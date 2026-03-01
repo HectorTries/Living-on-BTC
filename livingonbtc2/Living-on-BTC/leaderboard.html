@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BTC Livers Leaderboard | Living on Bitcoin</title>
+    <meta name="description" content="The world's largest database of people living on the Bitcoin standard. See who's been stacking sats the longest.">
+    
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-C25ZWRJKXL"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-C25ZWRJKXL');
+    </script>
+    
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    
+    <style>
+        .leaderboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .sort-options {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .sort-btn {
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .sort-btn:hover {
+            background: rgba(255, 255, 255, 0.12);
+        }
+        
+        .sort-btn.active {
+            background: var(--bitcoin-orange);
+            border-color: var(--bitcoin-orange);
+            color: white;
+        }
+        
+        .leaderboard-table {
+            width: 100%;
+        }
+        
+        .leaderboard-row {
+            display: grid;
+            grid-template-columns: 60px 1fr 120px 100px;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            transition: background 0.2s;
+        }
+        
+        .leaderboard-row:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+        
+        .leaderboard-row.header {
+            background: rgba(255, 255, 255, 0.05);
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .rank-cell {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .rank-badge {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+        
+        .rank-badge.gold {
+            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            color: #1a1f36;
+        }
+        
+        .rank-badge.silver {
+            background: linear-gradient(135deg, #c0c0c0, #a0a0a0);
+            color: #1a1f36;
+        }
+        
+        .rank-badge.bronze {
+            background: linear-gradient(135deg, #cd7f32, #a0522d);
+            color: white;
+        }
+        
+        .rank-badge.normal {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+        }
+        
+        .user-cell {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--bitcoin-orange);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: white;
+            font-size: 1.1rem;
+        }
+        
+        .user-info h4 {
+            margin: 0;
+            font-size: 1rem;
+        }
+        
+        .user-info h4 a {
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+        
+        .user-info h4 a:hover {
+            color: var(--bitcoin-orange);
+        }
+        
+        .user-info p {
+            margin: 0.25rem 0 0;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        
+        .savings-cell {
+            text-align: center;
+        }
+        
+        .savings-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--success-green);
+        }
+        
+        .date-cell {
+            text-align: right;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-muted);
+        }
+        
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 2rem;
+        }
+        
+        .page-btn {
+            padding: 8px 14px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .page-btn:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.12);
+        }
+        
+        .page-btn.active {
+            background: var(--bitcoin-orange);
+            border-color: var(--bitcoin-orange);
+            color: white;
+        }
+        
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        @media (max-width: 600px) {
+            .leaderboard-row {
+                grid-template-columns: 50px 1fr 80px;
+            }
+            
+            .date-cell {
+                display: none;
+            }
+            
+            .leaderboard-row.header .date-cell {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bitcoin-particles"></div>
+    
+    <div class="container">
+        <!-- Navigation -->
+        <nav class="navbar">
+            <a href="index.html" class="logo">
+                <i class="fab fa-bitcoin"></i>
+                Living on BTC
+            </a>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="backtest.html">Backtest</a>
+                <a href="verify.html">Verify</a>
+                <a href="leaderboard.html" class="active">Leaderboard</a>
+            </div>
+        </nav>
+        
+        <!-- Hero -->
+        <header class="hero">
+            <h1><i class="fas fa-trophy"></i> BTC Livers Leaderboard</h1>
+            <p>The world's largest database of people living on the Bitcoin standard</p>
+        </header>
+        
+        <!-- Stats -->
+        <div class="stats-grid" style="margin-bottom: 2rem;">
+            <div class="stat-card">
+                <div class="stat-value" id="totalCount">--</div>
+                <div class="stat-label">Total Verified</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="earliestYear">--</div>
+                <div class="stat-label">Earliest Adopter</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="avgSavings">--%</div>
+                <div class="stat-label">Average Savings</div>
+            </div>
+        </div>
+        
+        <!-- Leaderboard Card -->
+        <div class="card">
+            <div class="leaderboard-header">
+                <h2 style="margin: 0;"><i class="fas fa-list-ol"></i> Rankings</h2>
+                <div class="sort-options">
+                    <button class="sort-btn active" data-sort="date-asc">
+                        <i class="fas fa-calendar"></i> Earliest First
+                    </button>
+                    <button class="sort-btn" data-sort="savings-desc">
+                        <i class="fas fa-chart-line"></i> Most Savings
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Loading -->
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Loading leaderboard...</p>
+            </div>
+            
+            <!-- Leaderboard Table -->
+            <div id="leaderboardContainer">
+                <div class="leaderboard-row header">
+                    <div class="rank-cell">Rank</div>
+                    <div class="user-cell">User</div>
+                    <div class="savings-cell">Life Cheaper</div>
+                    <div class="date-cell">Since</div>
+                </div>
+                <div id="leaderboardBody">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </div>
+            
+            <!-- Pagination -->
+            <div class="pagination" id="pagination">
+                <!-- Populated by JavaScript -->
+            </div>
+        </div>
+        
+        <!-- CTA -->
+        <div class="card" style="text-align: center; margin-top: 2rem;">
+            <h2 style="justify-content: center; margin: 0 0 1rem;"><i class="fas fa-user-plus"></i> Join the Leaderboard</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+                Living on Bitcoin? Get yourself or someone you know verified!
+            </p>
+            <a href="verify.html" class="btn btn-primary">
+                <i class="fas fa-check-circle"></i> Get Verified
+            </a>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="js/btc-price.js"></script>
+    <script src="js/supabase-config.js"></script>
+    <script>
+        // State
+        let currentSort = 'date-asc';
+        let currentPage = 1;
+        const perPage = 20;
+        let allUsers = [];
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadLeaderboard();
+        });
+        
+        // Sort button handlers
+        document.querySelectorAll('.sort-btn').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentSort = btn.dataset.sort;
+                currentPage = 1;
+                sortAndRender();
+            });
+        });
+        
+        async function loadLeaderboard() {
+            const loadingEl = document.getElementById('loading');
+            const containerEl = document.getElementById('leaderboardContainer');
+            
+            loadingEl.classList.add('show');
+            containerEl.style.display = 'none';
+            
+            try {
+                const result = await BTCLivers.getAll({ limit: 100 });
+                
+                if (!result.success) {
+                    throw new Error(result.error);
+                }
+                
+                // Calculate savings for all users
+                allUsers = await Promise.all(result.data.map(async (user) => {
+                    let savings = user.estimated_savings;
+                    if (!savings) {
+                        savings = await BTCPrice.getEstimatedSavingsPercent(user.start_date);
+                    }
+                    return { ...user, savings };
+                }));
+                
+                // Update stats
+                updateStats();
+                
+                // Sort and render
+                sortAndRender();
+                
+            } catch (error) {
+                console.error('Error loading leaderboard:', error);
+                document.getElementById('leaderboardBody').innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>Failed to load leaderboard. Please try again.</p>
+                    </div>
+                `;
+            } finally {
+                loadingEl.classList.remove('show');
+                containerEl.style.display = 'block';
+            }
+        }
+        
+        function updateStats() {
+            document.getElementById('totalCount').textContent = allUsers.length;
+            
+            if (allUsers.length > 0) {
+                // Find earliest
+                const earliest = allUsers.reduce((min, user) => 
+                    user.start_date < min ? user.start_date : min, 
+                    allUsers[0].start_date
+                );
+                document.getElementById('earliestYear').textContent = new Date(earliest).getFullYear();
+                
+                // Average savings
+                const avgSavings = allUsers.reduce((sum, user) => sum + (user.savings || 0), 0) / allUsers.length;
+                document.getElementById('avgSavings').textContent = `${avgSavings.toFixed(0)}%`;
+            }
+        }
+        
+        function sortAndRender() {
+            let sorted = [...allUsers];
+            
+            switch (currentSort) {
+                case 'date-asc':
+                    sorted.sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
+                    break;
+                case 'savings-desc':
+                    sorted.sort((a, b) => (b.savings || 0) - (a.savings || 0));
+                    break;
+            }
+            
+            // Assign ranks
+            sorted = sorted.map((user, index) => ({ ...user, rank: index + 1 }));
+            
+            // Paginate
+            const totalPages = Math.ceil(sorted.length / perPage);
+            const startIndex = (currentPage - 1) * perPage;
+            const pageUsers = sorted.slice(startIndex, startIndex + perPage);
+            
+            renderUsers(pageUsers);
+            renderPagination(totalPages);
+        }
+        
+        function renderUsers(users) {
+            const container = document.getElementById('leaderboardBody');
+            
+            if (users.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-users"></i>
+                        <p>No verified users yet. Be the first!</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = users.map(user => {
+                const rankClass = user.rank === 1 ? 'gold' : 
+                                  user.rank === 2 ? 'silver' : 
+                                  user.rank === 3 ? 'bronze' : 'normal';
+                const initial = user.x_username.charAt(0).toUpperCase();
+                
+                return `
+                    <div class="leaderboard-row">
+                        <div class="rank-cell">
+                            <div class="rank-badge ${rankClass}">${user.rank}</div>
+                        </div>
+                        <div class="user-cell">
+                            <div class="user-avatar">${initial}</div>
+                            <div class="user-info">
+                                <h4>
+                                    <a href="https://x.com/${user.x_username}" target="_blank">
+                                        @${user.x_username}
+                                    </a>
+                                </h4>
+                                <p>${user.country || 'Unknown location'}</p>
+                            </div>
+                        </div>
+                        <div class="savings-cell">
+                            <div class="savings-value">+${(user.savings || 0).toFixed(0)}%</div>
+                        </div>
+                        <div class="date-cell">${formatDate(user.start_date)}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function renderPagination(totalPages) {
+            const container = document.getElementById('pagination');
+            
+            if (totalPages <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+            
+            let html = '';
+            
+            // Previous button
+            html += `<button class="page-btn" onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
+                <i class="fas fa-chevron-left"></i>
+            </button>`;
+            
+            // Page numbers
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                    html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+                } else if (i === currentPage - 2 || i === currentPage + 2) {
+                    html += `<span style="color: var(--text-muted); padding: 0 8px;">...</span>`;
+                }
+            }
+            
+            // Next button
+            html += `<button class="page-btn" onclick="goToPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
+                <i class="fas fa-chevron-right"></i>
+            </button>`;
+            
+            container.innerHTML = html;
+        }
+        
+        function goToPage(page) {
+            currentPage = page;
+            sortAndRender();
+            document.getElementById('leaderboardContainer').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('en-US', {
+                month: 'short',
+                year: 'numeric'
+            });
+        }
+    </script>
+</body>
+</html>

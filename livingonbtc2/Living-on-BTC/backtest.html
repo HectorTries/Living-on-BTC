@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BTC Savings Backtest | Living on Bitcoin</title>
+    <meta name="description" content="Calculate how much cheaper your life would be if you had been living on the Bitcoin standard. Backtest your savings with real historical BTC prices.">
+    
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-C25ZWRJKXL"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-C25ZWRJKXL');
+    </script>
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    
+    <style>
+        /* Page-specific styles */
+        .currency-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+            gap: 8px;
+            margin-bottom: 1rem;
+        }
+        
+        .currency-btn {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            color: var(--text-primary);
+            padding: 10px 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+        
+        .currency-btn:hover {
+            background: rgba(255, 255, 255, 0.12);
+        }
+        
+        .currency-btn.selected {
+            background: var(--bitcoin-orange);
+            border-color: var(--bitcoin-orange);
+            box-shadow: 0 0 12px rgba(247, 147, 26, 0.4);
+        }
+        
+        .results-section {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+        
+        .results-section.show {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .highlight-stat {
+            background: linear-gradient(135deg, rgba(247, 147, 26, 0.15), rgba(247, 147, 26, 0.05));
+            border: 1px solid rgba(247, 147, 26, 0.3);
+        }
+        
+        .highlight-stat .stat-value {
+            font-size: 2rem;
+        }
+        
+        .breakdown-list {
+            list-style: none;
+            padding: 0;
+            margin: 1rem 0;
+        }
+        
+        .breakdown-list li {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        
+        .breakdown-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .breakdown-label {
+            color: var(--text-secondary);
+        }
+        
+        .breakdown-value {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .assumptions-card {
+            background: rgba(84, 105, 212, 0.1);
+            border: 1px solid rgba(84, 105, 212, 0.2);
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            margin-top: 1.5rem;
+        }
+        
+        .assumptions-card h4 {
+            margin: 0 0 0.5rem;
+            color: var(--accent-blue);
+            font-size: 0.9rem;
+        }
+        
+        .assumptions-card p {
+            margin: 0;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="bitcoin-particles"></div>
+    
+    <div class="container">
+        <!-- Navigation -->
+        <nav class="navbar">
+            <a href="index.html" class="logo">
+                <i class="fab fa-bitcoin"></i>
+                Living on BTC
+            </a>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="backtest.html" class="active">Backtest</a>
+                <a href="verify.html">Verify</a>
+                <a href="leaderboard.html">Leaderboard</a>
+            </div>
+        </nav>
+        
+        <!-- Hero -->
+        <header class="hero">
+            <h1><i class="fas fa-chart-line"></i> BTC Savings Backtest</h1>
+            <p>Discover how much cheaper your life would be if you had started living on the Bitcoin standard.</p>
+        </header>
+        
+        <!-- Calculator Card -->
+        <div class="card">
+            <h2><i class="fas fa-calculator"></i> Calculate Your Savings</h2>
+            
+            <form id="backtestForm">
+                <!-- Currency Selection -->
+                <div class="form-group">
+                    <label>Select Your Currency</label>
+                    <div class="currency-grid">
+                        <button type="button" class="currency-btn selected" data-currency="USD">USD</button>
+                        <button type="button" class="currency-btn" data-currency="EUR">EUR</button>
+                        <button type="button" class="currency-btn" data-currency="GBP">GBP</button>
+                        <button type="button" class="currency-btn" data-currency="JPY">JPY</button>
+                        <button type="button" class="currency-btn" data-currency="CAD">CAD</button>
+                        <button type="button" class="currency-btn" data-currency="AUD">AUD</button>
+                        <button type="button" class="currency-btn" data-currency="CHF">CHF</button>
+                        <button type="button" class="currency-btn" data-currency="INR">INR</button>
+                        <button type="button" class="currency-btn" data-currency="BRL">BRL</button>
+                        <button type="button" class="currency-btn" data-currency="MXN">MXN</button>
+                    </div>
+                </div>
+                
+                <!-- Date and Income -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="startDate">When did you start living on BTC?</label>
+                        <input type="date" id="startDate" required>
+                        <div class="helper-text">Select the date you began the Bitcoin standard</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="annualIncome">Annual Income (optional)</label>
+                        <input type="number" id="annualIncome" placeholder="50000" min="0">
+                        <div class="helper-text">Leave blank for $50K USD default estimate</div>
+                    </div>
+                </div>
+                
+                <!-- Monthly Expenses (optional) -->
+                <div class="form-group">
+                    <label for="monthlyExpenses">Monthly Expenses (optional)</label>
+                    <input type="number" id="monthlyExpenses" placeholder="Auto-calculated from income" min="0">
+                    <div class="helper-text">If blank, assumes 70% of income goes to expenses (30% saved)</div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-full" id="calculateBtn">
+                    <i class="fas fa-rocket"></i> Calculate My Savings
+                </button>
+            </form>
+            
+            <!-- Loading -->
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Fetching historical Bitcoin prices...</p>
+            </div>
+        </div>
+        
+        <!-- Results Section -->
+        <div class="results-section" id="results">
+            <div class="card highlight-stat" style="text-align: center;">
+                <h2 style="justify-content: center;"><i class="fas fa-piggy-bank"></i> Your Life is Cheaper By</h2>
+                <div class="stat-value" id="cheaperByValue" style="font-size: 3rem;">--%</div>
+                <p style="color: var(--text-secondary); margin: 0;">in Bitcoin terms since <span id="resultStartDate">--</span></p>
+            </div>
+            
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">BTC Price When You Started</div>
+                    <div class="stat-value" id="priceAtStart">--</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Current BTC Price</div>
+                    <div class="stat-value" id="currentPrice">--</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">BTC Appreciation</div>
+                    <div class="stat-value positive" id="appreciation">--%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Time on BTC Standard</div>
+                    <div class="stat-value" id="timeElapsed">--</div>
+                </div>
+            </div>
+            
+            <!-- Detailed Breakdown -->
+            <div class="card">
+                <h2><i class="fas fa-chart-pie"></i> Savings Breakdown</h2>
+                
+                <div class="chart-container">
+                    <canvas id="savingsChart"></canvas>
+                </div>
+                
+                <ul class="breakdown-list">
+                    <li>
+                        <span class="breakdown-label">Monthly savings (30% of income)</span>
+                        <span class="breakdown-value" id="monthlySavings">--</span>
+                    </li>
+                    <li>
+                        <span class="breakdown-label">BTC you could buy per month (at start)</span>
+                        <span class="breakdown-value" id="btcPerMonthStart">-- BTC</span>
+                    </li>
+                    <li>
+                        <span class="breakdown-label">BTC you can buy per month (now)</span>
+                        <span class="breakdown-value" id="btcPerMonthNow">-- BTC</span>
+                    </li>
+                    <li>
+                        <span class="breakdown-label">Estimated BTC accumulated (if DCA'd)</span>
+                        <span class="breakdown-value" id="totalBtcAccumulated">-- BTC</span>
+                    </li>
+                    <li>
+                        <span class="breakdown-label">Current value of accumulated BTC</span>
+                        <span class="breakdown-value" id="accumulatedValue">--</span>
+                    </li>
+                    <li>
+                        <span class="breakdown-label">Traditional savings value</span>
+                        <span class="breakdown-value" id="traditionalValue">--</span>
+                    </li>
+                    <li style="background: rgba(34, 197, 94, 0.1); padding: 1rem; border-radius: 8px; margin-top: 0.5rem;">
+                        <span class="breakdown-label" style="font-weight: 600; color: var(--success-green);">Additional Wealth Generated</span>
+                        <span class="breakdown-value" style="color: var(--success-green);" id="additionalWealth">--</span>
+                    </li>
+                </ul>
+                
+                <div class="assumptions-card">
+                    <h4><i class="fas fa-info-circle"></i> Calculation Assumptions</h4>
+                    <p>• 30% savings rate on income • 3% annual USD inflation • DCA (Dollar Cost Averaging) monthly into BTC • Historical prices from CryptoCompare API</p>
+                </div>
+            </div>
+            
+            <!-- CTA -->
+            <div class="card" style="text-align: center;">
+                <h2 style="justify-content: center;"><i class="fas fa-users"></i> Join the Movement</h2>
+                <p style="color: var(--text-secondary); max-width: 500px; margin: 0 auto 1.5rem;">Add yourself to the world's largest database of people living on the Bitcoin standard.</p>
+                <a href="verify.html" class="btn btn-primary">
+                    <i class="fas fa-user-plus"></i> Get Verified
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="js/btc-price.js"></script>
+    <script>
+        // State
+        let selectedCurrency = 'USD';
+        let savingsChart = null;
+        
+        // Set default date to 2 years ago
+        document.addEventListener('DOMContentLoaded', () => {
+            const twoYearsAgo = new Date();
+            twoYearsAgo.setFullYear(twoYearsAgo.getFullYear() - 2);
+            document.getElementById('startDate').value = twoYearsAgo.toISOString().split('T')[0];
+            
+            // Set max date to today
+            document.getElementById('startDate').max = new Date().toISOString().split('T')[0];
+        });
+        
+        // Currency selection
+        document.querySelectorAll('.currency-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.currency-btn').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                selectedCurrency = btn.dataset.currency;
+            });
+        });
+        
+        // Form submission
+        document.getElementById('backtestForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const startDate = document.getElementById('startDate').value;
+            const annualIncome = parseFloat(document.getElementById('annualIncome').value) || null;
+            
+            if (!startDate) {
+                alert('Please select a start date');
+                return;
+            }
+            
+            // Validate date is not in the future
+            if (new Date(startDate) > new Date()) {
+                alert('Start date cannot be in the future');
+                return;
+            }
+            
+            // Show loading
+            document.getElementById('loading').classList.add('show');
+            document.getElementById('results').classList.remove('show');
+            document.getElementById('calculateBtn').disabled = true;
+            
+            try {
+                const results = await BTCPrice.calculateSavings(startDate, annualIncome, selectedCurrency);
+                displayResults(results);
+            } catch (error) {
+                console.error('Calculation error:', error);
+                alert(`Error: ${error.message || 'Failed to calculate. Please try again.'}`);
+            } finally {
+                document.getElementById('loading').classList.remove('show');
+                document.getElementById('calculateBtn').disabled = false;
+            }
+        });
+        
+        function displayResults(results) {
+            // Main result
+            document.getElementById('cheaperByValue').textContent = `${results.cheaperByPercent}%`;
+            document.getElementById('resultStartDate').textContent = formatDate(results.startDate);
+            
+            // Stats
+            document.getElementById('priceAtStart').textContent = formatCurrency(results.btcPriceAtStart);
+            document.getElementById('currentPrice').textContent = formatCurrency(results.currentBtcPrice);
+            document.getElementById('appreciation').textContent = `${results.btcAppreciation}%`;
+            document.getElementById('timeElapsed').textContent = `${results.yearsElapsed} years`;
+            
+            // Breakdown
+            document.getElementById('monthlySavings').textContent = formatCurrency(results.monthlySavingsFiat);
+            document.getElementById('btcPerMonthStart').textContent = `${results.btcPerMonthAtStart} BTC`;
+            document.getElementById('btcPerMonthNow').textContent = `${results.btcPerMonthNow} BTC`;
+            document.getElementById('totalBtcAccumulated').textContent = `${results.estimatedBtcAccumulated} BTC`;
+            document.getElementById('accumulatedValue').textContent = formatCurrency(parseFloat(results.accumulatedValueUsd));
+            document.getElementById('traditionalValue').textContent = formatCurrency(parseFloat(results.traditionalValueUsd));
+            document.getElementById('additionalWealth').textContent = formatCurrency(parseFloat(results.additionalWealth));
+            
+            // Update chart
+            updateChart(results);
+            
+            // Show results
+            document.getElementById('results').classList.add('show');
+            
+            // Scroll to results
+            setTimeout(() => {
+                document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+        }
+        
+        function updateChart(results) {
+            const ctx = document.getElementById('savingsChart').getContext('2d');
+            
+            if (savingsChart) {
+                savingsChart.destroy();
+            }
+            
+            const btcValue = parseFloat(results.accumulatedValueUsd);
+            const tradValue = parseFloat(results.traditionalValueUsd);
+            
+            savingsChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['BTC Standard Value', 'Traditional Savings'],
+                    datasets: [{
+                        data: [btcValue, tradValue],
+                        backgroundColor: [
+                            'rgba(247, 147, 26, 0.8)',
+                            'rgba(100, 116, 139, 0.5)'
+                        ],
+                        borderColor: [
+                            'rgba(247, 147, 26, 1)',
+                            'rgba(100, 116, 139, 0.8)'
+                        ],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#aabbcc',
+                                padding: 20,
+                                font: { size: 13 }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.label}: ${formatCurrency(context.raw)}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function formatCurrency(value) {
+            if (typeof value !== 'number') value = parseFloat(value);
+            return `${selectedCurrency} ${value.toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            })}`;
+        }
+        
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('en-US', {
+                month: 'long',
+                day: 'numeric',
+                year: 'numeric'
+            });
+        }
+    </script>
+</body>
+</html>

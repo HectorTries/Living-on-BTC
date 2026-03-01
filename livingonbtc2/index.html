@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-C25ZWRJKXL"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-C25ZWRJKXL');
+    </script>
+    <title>LivingOnBTC - Bitcoin Living Tools & Guides</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        :root {
+            --bitcoin-orange: #f7931a;
+            --dark-blue: #1a1f36;
+            --light-blue: #2a3050;
+            --accent-blue: #5469d4;
+            --card-bg: rgba(255, 255, 255, 0.07);
+            --card-hover: rgba(255, 255, 255, 0.1);
+            --text-primary: #fff;
+            --text-secondary: #aabbcc;
+            --card-border: rgba(255, 255, 255, 0.12);
+        }
+        
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: radial-gradient(circle at 50% 10%, var(--light-blue) 0%, var(--dark-blue) 80%);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .bitcoin-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.1;
+            overflow: hidden;
+            pointer-events: none;
+            background-image: 
+                radial-gradient(circle at 80% 40%, var(--bitcoin-orange) 0%, transparent 0.8%),
+                radial-gradient(circle at 20% 25%, var(--bitcoin-orange) 0%, transparent 0.5%),
+                radial-gradient(circle at 40% 70%, var(--bitcoin-orange) 0%, transparent 0.7%),
+                radial-gradient(circle at 70% 90%, var(--bitcoin-orange) 0%, transparent 0.6%),
+                radial-gradient(circle at 10% 60%, var(--bitcoin-orange) 0%, transparent 0.5%),
+                radial-gradient(circle at 60% 10%, var(--bitcoin-orange) 0%, transparent 0.4%),
+                radial-gradient(circle at 90% 65%, var(--bitcoin-orange) 0%, transparent 0.6%);
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        .logo i {
+            color: var(--bitcoin-orange);
+            font-size: 1.8rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--bitcoin-orange);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--bitcoin-orange);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 4rem 0;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            text-shadow: 0 2px 15px rgba(0,0,0,0.2);
+        }
+
+        .hero h1 i {
+            color: var(--bitcoin-orange);
+        }
+
+        .hero p {
+            color: var(--text-secondary);
+            font-size: 1.3rem;
+            max-width: 700px;
+            margin: 0 auto 2rem auto;
+        }
+
+        .bitcoin-badge {
+            display: inline-block;
+            background: linear-gradient(45deg, var(--bitcoin-orange), #fbb034);
+            color: #fff;
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 15px rgba(247, 147, 26, 0.3);
+        }
+
+        .section-title {
+            text-align: center;
+            margin: 5rem 0 3rem 0;
+            position: relative;
+        }
+
+        .section-title h2 {
+            font-size: 2.2rem;
+            color: var(--text-primary);
+            margin: 0;
+            position: relative;
+            display: inline-block;
+            padding: 0 1rem;
+        }
+
+        .section-title h2::before {
+            content: '';
+            position: absolute;
+            height: 4px;
+            width: 60px;
+            background: var(--bitcoin-orange);
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+
+        .section-title p {
+            color: var(--text-secondary);
+            margin-top: 1.5rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 2.5rem;
+            margin-top: 3rem;
+        }
+
+        .tool-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .tool-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--bitcoin-orange), #fbb034);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            border-color: var(--bitcoin-orange);
+        }
+
+        .tool-card:hover::before {
+            opacity: 1;
+        }
+
+        .tool-card h2 {
+            color: var(--text-primary);
+            margin-top: 0;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.5rem;
+        }
+
+        .tool-card h2 i {
+            color: var(--bitcoin-orange);
+            font-size: 1.3rem;
+        }
+
+        .tool-card p {
+            color: var(--text-secondary);
+            flex-grow: 1;
+            margin-bottom: 2rem;
+        }
+
+        .tool-card a {
+            display: inline-block;
+            background: linear-gradient(45deg, var(--bitcoin-orange), #fbb034);
+            color: #fff;
+            text-decoration: none;
+            padding: 0.9rem 1.8rem;
+            border-radius: 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(247, 147, 26, 0.2);
+        }
+
+        .tool-card a:hover {
+            background: linear-gradient(45deg, #fbb034, var(--bitcoin-orange));
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(247, 147, 26, 0.3);
+        }
+
+        .guides-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .guide-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.8rem;
+            transition: all 0.3s ease;
+            border: 1px solid var(--card-border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .guide-card::after {
+            content: '';
+            position: absolute;
+            bottom: -50px;
+            right: -50px;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, var(--bitcoin-orange) 0%, transparent 70%);
+            opacity: 0.1;
+            transition: all 0.3s ease;
+        }
+
+        .guide-card:hover {
+            background: var(--card-hover);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .guide-card:hover::after {
+            transform: scale(1.5);
+            opacity: 0.15;
+        }
+
+        .guide-card h3 {
+            color: var(--text-primary);
+            margin-top: 0;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.3rem;
+        }
+
+        .guide-card i {
+            color: var(--bitcoin-orange);
+        }
+
+        .guide-card p {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .guide-card a {
+            color: var(--bitcoin-orange);
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .guide-card a:hover {
+            color: #fbb034;
+            gap: 12px;
+        }
+
+        .guide-card a i {
+            font-size: 0.9rem;
+        }
+
+        .cta-section {
+            text-align: center;
+            margin-top: 6rem;
+            padding: 3rem;
+            background: var(--card-bg);
+            border-radius: 16px;
+            border: 1px solid var(--card-border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 30% 50%, rgba(247, 147, 26, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 50%, rgba(247, 147, 26, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .cta-section h2 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .cta-section p {
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 2rem auto;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .cta-primary {
+            background: linear-gradient(45deg, var(--bitcoin-orange), #fbb034);
+            color: #fff;
+            text-decoration: none;
+            padding: 1rem 2rem;
+            border-radius: 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(247, 147, 26, 0.2);
+        }
+
+        .cta-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(247, 147, 26, 0.3);
+        }
+
+        .cta-secondary {
+            background: transparent;
+            color: var(--text-primary);
+            text-decoration: none;
+            padding: 1rem 2rem;
+            border-radius: 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 2px solid var(--card-border);
+        }
+
+        .cta-secondary:hover {
+            border-color: var(--bitcoin-orange);
+            color: var(--bitcoin-orange);
+            transform: translateY(-3px);
+        }
+
+        footer {
+            margin-top: 6rem;
+            padding: 3rem 0;
+            border-top: 1px solid var(--card-border);
+            text-align: center;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .footer-logo i {
+            color: var(--bitcoin-orange);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--bitcoin-orange);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            background: var(--bitcoin-orange);
+            color: #fff;
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            margin-top: 2rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            
+            .hero p {
+                font-size: 1.1rem;
+            }
+            
+            .navbar {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .tools-grid, .guides-grid {
+                gap: 1.5rem;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .footer-logo {
+                justify-content: center;
+            }
+            
+            .social-links {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bitcoin-particles"></div>
+    <div class="container">
+        <nav class="navbar">
+            <a href="#" class="logo">
+                <i class="fab fa-bitcoin"></i>
+                LivingOnBTC
+            </a>            <div class="nav-links">
+                <a href="#">Home</a>
+                <a href="#tools">Tools</a>
+                <a href="#guides">Guides</a>
+                <a href="#about">About</a>
+                <a href="blog/US.html">Country Guides</a>
+                <a href="Bitcoin Standard Leaderboard.html"><i class="fab fa-bitcoin"></i> Leaderboard</a>
+            </div>
+        </nav>
+
+        <div class="hero">
+            <span class="bitcoin-badge">Bitcoin Lifestyle</span>
+            <h1><i class="fab fa-bitcoin"></i> LivingOnBTC</h1>
+            <p>Empowering you with practical tools and comprehensive guides for adopting and thriving on the Bitcoin standard</p>
+            <div class="cta-buttons">
+                <a href="#tools" class="cta-primary">Explore Tools</a>
+                <a href="#guides" class="cta-secondary">Browse Guides</a>
+            </div>
+        </div>
+
+        <div id="tools" class="section-title">
+            <h2>Bitcoin Tools</h2>
+            <p>Powerful calculators and analysis tools to optimize your Bitcoin journey</p>
+        </div>
+
+        <div class="tools-grid">
+            <div class="tool-card">
+                <h2><i class="fas fa-calculator"></i> Bitcoin Standard Calculator</h2>
+                <p>Track how your purchasing power has evolved since adopting the Bitcoin standard. Visualize the real impact of your Bitcoin journey with detailed analytics and comparisons to traditional currencies.</p>
+                <a href="calculator (1).html">Calculate Your Savings <i class="fas fa-arrow-right"></i></a>
+            </div>
+
+            <div class="tool-card">
+                <h2><i class="fas fa-coins"></i> Bitcoin vs Global Wages</h2>
+                <p>Analyze how many hours of work it takes to buy Bitcoin across different countries. Compare minimum and median wages to Bitcoin prices over time and see live sats-per-hour calculations.</p>
+                <a href="BitcoinSalary.html">Compare Global Wages <i class="fas fa-arrow-right"></i></a>
+            </div>
+
+            <div class="tool-card">
+                <h2><i class="fas fa-chart-line"></i> Bitcoin Loan Backtest</h2>
+                <p>Analyze historical performance of Bitcoin-backed loans using advanced simulations. Discover optimal entry points, loan-to-value ratios, and repayment strategies to maximize your Bitcoin holdings.</p>
+                <a href="BitcoinBacktester (1).html">Run Backtest <i class="fas fa-arrow-right"></i></a>
+            </div>
+
+            <div class="tool-card">
+                <h2><i class="fas fa-fire"></i> Bitcoin FIRE Calculator</h2>
+                <p>Calculate when your Bitcoin stack will generate enough annual appreciation to cover your living expenses. Plan your path to financial independence with Bitcoin.</p>
+                <a href="bitcoinfire.html">Calculate Freedom Date <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </div>
+
+        <div id="guides" class="section-title">
+            <h2>Country Guides</h2>
+            <p>Region-specific strategies for living on Bitcoin around the world</p>
+        </div>
+
+        <div class="guides-grid">
+            <div class="guide-card">
+                <h3><i class="fas fa-globe-americas"></i> United States</h3>
+                <p>Navigate the US Bitcoin ecosystem with Strike's bill pay, tax considerations, and practical strategies for everyday Bitcoin transactions.</p>
+                <a href="blog/US.html">Read Guide <i class="fas fa-chevron-right"></i></a>
+            </div>
+
+            <div class="guide-card">
+                <h3><i class="fas fa-landmark"></i> United Kingdom</h3>
+                <p>Discover Bitcoin adoption pathways in the UK with local services, regulatory insights, and practical tips for daily Bitcoin usage in British commerce.</p>
+                <a href="blog/UK.html">Read Guide <i class="fas fa-chevron-right"></i></a>
+            </div>
+
+            <div class="guide-card">
+                <h3><i class="fas fa-dharmachakra"></i> India</h3>
+                <p>Learn about living on Bitcoin in India with UPI integration, local Lightning Network solutions, and navigating the emerging crypto landscape.</p>
+                <a href="blog/India.html">Read Guide <i class="fas fa-chevron-right"></i></a>
+            </div>
+        </div>
+
+        <div class="cta-section">
+            <h2>Join the Bitcoin Circular Economy</h2>
+            <p>Ready to take your Bitcoin journey to the next level? Subscribe to our newsletter to receive the latest tools, guides, and insights on living the Bitcoin lifestyle.</p>
+            <div class="newsletter-container" style="margin: 2rem auto; max-width: 480px;">
+                <iframe 
+                    src="https://liveonbtc.substack.com/embed" 
+                    width="100%" 
+                    height="320" 
+                    style="border:1px solid #EEE; background:white; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);" 
+                    frameborder="0" 
+                    scrolling="no">
+                </iframe>
+            </div>
+            <div class="cta-buttons">
+                <a href="#" class="cta-secondary">Learn More</a>
+            </div>
+        </div>
+
+        <footer>
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <i class="fab fa-bitcoin"></i>
+                    LivingOnBTC
+                </div>
+                <div class="footer-links">
+                    <a href="#">Privacy</a>
+                    <a href="#">Terms</a>
+                    <a href="#">Contact</a>
+                    <a href="#">FAQ</a>
+                </div>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-telegram"></i></a>
+                    <a href="#"><i class="fab fa-github"></i></a>
+                    <a href="#"><i class="fab fa-discord"></i></a>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>© 2023 LivingOnBTC | Building tools for the Bitcoin circular economy</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Bitcoin Standard Leaderboard Widget -->
+    <script src="btc-leaderboard.js"></script>
+</body>
+</html>
