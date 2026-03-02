@@ -640,6 +640,7 @@
         let chart = null;
         let currentPeriod = 3;
         let liveBtcPrice = 0;
+        let historicalBtcPrices = {}; // Will hold fetched historical data
 
         // Currency conversion helper
         function convertToUSD(amount, currency) {
@@ -730,15 +731,60 @@
                 const response = await fetch(COINGECKO_API);
                 const data = await response.json();
                 liveBtcPrice = data.bitcoin.usd;
+                
+                // Also update the historical data with this latest price
+                const today = new Date();
+                const key = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
+                historicalBtcPrices[key] = liveBtcPrice;
+                
                 updateLiveMetrics();
                 return liveBtcPrice;
             } catch (error) {
                 console.error('Error fetching Bitcoin price:', error);
                 // Fallback to latest price from historical data
-                liveBtcPrice = DATA.bitcoinPrices['2025-01'];
+                const keys = Object.keys(historicalBtcPrices);
+                liveBtcPrice = keys.length > 0 ? historicalBtcPrices[keys.sort().pop()] : DATA.bitcoinPrices['2025-01'];
                 updateLiveMetrics();
                 return liveBtcPrice;
             }
+        }
+
+        // Fetch historical Bitcoin prices from CoinGecko (last 365 days)
+        async function fetchHistoricalBitcoinPrices() {
+            try {
+                // Fetch 365 days of daily data
+                const response = await fetch('https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=365');
+                const data = await response.json();
+                
+                if (data.prices && Array.isArray(data.prices)) {
+                    // Group by month and average
+                    const monthlyPrices = {};
+                    
+                    data.prices.forEach(([timestamp, price]) => {
+                        const date = new Date(timestamp);
+                        const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+                        
+                        if (!monthlyPrices[key]) {
+                            monthlyPrices[key] = [];
+                        }
+                        monthlyPrices[key].push(price);
+                    });
+                    
+                    // Calculate monthly average
+                    Object.keys(monthlyPrices).forEach(key => {
+                        const prices = monthlyPrices[key];
+                        const avg = prices.reduce((sum, p) => sum + p, 0) / prices.length;
+                        historicalBtcPrices[key] = Math.round(avg);
+                    });
+                    
+                    console.log('Historical BTC prices fetched:', historicalBtcPrices);
+                    return historicalBtcPrices;
+                }
+            } catch (error) {
+                console.error('Error fetching historical Bitcoin prices:', error);
+            }
+            // Fallback to hardcoded data if fetch fails
+            return DATA.bitcoinPrices;
         }
 
         // Update live metrics display
@@ -835,7 +881,7 @@
         // Update metrics display
         function updateMetrics(period) {
             const country = getCurrentCountryData();
-            const btcData = getAbsoluteData(DATA.bitcoinPrices, period);
+            const btcData = getAbsoluteData(historicalBtcPrices, period);
             const minWageData = getAbsoluteData(country.minWage, period);
             const medianWageData = getAbsoluteData(country.medianWage, period);
 
@@ -900,8 +946,8 @@
                 return `${monthNames[parseInt(month) - 1]} ${year}`;
             });
 
-            const minWageSats = normalizeData(DATA.bitcoinPrices, period, 'min');
-            const medianWageSats = normalizeData(DATA.bitcoinPrices, period, 'median');
+            const minWageSats = normalizeData(historicalBtcPrices, period, 'min');
+            const medianWageSats = normalizeData(historicalBtcPrices, period, 'median');
 
             const ctx = document.getElementById('comparisonChart').getContext('2d');
 
@@ -1006,9 +1052,12 @@
         }
 
         // Initialize
-        function init() {
+        async function init() {
             // Set UK as default selected country
             selectCountry('uk');
+            
+            // Fetch historical data first
+            await fetchHistoricalBitcoinPrices();
             
             // Fetch live Bitcoin price immediately
             fetchLiveBitcoinPrice();
