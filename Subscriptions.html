@@ -51,7 +51,7 @@
             margin: 15px auto;
         }
 
-        /* Rest of base styles from BitcoinBacktester.html */
+        /* Rest of base styles from bitcoin-backtester.html */
         /* ...existing input, button, and form styles... */
 
         /* Enhanced subscription-specific styles */
@@ -693,12 +693,12 @@
             document.getElementById('initialBtc').textContent = results.initialBtc.toFixed(8) + ' BTC';
             document.getElementById('remainingBtc').textContent = results.finalBtc.toFixed(8) + ' BTC';
             
-            // ... Rest of the display logic similar to BitcoinBacktester.html ...
+            // ... Rest of the display logic similar to bitcoin-backtester.html ...
         }
 
         // Update calculate button handler
         document.getElementById('calculateBtn').addEventListener('click', async () => {
-            // ... Similar to BitcoinBacktester.html but calling calculateSubscriptionStrategy ...
+            // ... Similar to bitcoin-backtester.html but calling calculateSubscriptionStrategy ...
         });
 
         async function calculateSubscriptionStrategy(startDate, monthlyAmount, initialPeriod, sellFee) {
