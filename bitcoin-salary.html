@@ -784,7 +784,7 @@
         // Generate date labels based on period
         function getDateLabels(period) {
             const labels = [];
-            const currentDate = new Date('2025-01-01');
+            const currentDate = new Date(); // Dynamically set to current date
             const startDate = new Date(currentDate);
             startDate.setFullYear(currentDate.getFullYear() - period);
 
