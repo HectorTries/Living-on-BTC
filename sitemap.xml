@@ -21,11 +21,6 @@
         <priority>0.8</priority>
     </url>
     <url>
-        <loc>https://livingonbtc.com/bitcoin-backtester.html</loc>
-        <changefreq>monthly</changefreq>
-        <priority>0.7</priority>
-    </url>
-    <url>
         <loc>https://livingonbtc.com/Subscriptions.html</loc>
         <changefreq>monthly</changefreq>
         <priority>0.7</priority>
@@ -42,6 +37,16 @@
     </url>
     <url>
         <loc>https://livingonbtc.com/blog/infrastructure-is-here.html</loc>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://livingonbtc.com/blog/living-on-btc-day-3.html</loc>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://livingonbtc.com/blog/living-on-btc-day-4.html</loc>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
