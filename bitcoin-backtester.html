@@ -3,54 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bitcoin Backtester - See What Your Salary Would Be Worth</title>
+    <title>Bitcoin Loan Backtester - Living on BTC</title>
     <link rel="stylesheet" href="blog-style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; background: #0d1117; color: #e6edf3; }
-        .calculator { background: #161b22; padding: 24px; border-radius: 12px; margin: 20px 0; }
-        input, select { padding: 12px; margin: 8px 0; width: 100%; background: #0d1117; color: #e6edf3; border: 1px solid #30363d; border-radius: 8px; font-size: 16px; }
-        .btn-group { display: flex; gap: 10px; margin: 10px 0; }
-        .btn { padding: 12px 24px; background: #238636; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; flex: 1; }
+        .calculator { background: #161b22; padding: 24px; border-radius: 12px; margin: 20px 0; border: 1px solid #30363d; }
+        input, select { padding: 12px; margin: 8px 0; width: 100%; background: #0d1117; color: #e6edf3; border: 1px solid #30363d; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
+        .btn-group { display: flex; gap: 10px; margin: 10px 0; flex-wrap: wrap; }
+        .btn { padding: 12px 24px; background: #238636; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; flex: 1; min-width: 100px; }
         .btn:hover { background: #2ea043; }
-        .btn-outline { background: transparent; border: 1px solid #30363d; }
+        .btn-outline { background: transparent; border: 1px solid #30363d; color: #e6edf3; }
         .btn-outline.active { background: #f7931a; border-color: #f7931a; }
-        #result { margin-top: 20px; padding: 16px; background: #0d1117; border-radius: 8px; }
-        .sats { color: #f7931a; font-weight: bold; font-size: 18px; }
+        .result { margin-top: 20px; padding: 16px; background: #0d1117; border-radius: 8px; }
+        .sats { color: #f7931a; font-weight: bold; }
+        .warning { color: #f85149; }
+        .safe { color: #238636; }
+        .tabs { display: flex; gap: 10px; margin: 20px 0; }
+        .tab { padding: 12px 24px; background: #161b22; border: 1px solid #30363d; border-radius: 8px; cursor: pointer; }
+        .tab.active { background: #f7931a; border-color: #f7931a; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #30363d; }
+        th { background: #161b22; color: #f7931a; }
     </style>
 </head>
 <body>
-    <a href="index.html">← Back to Home</a>
-    <h1>₿ Bitcoin Backtester</h1>
-    <p>See what your salary would be worth if you'd been paid in Bitcoin.</p>
-    
-    <div class="calculator">
-        <h3>Calculate Your Bitcoin Salary</h3>
-        <label>Monthly Salary</label>
-        <input type="number" id="salary" placeholder="e.g. 3000" value="3000">
+    <div class="container">
+        <a href="index.html" class="back-link">← Back to Home</a>
+        <h1>₿ Bitcoin Loan Backtester</h1>
+        <p>Stress test a Bitcoin-backed loan over time. See if you'd have been margin called or if you'd have made a profit.</p>
         
-        <label>Currency</label>
-        <div class="btn-group">
-            <button class="btn btn-outline active" onclick="setCurrency('GBP', '£')">£ GBP</button>
-            <button class="btn btn-outline" onclick="setCurrency('USD', '$')">$ USD</button>
-            <button class="btn btn-outline" onclick="setCurrency('EUR', '€')">€ EUR</button>
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('loan')">Loan Calculator</button>
+            <button class="tab" onclick="showTab('wages')">Wages in Sats</button>
         </div>
         
-        <label>Start Month</label>
-        <input type="month" id="startMonth" value="2022-01">
+        <!-- LOAN CALCULATOR -->
+        <div id="loan-tab">
+            <div class="calculator">
+                <h3>Loan Details</h3>
+                
+                <label>Loan Amount (GBP)</label>
+                <input type="number" id="loanAmount" placeholder="e.g. 10000" value="10000">
+                
+                <label>Loan Term (months)</label>
+                <input type="number" id="loanTerm" placeholder="e.g. 12" value="12">
+                
+                <label>Interest Rate (% APR)</label>
+                <input type="number" id="interestRate" placeholder="e.g. 5" value="5">
+                
+                <label>Loan Start Month</label>
+                <input type="month" id="loanStart" value="2022-01">
+                
+                <h3>Collateral</h3>
+                
+                <label>Collateral Amount (BTC)</label>
+                <input type="number" id="collateralBTC" placeholder="e.g. 0.5" value="0.5" step="0.01">
+                
+                <label>Liquidation Threshold (%)</label>
+                <input type="number" id="liquidationThreshold" placeholder="e.g. 80" value="80">
+                
+                <button class="btn" onclick="calculateLoan()">Calculate</button>
+                
+                <div id="loanResult" class="result" style="display:none;"></div>
+            </div>
+            
+            <canvas id="loanChart"></canvas>
+        </div>
         
-        <button class="btn" onclick="calculate()">Calculate</button>
-        
-        <div id="result" style="display:none;"></div>
+        <!-- WAGES IN SATS -->
+        <div id="wages-tab" style="display:none;">
+            <div class="calculator">
+                <h3>Select Your Country</h3>
+                
+                <label>Country</label>
+                <select id="countrySelect" onchange="updateWageChart()">
+                    <option value="uk">🇬🇧 UK (£)</option>
+                    <option value="us">🇺🇸 US ($)</option>
+                    <option value="de">🇩🇪 Germany (€)</option>
+                    <option value="fr">🇫🇷 France (€)</option>
+                    <option value="au">🇦🇺 Australia (A$)</option>
+                </select>
+                
+                <label>Wage Type</label>
+                <select id="wageType" onchange="updateWageChart()">
+                    <option value="min">Minimum Wage</option>
+                    <option value="median">Median Wage</option>
+                </select>
+                
+                <div id="wageResult" class="result">
+                    <h3>Wages Over Time</h3>
+                    <p>See how your salary in sats has changed over time. As Bitcoin appreciates, you get fewer sats for the same fiat amount — meaning your real purchasing power in Bitcoin terms decreases.</p>
+                </div>
+            </div>
+            
+            <canvas id="wageChart"></canvas>
+        </div>
     </div>
     
-    <canvas id="chart"></canvas>
-    
     <script>
-        let currentCurrency = 'GBP';
-        let currencySymbol = '£';
-        
-        // Historical BTC prices (monthly average in GBP)
+        // Historical BTC prices (GBP monthly average)
         const btcPrices = {
             '2022-01': 35000, '2022-02': 32000, '2022-03': 35000, '2022-04': 32000,
             '2022-05': 25000, '2022-06': 18000, '2022-07': 22000, '2022-08': 20000,
@@ -67,59 +118,102 @@
             '2026-01': 55000, '2026-02': 62000, '2026-03': 68500
         };
         
-        function setCurrency(cur, sym) {
-            currentCurrency = cur;
-            currencySymbol = sym;
-            document.querySelectorAll('.btn-outline').forEach(b => b.classList.remove('active'));
+        // Minimum and median wages by country (monthly)
+        const wages = {
+            uk: { min: 1838, median: 3100 },  // UK
+            us: { min: 1913, median: 5400 },  // US  
+            de: { min: 2089, median: 4500 },  // Germany
+            fr: { min: 1913, median: 3800 },  // France
+            au: { min: 2075, median: 5200 },  // Australia
+        };
+        
+        const currencySymbols = { uk: '£', us: '$', de: '€', fr: '€', au: 'A$' };
+        
+        function showTab(tab) {
+            document.getElementById('loan-tab').style.display = tab === 'loan' ? 'block' : 'none';
+            document.getElementById('wages-tab').style.display = tab === 'wages' ? 'block' : 'none';
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             event.target.classList.add('active');
+            if (tab === 'wages') updateWageChart();
         }
         
-        function calculate() {
-            const salary = parseFloat(document.getElementById('salary').value);
-            const startMonth = document.getElementById('startMonth').value;
+        function calculateLoan() {
+            const loanAmount = parseFloat(document.getElementById('loanAmount').value);
+            const term = parseInt(document.getElementById('loanTerm').value);
+            const rate = parseFloat(document.getElementById('interestRate').value) / 100 / 12;
+            const startMonth = document.getElementById('loanStart').value;
+            const collateralBTC = parseFloat(document.getElementById('collateralBTC').value);
+            const liquidationThreshold = parseFloat(document.getElementById('liquidationThreshold').value) / 100;
             
-            if (!salary || !startMonth) {
-                alert('Please enter a salary and start month');
+            if (!loanAmount || !term || !collateralBTC) {
+                alert('Please fill in all fields');
                 return;
             }
             
-            // Convert salary to GBP for calculation
-            let salaryGBP = salary;
-            if (currentCurrency === 'USD') salaryGBP = salary * 0.79;
-            if (currentCurrency === 'EUR') salaryGBP = salary * 0.86;
+            // Calculate monthly payment
+            const monthlyPayment = (loanAmount * rate * Math.pow(1 + rate, term)) / ( + rate, termMath.pow(1) - 1);
+            const totalRepaid = monthlyPayment * term;
+            const totalInterest = totalRepaid - loanAmount;
             
-            const resultDiv = document.getElementById('result');
-            let html = '<h3>Results</h3><table style="width:100%"><tr><th>Month</th><th>BTC Price</th><th>Your Salary in Sats</th></tr>';
+            let html = `<h3>Loan Summary</h3>`;
+            html += `<p><strong>Monthly Payment:</strong> £${monthlyPayment.toFixed(2)}</p>`;
+            html += `<p><strong>Total Repaid:</strong> £${totalRepaid.toFixed(2)}</p>`;
+            html += `<p><strong>Total Interest:</strong> £${totalInterest.toFixed(2)}</p>`;
             
-            let months = Object.keys(btcPrices).filter(m => m >= startMonth).sort();
+            // Check each month
+            let months = Object.keys(btcPrices).filter(m => m >= startMonth).sort().slice(0, term);
             let labels = [];
-            let data = [];
+            let collateralValues = [];
+            let loanValues = [];
+            let marginCalls = [];
             
-            months.forEach(month => {
+            let remainingLoan = loanAmount;
+            let currentCollateral = collateralBTC;
+            
+            html += `<h4>Monthly Breakdown</h4><table><tr><th>Month</th><th>BTC Price</th><th>Collateral Value</th><th>Loan Outstanding</th><th>LTV</th><th>Status</th></tr>`;
+            
+            months.forEach((month, i) => {
                 const price = btcPrices[month];
-                const sats = Math.round((salaryGBP / price) * 100000000);
+                const collateralGBP = currentCollateral * price;
+                const ltv = (remainingLoan / collateralGBP) * 100;
+                const status = ltv > (liquidationThreshold * 100) ? '<span class="warning">⚠️ MARGIN CALL</span>' : '<span class="safe">✓ Safe</span>';
+                
+                if (ltv > (liquidationThreshold * 100) && marginCalls.length < 3) {
+                    marginCalls.push(month);
+                }
+                
                 labels.push(month);
-                data.push(sats);
-                html += `<tr><td>${month}</td><td>${currencySymbol}${price.toLocaleString()}</td><td class="sats">${sats.toLocaleString()} sats</td></tr>`;
+                collateralValues.push(collateralGBP);
+                loanValues.push(remainingLoan);
+                
+                // Subtract payment
+                remainingLoan -= monthlyPayment;
+                if (remainingLoan < 0) remainingLoan = 0;
+                
+                html += `<tr><td>${month}</td><td>£${price.toLocaleString()}</td><td>£${collateralGBP.toFixed(0)}</td><td>£${remainingLoan.toFixed(0)}</td><td>${ltv.toFixed(1)}%</td><td>${status}</td></tr>`;
             });
             
             html += '</table>';
-            resultDiv.innerHTML = html;
-            resultDiv.style.display = 'block';
+            
+            if (marginCalls.length > 0) {
+                html += `<p class="warning"><strong>⚠️ MARGIN CALLS:</strong> ${marginCalls.join(', ')}</p>`;
+            } else {
+                html += `<p class="safe"><strong>✓ No margin calls!</strong> Your collateral was sufficient throughout.</p>`;
+            }
+            
+            document.getElementById('loanResult').innerHTML = html;
+            document.getElementById('loanResult').style.display = 'block';
             
             // Draw chart
-            const ctx = document.getElementById('chart').getContext('2d');
+            const ctx = document.getElementById('loanChart').getContext('2d');
             new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: labels,
-                    datasets: [{
-                        label: 'Sats per month',
-                        data: data,
-                        borderColor: '#f7931a',
-                        backgroundColor: 'rgba(247, 147, 26, 0.1)',
-                        fill: true
-                    }]
+                    datasets: [
+                        { label: 'Collateral Value (£)', data: collateralValues, borderColor: '#f7931a', backgroundColor: 'rgba(247,147,26,0.1)', fill: true },
+                        { label: 'Loan Outstanding (£)', data: loanValues, borderColor: '#238636' }
+                    ]
                 },
                 options: {
                     responsive: true,
@@ -131,6 +225,57 @@
                 }
             });
         }
+        
+        let wageChart = null;
+        
+        function updateWageChart() {
+            const country = document.getElementById('countrySelect').value;
+            const wageType = document.getElementById('wageType').value;
+            const wage = wages[country][wageType];
+            const symbol = currencySymbols[country];
+            
+            let labels = [];
+            let data = [];
+            
+            Object.keys(btcPrices).forEach(month => {
+                const price = btcPrices[month];
+                const sats = Math.round((wage / price) * 100000000);
+                labels.push(month);
+                data.push(sats);
+            });
+            
+            const ctx = document.getElementById('wageChart').getContext('2d');
+            
+            if (wageChart) wageChart.destroy();
+            
+            wageChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: `${wageType === 'min' ? 'Minimum' : 'Median'} Wage in Sats`,
+                        data: data,
+                        borderColor: '#f7931a',
+                        backgroundColor: 'rgba(247,147,26,0.1)',
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { 
+                        legend: { labels: { color: '#e6edf3' } },
+                        title: { display: true, text: `${wageType === 'min' ? 'Minimum' : 'Median'} Wage (${symbol}${wage.toLocaleString()}/month) in Sats over Time`, color: '#e6edf3' }
+                    },
+                    scales: {
+                        y: { ticks: { color: '#e6edf3', callback: v => v.toLocaleString() + ' sats' }, grid: { color: '#30363d' } },
+                        x: { ticks: { color: '#e6edf3' }, grid: { color: '#30363d' } }
+                    }
+                }
+            });
+        }
+        
+        // Initialise wage chart
+        updateWageChart();
     </script>
 </body>
 </html>
