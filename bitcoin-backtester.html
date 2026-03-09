@@ -1,1049 +1,136 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-C25ZWRJKXL"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-C25ZWRJKXL');
-    </script>
-    L<meta name="description" content="Backtest Bitcoin loans against other investment strategies. See how holding Bitcoin compares to traditional financing.">
-    <title>Bitcoin Loan Backtest | LivingOnBTC</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, ">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bitcoin Backtester - See What Your Salary Would Be Worth</title>
+    <link rel="stylesheet" href="blog-style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        :root {
-            --bitcoin-orange: #f7931a;
-            --dark-blue: #1a1f36;
-        }
-        body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background: linear-gradient(135deg, var(--dark-blue), #2a2f46);
-            color: #fff;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-        .container {
-            background-color: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            padding: 1.5rem;
-            border-radius: 20px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            max-width: 800px;
-            width: 92%;
-            margin: 15px;
-        }
-        h1 {
-            text-align: center;
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            background: linear-gradient(135deg, var(--bitcoin-orange), #ffb74d);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            position: relative;
-        }
-
-        h1 i {
-            margin-right: 0.5rem;
-            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
-        }
-        .input-group {
-            margin-bottom: 1.5rem;
-        }
-        .helper-text {
-            font-size: 0.85rem;
-            color: #aab;
-            margin-top: 0.5rem;
-        }
-        label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: #fff;
-            font-weight: 500;
-        }
-        select, input {
-            width: 100%;
-            padding: 12px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 8px;
-            color: #fff;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            box-sizing: border-box;
-        }
-        .input-row {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 1rem;
-        }
-        .input-col {
-            flex: 1;
-        }
-        select:focus, input:focus {
-            outline: none;
-            border-color: var(--bitcoin-orange);
-            box-shadow: 0 0 0 2px rgba(247, 147, 26, 0.2);
-        }
-        button {
-            width: 100%;
-            padding: 14px;
-            background: var(--bitcoin-orange);
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s ease;
-        }
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(247, 147, 26, 0.3);
-        }        .loading {
-            display: none;
-            text-align: center;
-            margin: 1rem 0;
-            padding: 1.5rem;
-            background: rgba(247, 147, 26, 0.1);
-            border-radius: 12px;
-            border: 1px solid var(--bitcoin-orange);
-        }
-        .loading i {
-            color: var(--bitcoin-orange);
-            animation: spin 1s linear infinite;
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-        }
-        .loading p {
-            margin: 0.5rem 0 0;
-            color: #fff;
-            font-weight: 500;
-        }
-        @keyframes spin {
-            100% { transform: rotate(360deg); }
-        }
-        .currency-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
-            gap: 10px;
-            margin-bottom: 1.5rem;
-        }
-        .currency-btn {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 8px;
-            color: #fff;
-            padding: 12px 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 1rem;
-            touch-action: manipulation;
-        }
-        .currency-btn.selected {
-            background: var(--bitcoin-orange);
-            border-color: var(--bitcoin-orange);
-            box-shadow: 0 0 10px rgba(247, 147, 26, 0.3);
-        }
-        .results-container {
-            margin-top: 2rem;
-            opacity: 0;
-            transform: translateY(10px);
-            transition: all 0.3s ease;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-            padding: 1.5rem;
-        }
-        .results-container.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        .chart-container {
-            margin-top: 1.5rem;
-            height: 300px;
-            position: relative;
-        }
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-top: 1.5rem;
-        }
-        .stat-card {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 1rem;
-            text-align: center;
-        }
-        .stat-value {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--bitcoin-orange);
-            margin: 0.5rem 0;
-        }        .stat-label {
-            font-size: 0.9rem;
-            color: #aab;
-        }
-        
-        .stat-subtitle {
-            font-size: 0.8rem;
-            color: rgba(255, 255, 255, 0.6);
-            margin-top: 0.25rem;
-        }
-        .table-container {
-            overflow-x: auto;
-            margin-top: 1.5rem;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-        }
-        th, td {
-            padding: 0.75rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        th {
-            font-weight: 600;
-            color: #aab;
-        }
-        .nav-links {
-            margin-top: 2rem;
-            text-align: center;
-        }
-
-        .nav-link {
-            color: var(--bitcoin-orange);
-            text-decoration: none;
-            font-weight: bold;
-            margin: 0 1rem;
-            transition: color 0.3s ease;
-        }
-
-        .nav-link:hover {
-            color: #f1c40f;
-        }
-        .toggle-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 1rem;
-        }
-        .toggle-label {
-            margin: 0 10px;
-            font-size: 0.9rem;
-        }
-        .toggle {
-            position: relative;
-            display: inline-block;
-            width: 60px;
-            height: 30px;
-        }
-        .toggle input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(255, 255, 255, 0.1);
-            transition: .4s;
-            border-radius: 34px;
-        }
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 22px;
-            width: 22px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-        input:checked + .slider {
-            background-color: var(--bitcoin-orange);
-        }
-        input:checked + .slider:before {
-            transform: translateX(30px);
-        }
-        @media (max-width: 600px) {
-            .input-row {
-                flex-direction: column;
-                gap: 10px;
-            }
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-            h1 {
-                font-size: 1.5rem;
-            }
-        }
-        .tabs {
-            display: flex;
-            margin-bottom: 1.5rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .tab {
-            padding: 0.75rem 1.5rem;
-            cursor: pointer;
-            color: #aab;
-            transition: all 0.3s ease;
-            border-bottom: 2px solid transparent;
-        }
-        .tab.active {
-            color: var(--bitcoin-orange);
-            border-bottom: 2px solid var(--bitcoin-orange);
-        }
-        .tab-content {
-            display: none;
-        }
-        .tab-content.active {
-            display: block;
-        }
-        .card-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
-        }
-
-        .related-card {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            padding: 1.5rem;
-            text-align: center;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            position: relative;
-            overflow: auto;
-        }
-
-        .related-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
-        }
-
-        .related-card i {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-            color: var(--bitcoin-orange);
-        }
-
-        .related-card h3 {
-            font-size: 1.2rem;
-            margin: 0.5rem 0;
-            color: white;
-        }
-
-        .related-card p {
-            font-size: 0.9rem;
-            color: rgba(255, 255, 255, 0.7);
-            margin-bottom: 1rem;
-        }
-
-        .related-card a {
-            display: inline-block;
-            background: var(--bitcoin-orange);
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 10px;
-            text-decoration: none;
-            font-weight: 500;
-            transition: background 0.3s ease, transform 0.3s ease;
-        }
-
-        .related-card a:hover {
-            background: #f3701a;
-            transform: translateY(-2px);
-        }
-
-        .bitcoin-particles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            opacity: 0.1;
-            overflow: auto;
-            pointer-events: none;
-            background-image: 
-                radial-gradient(circle at 80% 40%, var(--bitcoin-orange) 0%, transparent 0.8%),
-                radial-gradient(circle at 20% 25%, var(--bitcoin-orange) 0%, transparent 0.5%),
-                radial-gradient(circle at 40% 70%, var(--bitcoin-orange) 0%, transparent 0.7%),
-                radial-gradient(circle at 70% 90%, var(--bitcoin-orange) 0%, transparent 0.6%),
-                radial-gradient(circle at 10% 60%, var(--bitcoin-orange) 0%, transparent 0.5%),
-                radial-gradient(circle at 60% 10%, var(--bitcoin-orange) 0%, transparent 0.4%),
-                radial-gradient(circle at 90% 65%, var(--bitcoin-orange) 0%, transparent 0.6%);
-        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; background: #0d1117; color: #e6edf3; }
+        .calculator { background: #161b22; padding: 24px; border-radius: 12px; margin: 20px 0; }
+        input, select { padding: 12px; margin: 8px 0; width: 100%; background: #0d1117; color: #e6edf3; border: 1px solid #30363d; border-radius: 8px; font-size: 16px; }
+        .btn-group { display: flex; gap: 10px; margin: 10px 0; }
+        .btn { padding: 12px 24px; background: #238636; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; flex: 1; }
+        .btn:hover { background: #2ea043; }
+        .btn-outline { background: transparent; border: 1px solid #30363d; }
+        .btn-outline.active { background: #f7931a; border-color: #f7931a; }
+        #result { margin-top: 20px; padding: 16px; background: #0d1117; border-radius: 8px; }
+        .sats { color: #f7931a; font-weight: bold; font-size: 18px; }
     </style>
 </head>
 <body>
-    <div class="bitcoin-particles"></div>
-    <div class="container">
-        <h1><i class="fab fa-bitcoin"></i> Bitcoin Loan Backtester</h1>
+    <a href="index.html">← Back to Home</a>
+    <h1>₿ Bitcoin Backtester</h1>
+    <p>See what your salary would be worth if you'd been paid in Bitcoin.</p>
+    
+    <div class="calculator">
+        <h3>Calculate Your Bitcoin Salary</h3>
+        <label>Monthly Salary</label>
+        <input type="number" id="salary" placeholder="e.g. 3000" value="3000">
         
-        <div class="nav-links" style="margin-bottom: 2rem;">
-            <a href="index.html" class="nav-link"><i class="fas fa-home"></i> Home</a>
-            <a href="calculator.html" class="nav-link"><i class="fas fa-calculator"></i> Standard Calculator</a>
-            <a href="bitcoinfire.html" class="nav-link"><i class="fas fa-fire"></i> FIRE Calculator</a>
-            <a href="bitcoin-salary.html" class="nav-link"><i class="fas fa-building"></i> Corporate Treasury</a>
-        </div>
-        
-        <div class="tabs">
-            <div class="tab active" data-tab="calculator">Calculator</div>
-            <div class="tab" data-tab="about">About</div>
-        </div>
-        
-        <div class="tab-content active" id="calculator">
-            <div class="input-group">
-                <label>Select Your Currency:</label>
-                <div class="currency-grid">
-                    <button class="currency-btn" data-currency="USD">USD</button>
-                    <button class="currency-btn" data-currency="EUR">EUR</button>
-                    <button class="currency-btn" data-currency="GBP">GBP</button>
-                    <button class="currency-btn" data-currency="JPY">JPY</button>
-                    <button class="currency-btn" data-currency="AUD">AUD</button>
-                    <button class="currency-btn" data-currency="CAD">CAD</button>
-                    <button class="currency-btn" data-currency="CHF">CHF</button>
-                    <button class="currency-btn" data-currency="CNY">CNY</button>
-                    <button class="currency-btn" data-currency="INR">INR</button>
-                    <button class="currency-btn" data-currency="BRL">BRL</button>
-                </div>
-                <div class="helper-text">Tap to choose your local currency</div>
-            </div>
-
-            <div class="input-row">
-                <div class="input-col">
-                    <label for="loanAmount">Loan Amount:</label>
-                    <input type="number" id="loanAmount" min="100" value="10000">
-                </div>
-                <div class="input-col">
-                    <label for="startDate">Start Date:</label>
-                    <input type="date" id="startDate">
-                </div>
-            </div>
-
-            <div class="input-row">
-                <div class="input-col">
-                    <label for="loanTerm">Loan Term (Years):</label>
-                    <select id="loanTerm">
-                        <option value="1">1 Year</option>
-                        <option value="2">2 Years</option>
-                        <option value="3">3 Years</option>
-                        <option value="4">4 Years</option>
-                        <option value="5" selected>5 Years</option>
-                        <option value="10">10 Years</option>
-                    </select>
-                </div>
-                <div class="input-col">
-                    <label for="interestRate">Annual Interest Rate (%):</label>
-                    <input type="number" id="interestRate" min="0" step="0.1" value="5.0">
-                </div>
-            </div>
-
-            <div class="input-group">
-                <label for="sellFee">Selling Fee (%):</label>
-                <input type="number" id="sellFee" min="0" step="0.1" value="0.5">
-                <div class="helper-text">Fee incurred when selling Bitcoin to make loan payments</div>
-            </div>
-
-            <div class="toggle-container">
-                <span class="toggle-label">Compare with Traditional Loan</span>
-                <label class="toggle">
-                    <input type="checkbox" id="compareToggle" checked>
-                    <span class="slider"></span>
-                </label>
-            </div>            <button id="calculateBtn">
-                <i class="fas fa-calculator"></i> Calculate Results
-            </button>
-
-            <div class="loading">
-                <i class="fas fa-spinner"></i>
-                <p>Fetching historical Bitcoin prices...</p>
-                <div id="loading-progress">This may take a moment for longer time periods</div>
-            </div>
-
-            <div class="results-container" id="results">
-                <h2>Backtest Results</h2>
-                
-                <div class="chart-container">
-                    <canvas id="resultChart"></canvas>
-                </div>
-                      <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-label">Initial Loan</div>
-                        <div class="stat-value" id="initialInvestment">-</div>
-                        <div class="stat-subtitle" id="initialBitcoin">- BTC</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Total Payments Made</div>
-                        <div class="stat-value" id="totalLoanCost">-</div>
-                        <div class="stat-subtitle" id="totalBtcSold">- BTC sold</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Final BTC Value</div>
-                        <div class="stat-value" id="finalBtcValue">-</div>
-                        <div class="stat-subtitle" id="remainingBitcoin">- BTC remaining</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Your Bitcoin (Loan Paid)</div>
-                        <div class="stat-value" id="netProfitLoss">-</div>
-                        <div class="stat-subtitle" id="percentageReturn">-% return</div>
-                    </div>
-                </div>
-                
-                <div class="table-container">
-                    <table id="resultsTable">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>BTC Price</th>
-                                <th>BTC Owned</th>
-                                <th>Payment</th>
-                                <th>BTC Sold</th>
-                                <th>Portfolio Value</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Data will be populated by JavaScript -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+        <label>Currency</label>
+        <div class="btn-group">
+            <button class="btn btn-outline active" onclick="setCurrency('GBP', '£')">£ GBP</button>
+            <button class="btn btn-outline" onclick="setCurrency('USD', '$')">$ USD</button>
+            <button class="btn btn-outline" onclick="setCurrency('EUR', '€')">€ EUR</button>
         </div>
         
-        <div class="tab-content" id="about">
-            <h2>About the Bitcoin Loan Backtest</h2>
-            <p>The Bitcoin Loan Backtest allows you to see how a "Bitcoin-financed loan" strategy would have performed historically. This tool helps you visualize the potential benefits of borrowing money to buy Bitcoin and then gradually selling small portions to pay back the loan.</p>
-            
-            <h3>Historical Performance Analysis</h3>
-            <div class="feature-card">
-                <h4>Best Historical Periods for Bitcoin-Backed Loans</h4>
-                <ul>
-                    <li><strong>March 2015 - March 2019:</strong> Initial BTC price ~$250, peaked at $19,000, ended at $4,000. Even with the 2018 crash, loans initiated during this period performed exceptionally well due to the low entry price.</li>
-                    <li><strong>March 2019 - March 2023:</strong> Starting at $4,000, through a peak of $69,000, ending around $28,000. Despite high volatility, the low entry point made this period highly profitable.</li>
-                </ul>
-            </div>
-
-            <div class="feature-card" style="border-left-color: #ff4444;">
-                <h4>Challenging Periods</h4>
-                <ul>
-                    <li><strong>December 2017 - December 2021:</strong> Starting near the $19,000 peak, enduring a multi-year bear market. Loans initiated at this point required selling more BTC during the $3,000-6,000 range to make payments.</li>
-                    <li><strong>November 2021 - Present:</strong> Initiating at the $69,000 all-time high would have required selling significant portions of BTC at lower prices to maintain payments.</li>
-                </ul>
-            </div>
-
-            <div class="tips">
-                <h4>Key Insights</h4>
-                <ul>
-                    <li>Entry price is crucial - loans taken during bear markets historically performed best</li>
-                    <li>Longer loan terms (4+ years) helped weather market volatility</li>
-                    <li>Lower interest rates significantly improved outcomes by requiring less BTC sold for payments</li>
-                    <li>Bear market loan payments required selling more BTC, but often led to stronger long-term positions</li>
-                </ul>
-            </div>
-
-            <h3>How It Works</h3>
-            <p>The calculator simulates the following scenario:</p>
-            <ol>
-                <li>You take out a loan for a specified amount in your chosen currency</li>
-                <li>You use the entire loan amount to purchase Bitcoin at the historical price</li>
-                <li>Each month, you sell just enough Bitcoin to make the monthly loan payment</li>
-                <li>A selling fee (default: 0.5%) is applied when converting Bitcoin to fiat</li>
-                <li>At the end of the loan term, you own the remaining Bitcoin outright</li>
-            </ol>
-            
-            <h3>Considerations</h3>
-            <p>This backtesting tool is for educational purposes only and not financial advice. Past performance is not indicative of future results. Some important considerations:</p>
-            <ul>
-                <li>Bitcoin is highly volatile and prices can dramatically rise or fall</li>
-                <li>The strategy assumes you have other income to cover living expenses</li>
-                <li>Loan defaults can have serious consequences for your credit</li>
-                <li>Tax implications are not included in the calculation</li>
-                <li>Historical data availability might limit certain date ranges</li>
-            </ul>
-            
-            <div class="nav-links" style="text-align: center; margin-bottom: 1.5rem;">
-                <a href="index.html" style="color: var(--bitcoin-orange); text-decoration: none; margin: 0 10px;"><i class="fas fa-home"></i> Home</a>
-                <a href="calculator.html" style="color: var(--bitcoin-orange); text-decoration: none; margin: 0 10px;"><i class="fas fa-calculator"></i> Standard Calculator</a>
-                <a href="bitcoinfire.html" style="color: var(--bitcoin-orange); text-decoration: none; margin: 0 10px;"><i class="fas fa-fire"></i> FIRE Calculator</a>
-                <a href="bitcoin-salary.html" style="color: var(--bitcoin-orange); text-decoration: none; margin: 0 10px;"><i class="fas fa-building"></i> Corporate Tool</a>
-            </div>
-        </div>
-
-        <div class="card-grid">
-            <div class="related-card">
-                <i class="fas fa-fire"></i>
-                <h3>Bitcoin FIRE</h3>
-                <p>Calculate your path to financial freedom with Bitcoin</p>
-                <a href="bitcoinfire.html">Freedom Calculator</a>
-            </div>
-            <div class="related-card">
-                <i class="fas fa-building"></i>
-                <h3>Corporate Treasury</h3>
-                <p>Model corporate Bitcoin allocation strategies</p>
-                <a href="bitcoin-salary.html">Analyze Strategy</a>
-            </div>
-            <div class="related-card">
-                <i class="fas fa-calculator"></i>
-                <h3>Standard Calculator</h3>
-                <p>Track your purchasing power on the Bitcoin standard</p>
-                <a href="calculator.html">Use Calculator</a>
-            </div>
-        </div>
-    </div> <!-- container -->
-
+        <label>Start Month</label>
+        <input type="month" id="startMonth" value="2022-01">
+        
+        <button class="btn" onclick="calculate()">Calculate</button>
+        
+        <div id="result" style="display:none;"></div>
+    </div>
+    
+    <canvas id="chart"></canvas>
+    
     <script>
-        // Set default date to 2 years ago
-        window.addEventListener('DOMContentLoaded', () => {
-            const twoYearsAgo = new Date();
-            twoYearsAgo.setFullYear(twoYearsAgo.getFullYear() - 2);
-            document.getElementById('startDate').value = twoYearsAgo.toISOString().split('T')[0];
+        let currentCurrency = 'GBP';
+        let currencySymbol = '£';
+        
+        // Historical BTC prices (monthly average in GBP)
+        const btcPrices = {
+            '2022-01': 35000, '2022-02': 32000, '2022-03': 35000, '2022-04': 32000,
+            '2022-05': 25000, '2022-06': 18000, '2022-07': 22000, '2022-08': 20000,
+            '2022-09': 18000, '2022-10': 16000, '2022-11': 15000, '2022-12': 14000,
+            '2023-01': 16000, '2023-02': 18000, '2023-03': 22000, '2023-04': 25000,
+            '2023-05': 24000, '2023-06': 25000, '2023-07': 28000, '2023-08': 25000,
+            '2023-09': 22000, '2023-10': 28000, '2023-11': 35000, '2023-12': 32000,
+            '2024-01': 35000, '2024-02': 58000, '2024-03': 62000, '2024-04': 55000,
+            '2024-05': 52000, '2024-06': 48000, '2024-07': 55000, '2024-08': 52000,
+            '2024-09': 48000, '2024-10': 58000, '2024-11': 65000, '2024-12': 72000,
+            '2025-01': 68000, '2025-02': 65000, '2025-03': 62000, '2025-04': 55000,
+            '2025-05': 58000, '2025-06': 52000, '2025-07': 48500, '2025-08': 45000,
+            '2025-09': 42000, '2025-10': 48000, '2025-11': 52000, '2025-12': 58000,
+            '2026-01': 55000, '2026-02': 62000, '2026-03': 68500
+        };
+        
+        function setCurrency(cur, sym) {
+            currentCurrency = cur;
+            currencySymbol = sym;
+            document.querySelectorAll('.btn-outline').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+        
+        function calculate() {
+            const salary = parseFloat(document.getElementById('salary').value);
+            const startMonth = document.getElementById('startMonth').value;
             
-            // Initialize first currency button as selected
-            document.querySelector('.currency-btn').classList.add('selected');
-            selectedCurrency = document.querySelector('.currency-btn').dataset.currency;
-        });
-
-        // Tab functionality
-        document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', () => {
-                // Remove active class from all tabs and tab contents
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                
-                // Add active class to clicked tab and corresponding content
-                tab.classList.add('active');
-                const tabContent = document.getElementById(tab.dataset.tab);
-                if (tabContent) tabContent.classList.add('active');
-            });
-        });
-
-        let selectedCurrency = null;
-        let resultChart = null;
-
-        // Add currency button handlers
-        document.querySelectorAll('.currency-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.currency-btn').forEach(b => b.classList.remove('selected'));
-                btn.classList.add('selected');
-                selectedCurrency = btn.dataset.currency;
-            });
-        });
-
-        // Calculate button handler
-        document.getElementById('calculateBtn').addEventListener('click', async () => {
-            if (!selectedCurrency) {
-                alert('Please select a currency');
-                return;
-            }
-
-            const loanAmount = parseFloat(document.getElementById('loanAmount').value);
-            const startDate = document.getElementById('startDate').value;
-            const loanTerm = parseInt(document.getElementById('loanTerm').value);
-            const interestRate = parseFloat(document.getElementById('interestRate').value);
-            const sellFee = parseFloat(document.getElementById('sellFee').value);
-            const compareTraditional = document.getElementById('compareToggle').checked;
-            
-            const loadingDiv = document.querySelector('.loading');
-            const resultsDiv = document.getElementById('results');
-            
-            if (!startDate || !loanAmount || isNaN(loanAmount) || loanAmount <= 0) {
-                alert('Please enter valid loan details');
+            if (!salary || !startMonth) {
+                alert('Please enter a salary and start month');
                 return;
             }
             
-            resultsDiv.classList.remove('show');
-            loadingDiv.style.display = 'block';
+            // Convert salary to GBP for calculation
+            let salaryGBP = salary;
+            if (currentCurrency === 'USD') salaryGBP = salary * 0.79;
+            if (currentCurrency === 'EUR') salaryGBP = salary * 0.86;
             
-            try {
-                const startDateObj = new Date(startDate);
-                const today = new Date();
-                
-                if (startDateObj > today) {
-                    alert('Start date cannot be in the future. Using today\'s date.');
-                    document.getElementById('startDate').value = today.toISOString().split('T')[0];
-                    startDate = document.getElementById('startDate').value;
-                }
-                
-                // Calculate loan payment (monthly)
-                const monthlyRate = interestRate / 100 / 12;
-                const totalPayments = loanTerm * 12;
-                const monthlyPayment = loanAmount * monthlyRate * Math.pow(1 + monthlyRate, totalPayments) / 
-                                      (Math.pow(1 + monthlyRate, totalPayments) - 1);
-                
-                // Get historical data and calculate results
-                const results = await calculateLoanStrategy(startDate, loanAmount, monthlyPayment, loanTerm, sellFee);
-                
-                // Display results
-                displayResults(results, loanAmount, monthlyPayment, totalPayments, compareTraditional);
-                
-            } catch (error) {
-                console.error('Calculation error:', error);
-                alert(`Error: ${error.message || 'Failed to calculate results. Please try different dates.'}`);
-            } finally {
-                loadingDiv.style.display = 'none';
-            }
-        });
-
-        // Add price caching at the top of the script section
-        const priceCache = new Map();
-        let lastApiCall = 0;
-        const API_RATE_LIMIT = 100; // milliseconds between calls
-
-        async function getBitcoinPrice(date, currency) {
-            // Check cache first
-            const cacheKey = `${date}-${currency}`;
-            if (priceCache.has(cacheKey)) {
-                return priceCache.get(cacheKey);
-            }
-
-            // Respect rate limiting
-            const now = Date.now();
-            const timeToWait = Math.max(0, API_RATE_LIMIT - (now - lastApiCall));
-            if (timeToWait > 0) {
-                await new Promise(resolve => setTimeout(resolve, timeToWait));
-            }
-            lastApiCall = Date.now();
-
-            // Don't allow future dates
-            const requestDate = new Date(date);
-            const today = new Date();
-            if (requestDate > today) {
-                requestDate.setTime(today.getTime());
-            }
+            const resultDiv = document.getElementById('result');
+            let html = '<h3>Results</h3><table style="width:100%"><tr><th>Month</th><th>BTC Price</th><th>Your Salary in Sats</th></tr>';
             
-            const timestamp = Math.floor(requestDate.getTime() / 1000);
-            const apiUrl = `https://min-api.cryptocompare.com/data/pricehistorical?fsym=BTC&tsyms=${currency.toUpperCase()}&ts=${timestamp}`;
-
-            try {
-                const response = await fetch(apiUrl);
-
-                if (!response.ok) {
-                    if (response.status === 429) { // Rate limit error
-                        await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second
-                        return getBitcoinPrice(date, currency); // Retry
-                    }
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                const data = await response.json();
-                let price = null;
-
-                if (data && data.BTC && data.BTC[currency.toUpperCase()]) {
-                    price = data.BTC[currency.toUpperCase()];
-                } else if (data && Object.keys(data).length > 0) {
-                    const firstKey = Object.keys(data)[0];
-                    if (typeof data[firstKey] === 'object' && data[firstKey][currency.toUpperCase()]) {
-                        price = data[firstKey][currency.toUpperCase()];
-                    }
-                }
-
-                if (price) {
-                    priceCache.set(cacheKey, price); // Cache the result
-                    return price;
-                }
-
-                throw new Error(`Could not parse Bitcoin price for ${date}`);
-
-            } catch (error) {
-                console.error("Error fetching Bitcoin price:", error, "for date:", date);
-                if (requestDate > today) {
-                    return getBitcoinPrice(today.toISOString().split('T')[0], currency);
-                }
-                throw error;
-            }
-        }
-
-        // Modify calculateLoanStrategy to fetch prices in batches
-        async function calculateLoanStrategy(startDate, loanAmount, monthlyPayment, loanTerm, sellFee) {
-            // Convert sellFee to decimal
-            const sellFeeDecimal = sellFee / 100;
+            let months = Object.keys(btcPrices).filter(m => m >= startMonth).sort();
+            let labels = [];
+            let data = [];
             
-            // Calculate end date based on loan term
-            const startDateObj = new Date(startDate);
-            const loanEndDate = new Date(startDateObj);
-            loanEndDate.setFullYear(loanEndDate.getFullYear() + loanTerm);
-            
-            // Use today's date if loan end date would be in the future
-            const today = new Date();
-            const endDate = loanEndDate > today ? today : loanEndDate;
-            
-            // Get initial BTC price
-            const initialPrice = await getBitcoinPrice(startDate, selectedCurrency);
-            if (!initialPrice) throw new Error('Could not get initial BTC price');
-            
-            // Calculate initial BTC purchased
-            const initialBtc = loanAmount / initialPrice;
-            const monthlyData = [];
-            
-            // Add initial state
-            monthlyData.push({
-                date: new Date(startDate),
-                btcPrice: initialPrice,
-                btcOwned: initialBtc,
-                payment: 0,
-                btcSold: 0,
-                portfolioValue: initialBtc * initialPrice
+            months.forEach(month => {
+                const price = btcPrices[month];
+                const sats = Math.round((salaryGBP / price) * 100000000);
+                labels.push(month);
+                data.push(sats);
+                html += `<tr><td>${month}</td><td>${currencySymbol}${price.toLocaleString()}</td><td class="sats">${sats.toLocaleString()} sats</td></tr>`;
             });
             
-            let currentBtc = initialBtc;
-            let currentDate = new Date(startDate);
+            html += '</table>';
+            resultDiv.innerHTML = html;
+            resultDiv.style.display = 'block';
             
-            // Calculate actual number of months until end date
-            const monthDiff = (endDate.getFullYear() - startDateObj.getFullYear()) * 12 
-                             + endDate.getMonth() - startDateObj.getMonth();
-            const totalMonths = Math.max(1, monthDiff);
-
-            // Pre-fetch all required prices
-            const allDates = [];
-            for (let month = 0; month <= totalMonths; month++) {
-                allDates.push(currentDate.toISOString().split('T')[0]);
-                currentDate = new Date(currentDate);
-                currentDate.setMonth(currentDate.getMonth() + 1);
-            }
-
-            // Fetch prices with built-in throttling
-            for (const date of allDates) {
-                try {
-                    await getBitcoinPrice(date, selectedCurrency);
-                } catch (error) {
-                    if (error.message.includes('rate limit')) {
-                        await new Promise(resolve => setTimeout(resolve, 1000));
-                        await getBitcoinPrice(date, selectedCurrency);
-                    } else {
-                        throw error;
-                    }
-                }
-            }
-            
-            currentDate = new Date(startDate);
-            for (let month = 1; month <= totalMonths; month++) {
-                currentDate = new Date(currentDate);
-                currentDate.setMonth(currentDate.getMonth() + 1);
-                
-                // Don't go beyond end date
-                if (currentDate > endDate) {
-                    currentDate = new Date(endDate);
-                }
-                
-                const dateString = currentDate.toISOString().split('T')[0];
-                
-                try {
-                    const btcPrice = await getBitcoinPrice(dateString, selectedCurrency);
-                    if (!btcPrice) {
-                        throw new Error(`Invalid price data for ${dateString}`);
-                    }
-                    
-                    const btcToSell = monthlyPayment / (btcPrice * (1 - sellFeeDecimal));
-                    currentBtc -= btcToSell;
-                    
-                    monthlyData.push({
-                        date: new Date(currentDate),
-                        btcPrice: btcPrice,
-                        btcOwned: currentBtc,
-                        payment: monthlyPayment,
-                        btcSold: btcToSell,
-                        portfolioValue: currentBtc * btcPrice
-                    });
-                } catch (error) {
-                    console.error(`Error processing month ${month}:`, error);
-                    throw error;
-                }
-            }
-            
-            return {
-                monthlyData,
-                initialPrice,
-                initialBtc,
-                finalBtc: currentBtc,
-                totalPayments: totalMonths,
-                actualEndDate: endDate
-            };
-        }
-
-        function displayResults(results, loanAmount, monthlyPayment, totalPayments, compareTraditional) {
-            const { monthlyData, initialBtc, finalBtc } = results;
-            const resultsDiv = document.getElementById('results');
-            
-            // Remove any existing date range info
-            const existingDateRange = resultsDiv.querySelector('.helper-text');
-            if (existingDateRange) {
-                existingDateRange.remove();
-            }
-            
-            // Add new date range information
-            const startDate = results.monthlyData[0].date;
-            const endDate = results.actualEndDate;
-            const dateRangeInfo = document.createElement('div');
-            dateRangeInfo.className = 'helper-text';
-            dateRangeInfo.textContent = `Calculation period: ${formatDate(startDate)} to ${formatDate(endDate)}`;
-            resultsDiv.insertBefore(dateRangeInfo, resultsDiv.firstChild.nextSibling);
-
-            // Calculate final metrics
-            const finalBtcValue = finalBtc * monthlyData[monthlyData.length - 1].btcPrice;
-            const monthlyRate = (parseFloat(document.getElementById('interestRate').value) / 100) / 12;
-              // Update profit calculation: just the final BTC value (loan is already paid off)
-            const netProfitLoss = finalBtcValue;
-            const percentReturn = ((finalBtcValue / loanAmount) - 1) * 100;
-            const totalBtcSold = initialBtc - finalBtc;
-            
-            // Display stats
-            document.getElementById('initialInvestment').textContent = formatCurrency(loanAmount);
-            document.getElementById('initialBitcoin').textContent = `${initialBtc.toFixed(8)} BTC`;
-            
-            document.getElementById('totalLoanCost').textContent = formatCurrency(monthlyPayment * totalPayments);
-            document.getElementById('totalBtcSold').textContent = `${totalBtcSold.toFixed(8)} BTC sold`;
-            
-            document.getElementById('finalBtcValue').textContent = formatCurrency(finalBtcValue);
-            document.getElementById('remainingBitcoin').textContent = `${finalBtc.toFixed(8)} BTC remaining`;
-            
-            document.getElementById('netProfitLoss').textContent = formatCurrency(netProfitLoss);
-            document.getElementById('percentageReturn').textContent = `${percentReturn.toFixed(2)}% return`;
-
-            // Update chart data to show real equity at each point
-            const dates = monthlyData.map(data => formatDate(data.date));
-            const btcValues = monthlyData.map((data, index) => {
-                const remainingPayments = totalPayments - index;
-                const remainingLoanBalance = monthlyPayment * ((1 - Math.pow(1 + monthlyRate, -remainingPayments)) / monthlyRate);
-                // Real equity is BTC value minus remaining loan
-                return data.portfolioValue - remainingLoanBalance;
-            });
-            
-            let traditionalLoanValues = [];
-            if (compareTraditional) {
-                // Traditional loan always has 0 equity (you just have debt)
-                traditionalLoanValues = monthlyData.map(() => 0);
-            }
-            
-            // Create or update chart
-            const ctx = document.getElementById('resultChart').getContext('2d');
-            
-            if (resultChart) {
-                resultChart.destroy();
-            }
-            
-            resultChart = new Chart(ctx, {
+            // Draw chart
+            const ctx = document.getElementById('chart').getContext('2d');
+            new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: dates,
-                    datasets: [
-                        {
-                            label: 'Net Bitcoin Equity',
-                            data: btcValues,
-                            borderColor: '#f7931a',
-                            backgroundColor: 'rgba(247, 147, 26, 0.1)',
-                            tension: 0.1,
-                            fill: true
-                        },
-                        ...compareTraditional ? [{
-                            label: 'Traditional Loan Equity',
-                            data: traditionalLoanValues,
-                            borderColor: '#ff4444',
-                            backgroundColor: 'rgba(255, 68, 68, 0.1)',
-                            tension: 0.1,
-                            fill: true
-                        }] : []
-                    ]
+                    labels: labels,
+                    datasets: [{
+                        label: 'Sats per month',
+                        data: data,
+                        borderColor: '#f7931a',
+                        backgroundColor: 'rgba(247, 147, 26, 0.1)',
+                        fill: true
+                    }]
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        tooltip: {
-                            mode: 'index',
-                            intersect: false
-                        },
-                        legend: {
-                            labels: {
-                                color: '#fff'
-                            }
-                        }
-                    },
+                    plugins: { legend: { labels: { color: '#e6edf3' } } },
                     scales: {
-                        x: {
-                            ticks: {
-                                color: '#aab'
-                            },
-                            grid: {
-                                color: 'rgba(255, 255, 255, 0.05)'
-                            }
-                        },
-                        y: {
-                            ticks: {
-                                color: '#aab',
-                                callback: function(value) {
-                                    return formatCurrency(value, true);
-                                }
-                            },
-                            grid: {
-                                color: 'rgba(255, 255, 255, 0.05)'
-                            }
-                        }
+                        y: { ticks: { color: '#e6edf3' }, grid: { color: '#30363d' } },
+                        x: { ticks: { color: '#e6edf3' }, grid: { color: '#30363d' } }
                     }
-                });
-            
-            // Populate table
-            const tableBody = document.getElementById('resultsTable').querySelector('tbody');
-            tableBody.innerHTML = '';
-            
-            monthlyData.forEach(data => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${formatDate(data.date)}</td>
-                    <td>${formatCurrency(data.btcPrice)}</td>
-                    <td>${data.btcOwned.toFixed(8)}</td>
-                    <td>${data.payment ? formatCurrency(data.payment) : '-'}</td>
-                    <td>${data.btcSold ? data.btcSold.toFixed(8) : '-'}</td>
-                    <td>${formatCurrency(data.portfolioValue)}</td>
-                `;
-                tableBody.appendChild(row);
-            });
-              // Show results
-            resultsDiv.classList.add('show');
-            
-            // Scroll to results after a slight delay to allow for rendering
-            setTimeout(() => {
-                resultsDiv.scrollIntoView({ behavior: 'smooth' });
-            }, 200);
-        }
-
-        function formatCurrency(value, shortFormat = false) {
-            if (shortFormat && Math.abs(value) >= 1000) {
-                if (Math.abs(value) >= 1000000) {
-                    return `${selectedCurrency} ${(value / 1000000).toFixed(1)}M`;
-                } else {
-                    return `${selectedCurrency} ${(value / 1000).toFixed(1)}K`;
                 }
-            }
-            
-            return `${selectedCurrency} ${value.toLocaleString(undefined, {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            })}`;
-        }
-
-        function formatDate(date) {
-            const month = date.toLocaleString('default', { month: 'short' });
-            const year = date.getFullYear();
-            return `${month} ${year}`;
+            });
         }
     </script>
-
 </body>
 </html>
