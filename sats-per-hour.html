@@ -119,7 +119,7 @@
             timeButtons: document.querySelectorAll('.time-buttons button')
         };
 
-        const symbols = { gbp: 'BTCGBP', usd: 'BTCUSDT', eur: 'BTCEUR', jpy: 'BTCJPY', cad: 'BTCCAD', aud: 'BTCAUD' };
+        const binanceSymbols = { gbp: 'BTCGBP', usd: 'BTCUSDT', eur: 'BTCEUR', jpy: 'BTCJPY', cad: 'BTCCAD', aud: 'BTCAUD' };
         const currencyNames = { gbp: '£', usd: '$', eur: '€', jpy: '¥', cad: 'C$', aud: 'A$' };
         const periods = { hourly: 'per hour', weekly: 'per week', monthly: 'per month', yearly: 'per year' };
         const hoursInPeriod = { hourly: 1, weekly: 168, monthly: 730, yearly: 8760 };
@@ -128,7 +128,7 @@
 
         async function getPrice() {
             try {
-                const res = await fetch(`https://api.binance.com/api/v3/ticker/price?symbol=${symbols[state.currency]}`);
+                const res = await fetch(`https://api.binance.com/api/v3/ticker/price?symbol=${binanceSymbols[state.currency]}`);
                 const data = await res.json();
                 return parseFloat(data.price);
             } catch (e) { 
@@ -145,7 +145,7 @@
                 const start = end - (days * 24 * 60 * 60);
                 
                 const res = await fetch(
-                    `https://api.binance.com/api/v3/klines?symbol=${symbols[state.currency]}&interval=${interval}&startTime=${start * 1000}&limit=${limit}`
+                    `https://api.binance.com/api/v3/klines?symbol=${binanceSymbols[state.currency]}&interval=${interval}&startTime=${start * 1000}&limit=${limit}`
                 );
                 const data = await res.json();
                 if (!Array.isArray(data)) return [];
