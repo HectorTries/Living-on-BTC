@@ -128,12 +128,22 @@
 
         async function getPrice() {
             try {
+                // Try Binance first
                 const res = await fetch(`https://api.binance.com/api/v3/ticker/price?symbol=${binanceSymbols[state.currency]}`);
                 const data = await res.json();
-                return parseFloat(data.price);
-            } catch (e) { 
-                console.error('Price error:', e); 
-                return null; 
+                if (data.price) return parseFloat(data.price);
+                throw new Error('No price');
+            } catch (e) {
+                // Fallback to Coinbase
+                try {
+                    const currencyMap = { gbp: 'gbp', usd: 'usd', eur: 'eur', jpy: 'jpy', cad: 'cad', aud: 'aud' };
+                    const res = await fetch(`https://api.coinbase.com/v2/prices/BTC-${currencyMap[state.currency].toUpperCase()}/spot`);
+                    const data = await res.json();
+                    return parseFloat(data.data.amount);
+                } catch (e2) {
+                    console.error('Price error:', e2);
+                    return null;
+                }
             }
         }
 
@@ -148,11 +158,11 @@
                     `https://api.binance.com/api/v3/klines?symbol=${binanceSymbols[state.currency]}&interval=${interval}&startTime=${start * 1000}&limit=${limit}`
                 );
                 const data = await res.json();
-                if (!Array.isArray(data)) return [];
+                if (!Array.isArray(data)) throw new Error('No data');
                 return data.map(d => [d[0], parseFloat(d[4])]);
-            } catch (e) { 
-                console.error('History error:', e); 
-                return []; 
+            } catch (e) {
+                console.error('History error:', e);
+                return [];
             }
         }
 
