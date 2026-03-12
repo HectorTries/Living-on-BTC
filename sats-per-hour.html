@@ -7,78 +7,52 @@
     <meta name="description" content="Track your real-time Bitcoin sats per hour. See how your earnings change with live BTC price and historical trends.">
     <link rel="canonical" href="https://livingonbtc.com/sats-per-hour.html">
     
-    <!-- Preconnect for speed -->
-    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <!-- Preconnect -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    
-    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Defer Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
-    
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         :root {
             --btc-orange: #f7931a;
-            --btc-orange-light: #ffc107;
             --bg-dark: #0d0d0d;
             --bg-card: #161616;
             --bg-elevated: #1e1e1e;
             --border-subtle: #2a2a2a;
             --text-primary: #ffffff;
             --text-secondary: #888888;
-            --text-muted: #555555;
             --success: #00c853;
-            --gradient-glow: linear-gradient(135deg, #f7931a 0%, #ff6b35 100%);
         }
         
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Inter', -apple-system, sans-serif;
             background: var(--bg-dark);
             color: var(--text-primary);
             min-height: 100vh;
-            line-height: 1.5;
+            padding: 20px;
         }
         
         .page-wrapper {
             max-width: 800px;
             margin: 0 auto;
-            padding: 40px 20px;
         }
         
-        /* Header */
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
+        .header { text-align: center; margin-bottom: 32px; }
         
         .header h1 {
             font-size: 2.5rem;
             font-weight: 800;
-            background: var(--gradient-glow);
+            background: linear-gradient(135deg, #f7931a, #ff6b35);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
             margin-bottom: 8px;
-            letter-spacing: -0.02em;
         }
         
-        .header p {
-            color: var(--text-secondary);
-            font-size: 1rem;
-        }
+        .header p { color: var(--text-secondary); }
         
-        /* Main Display */
         .hero-card {
             background: var(--bg-card);
             border: 1px solid var(--border-subtle);
@@ -86,18 +60,15 @@
             padding: 40px;
             text-align: center;
             margin-bottom: 24px;
-            position: relative;
-            overflow: hidden;
         }
         
         .hero-card::before {
             content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
+            display: block;
             height: 3px;
-            background: var(--gradient-glow);
+            background: linear-gradient(90deg, #f7931a, #ff6b35);
+            border-radius: 24px 24px 0 0;
+            margin: -40px -40px 24px -40px;
         }
         
         .hero-label {
@@ -112,20 +83,12 @@
         .sats-display {
             font-size: 4rem;
             font-weight: 800;
-            color: var(--text-primary);
+            color: var(--btc-orange);
             line-height: 1;
             margin-bottom: 8px;
-            letter-spacing: -0.02em;
         }
         
-        .sats-display .sats {
-            color: var(--btc-orange);
-        }
-        
-        .fiat-display {
-            font-size: 1.125rem;
-            color: var(--text-secondary);
-        }
+        .fiat-display { font-size: 1.125rem; color: var(--text-secondary); }
         
         .live-indicator {
             display: inline-flex;
@@ -140,8 +103,7 @@
             margin-top: 16px;
         }
         
-        .live-indicator::before {
-            content: '';
+        .live-dot {
             width: 6px;
             height: 6px;
             background: var(--success);
@@ -151,10 +113,9 @@
         
         @keyframes pulse {
             0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+            50% { opacity: 0.4; }
         }
         
-        /* Input Section */
         .input-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -162,11 +123,7 @@
             margin-bottom: 24px;
         }
         
-        @media (max-width: 600px) {
-            .input-grid {
-                grid-template-columns: 1fr;
-            }
-        }
+        @media (max-width: 600px) { .input-grid { grid-template-columns: 1fr; } }
         
         .input-group {
             background: var(--bg-card);
@@ -178,13 +135,11 @@
         .input-group label {
             display: block;
             font-size: 0.875rem;
-            font-weight: 500;
             color: var(--text-secondary);
             margin-bottom: 8px;
         }
         
-        .input-group input,
-        .input-group select {
+        .input-group input, .input-group select {
             width: 100%;
             background: var(--bg-elevated);
             border: 1px solid var(--border-subtle);
@@ -194,23 +149,12 @@
             font-weight: 600;
             color: var(--text-primary);
             outline: none;
-            transition: border-color 0.2s;
         }
         
-        .input-group input:focus,
-        .input-group select:focus {
+        .input-group input:focus, .input-group select:focus {
             border-color: var(--btc-orange);
         }
         
-        .input-group select {
-            cursor: pointer;
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23888' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 16px center;
-        }
-        
-        /* Chart Section */
         .chart-card {
             background: var(--bg-card);
             border: 1px solid var(--border-subtle);
@@ -227,10 +171,7 @@
             gap: 12px;
         }
         
-        .chart-title {
-            font-size: 1.125rem;
-            font-weight: 600;
-        }
+        .chart-title { font-size: 1.125rem; font-weight: 600; }
         
         .time-buttons {
             display: flex;
@@ -249,7 +190,6 @@
             font-weight: 500;
             border-radius: 8px;
             cursor: pointer;
-            transition: all 0.2s;
         }
         
         .time-buttons button.active {
@@ -257,50 +197,12 @@
             color: #000;
         }
         
-        .time-buttons button:hover:not(.active) {
-            color: var(--text-primary);
-        }
+        .chart-container { height: 300px; }
         
-        .chart-container {
-            height: 300px;
-            position: relative;
-        }
-        
-        /* Loading State */
-        .loading {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            color: var(--text-secondary);
-        }
-        
-        .loading-spinner {
-            width: 24px;
-            height: 24px;
-            border: 2px solid var(--border-subtle);
-            border-top-color: var(--btc-orange);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        /* Footer */
-        .footer {
+        .error-msg {
+            color: #ff4444;
+            padding: 20px;
             text-align: center;
-            margin-top: 40px;
-            padding-top: 24px;
-            border-top: 1px solid var(--border-subtle);
-            color: var(--text-muted);
-            font-size: 0.875rem;
-        }
-        
-        .footer a {
-            color: var(--btc-orange);
-            text-decoration: none;
         }
         
         .back-link {
@@ -311,12 +213,18 @@
             text-decoration: none;
             font-size: 0.875rem;
             margin-bottom: 24px;
-            transition: color 0.2s;
         }
         
-        .back-link:hover {
-            color: var(--text-primary);
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-subtle);
+            color: #555;
+            font-size: 0.875rem;
         }
+        
+        .footer a { color: var(--btc-orange); }
     </style>
 </head>
 <body>
@@ -332,11 +240,10 @@
         
         <div class="hero-card">
             <div class="hero-label">Your Hourly Earnings</div>
-            <div class="sats-display" id="satsValue">
-                <span class="loading"><div class="loading-spinner"></div></span>
-            </div>
+            <div class="sats-display" id="satsValue">—</div>
             <div class="fiat-display" id="fiatValue">—</div>
             <div class="live-indicator">
+                <span class="live-dot"></span>
                 <span>LIVE</span>
             </div>
         </div>
@@ -344,7 +251,7 @@
         <div class="input-grid">
             <div class="input-group">
                 <label>Your hourly wage</label>
-                <input type="number" id="hourlyIncome" value="15" min="0" step="0.01" placeholder="15.00">
+                <input type="number" id="hourlyIncome" value="15" min="0" step="0.01">
             </div>
             <div class="input-group">
                 <label>Currency</label>
@@ -355,10 +262,6 @@
                     <option value="jpy">🇯🇵 Japanese Yen (¥)</option>
                     <option value="cad">🇨🇦 Canadian Dollar (C$)</option>
                     <option value="aud">🇦🇺 Australian Dollar (A$)</option>
-                    <option value="chf">🇨🇭 Swiss Franc (Fr)</option>
-                    <option value="inr">🇮🇳 Indian Rupee (₹)</option>
-                    <option value="brl">🇧🇷 Brazilian Real (R$)</option>
-                    <option value="mxn">🇲🇽 Mexican Peso ($)</option>
                 </select>
             </div>
         </div>
@@ -379,33 +282,22 @@
         </div>
         
         <div class="footer">
-            Data from <a href="https://www.coingecko.com" target="_blank" rel="noopener">CoinGecko API</a> • Not financial advice
+            Data from <a href="https://www.coingecko.com" target="_blank">CoinGecko API</a> • Not financial advice
         </div>
     </div>
 
+    <!-- Load Chart.js synchronously -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
     <script>
-        // Wait for Chart.js to load
-        const waitForChart = () => new Promise(resolve => {
-            if (window.Chart) resolve();
-            else {
-                const check = setInterval(() => {
-                    if (window.Chart) {
-                        clearInterval(check);
-                        resolve();
-                    }
-                }, 100);
-            }
-        });
-
         const state = {
             currency: 'gbp',
             hourlyIncome: 15,
-            currentPrice: null,
             chart: null,
             currentView: 1
         };
 
-        const elements = {
+        const els = {
             satsValue: document.getElementById('satsValue'),
             fiatValue: document.getElementById('fiatValue'),
             hourlyIncome: document.getElementById('hourlyIncome'),
@@ -414,25 +306,21 @@
             timeButtons: document.querySelectorAll('.time-buttons button')
         };
 
-        const currencySymbols = {
-            gbp: '£', usd: '$', eur: '€', jpy: '¥', cad: 'C$', 
-            aud: 'A$', chf: 'Fr', inr: '₹', brl: 'R$', mxn: '$'
-        };
+        const symbols = { gbp: '£', usd: '$', eur: '€', jpy: '¥', cad: 'C$', aud: 'A$' };
+        const fmt = num => new Intl.NumberFormat().format(Math.round(num));
 
-        const formatNumber = num => new Intl.NumberFormat().format(num);
-
-        async function fetchPrice() {
+        async function getPrice() {
             try {
                 const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=${state.currency}`);
                 const data = await res.json();
                 return data.bitcoin[state.currency];
             } catch (e) {
-                console.error('Price fetch error:', e);
+                console.error(e);
                 return null;
             }
         }
 
-        async function fetchHistory(days) {
+        async function getHistory(days) {
             try {
                 const res = await fetch(
                     `https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=${state.currency}&days=${days}`
@@ -440,120 +328,94 @@
                 const data = await res.json();
                 return data.prices || [];
             } catch (e) {
-                console.error('History fetch error:', e);
+                console.error(e);
                 return [];
             }
         }
 
-        function calculateSats(price) {
+        function satsFromPrice(price) {
             if (!price) return 0;
             return (state.hourlyIncome / price) * 100_000_000;
         }
 
         async function updateDisplay() {
-            const price = await fetchPrice();
-            state.currentPrice = price;
-            
+            const price = await getPrice();
             if (price) {
-                const sats = calculateSats(price);
-                const symbol = currencySymbols[state.currency];
-                
-                elements.satsValue.innerHTML = `<span class="sats">${formatNumber(Math.round(sats))}</span>`;
-                elements.fiatValue.textContent = `${symbol}${state.hourlyIncome.toFixed(2)} / hour`;
+                const sats = satsFromPrice(price);
+                els.satsValue.textContent = fmt(sats);
+                els.fiatValue.textContent = `${symbols[state.currency]}${state.hourlyIncome.toFixed(2)} / hour`;
             } else {
-                elements.satsValue.innerHTML = '<span style="color: #ff4444;">Error</span>';
+                els.satsValue.textContent = 'Error';
+                els.fiatValue.textContent = 'API unavailable';
             }
         }
 
         async function updateChart() {
-            const prices = await fetchHistory(state.currentView);
+            const prices = await getHistory(state.currentView);
             if (!prices.length) return;
 
-            const satsData = prices.map(([time, price]) => ({
+            const data = prices.map(([time, price]) => ({
                 x: time,
-                y: calculateSats(price)
+                y: satsFromPrice(price)
             }));
 
-            const labels = satsData.map(d => {
+            const labels = data.map(d => {
                 const date = new Date(d.x);
-                if (state.currentView === 1) return date.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
-                if (state.currentView === 30) return date.toLocaleDateString([], {month: 'short', day: 'numeric'});
-                return date.toLocaleDateString([], {month: 'short', year: '2-digit'});
+                if (state.currentView === 1) return date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                if (state.currentView === 30) return date.toLocaleDateString([], {month:'short', day:'numeric'});
+                return date.toLocaleDateString([], {month:'short', year:'2-digit'});
             });
-
-            const data = satsData.map(d => Math.round(d.y));
 
             if (state.chart) state.chart.destroy();
 
-            state.chart = new Chart(elements.chartCanvas, {
+            state.chart = new Chart(els.chartCanvas, {
                 type: 'line',
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: 'Sats per hour',
-                        data: data,
+                        data: data.map(d => d.y),
                         borderColor: '#f7931a',
                         backgroundColor: 'rgba(247, 147, 26, 0.1)',
                         fill: true,
                         tension: 0.4,
                         pointRadius: 0,
-                        pointHoverRadius: 4,
                         borderWidth: 2
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    interaction: {
-                        intersect: false,
-                        mode: 'index'
-                    },
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            backgroundColor: '#1e1e1e',
-                            titleColor: '#888',
-                            bodyColor: '#fff',
-                            bodyFont: { weight: '600' },
-                            padding: 12,
-                            callbacks: {
-                                label: ctx => `${formatNumber(ctx.parsed.y)} sats`
-                            }
-                        }
-                    },
+                    plugins: { legend: { display: false } },
                     scales: {
-                        x: {
+                        x: { 
                             grid: { color: 'rgba(255,255,255,0.05)' },
                             ticks: { color: '#555', maxTicksLimit: 8 }
                         },
-                        y: {
+                        y: { 
                             grid: { color: 'rgba(255,255,255,0.05)' },
-                            ticks: { 
-                                color: '#555',
-                                callback: v => formatNumber(v)
-                            }
+                            ticks: { color: '#555', callback: v => fmt(v) }
                         }
                     }
                 }
             });
         }
 
-        // Event Listeners
-        elements.hourlyIncome.addEventListener('input', e => {
+        // Events
+        els.hourlyIncome.addEventListener('input', e => {
             state.hourlyIncome = parseFloat(e.target.value) || 0;
             updateDisplay();
             updateChart();
         });
 
-        elements.currency.addEventListener('change', e => {
+        els.currency.addEventListener('change', e => {
             state.currency = e.target.value;
             updateDisplay();
             updateChart();
         });
 
-        elements.timeButtons.forEach(btn => {
+        els.timeButtons.forEach(btn => {
             btn.addEventListener('click', () => {
-                elements.timeButtons.forEach(b => b.classList.remove('active'));
+                els.timeButtons.forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 state.currentView = parseInt(btn.dataset.days);
                 updateChart();
@@ -561,13 +423,9 @@
         });
 
         // Init
-        waitForChart().then(() => {
-            updateDisplay();
-            updateChart();
-            
-            // Auto-refresh price every 30s
-            setInterval(updateDisplay, 30000);
-        });
+        updateDisplay();
+        updateChart();
+        setInterval(updateDisplay, 30000);
     </script>
 </body>
 </html>
