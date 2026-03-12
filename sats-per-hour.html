@@ -136,7 +136,8 @@
 
         async function getPrice() {
             try {
-                const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=${state.currency}`);
+                // Use CORS proxy
+                const res = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(`https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=${state.currency}`)}`);
                 const data = await res.json();
                 return data.bitcoin[state.currency];
             } catch (e) { console.error(e); return null; }
@@ -144,7 +145,8 @@
 
         async function getHistory(days) {
             try {
-                const res = await fetch(`https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=${state.currency}&days=${days}`);
+                const url = `https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=${state.currency}&days=${days}`;
+                const res = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`);
                 const data = await res.json();
                 return data.prices || [];
             } catch (e) { console.error(e); return []; }
