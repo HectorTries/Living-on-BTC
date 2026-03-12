@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-C25ZWRJKXL"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-C25ZWRJKXL');
+    </script>
+    <title>Real-time Sats Per Hour Calculator - LivingOnBTC</title>
+    <meta name="description" content="Track your real-time Bitcoin sats per hour earnings. Monitor your fiat income converted to satoshis across day, month, year, and 5-year historical views.">
+    <link rel="canonical" href="https://livingonbtc.com/sats-per-hour.html">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bitcoin-orange: #f7931a;
+            --dark-blue: #1a1f36;
+            --light-grey: #e0e0e0;
+            --text-color: #fff;
+            --card-background: #2a2f46;
+            --input-background: #3a3f56;
+            --button-background: #f7931a;
+            --button-hover: #ffb74d;
+        }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, var(--dark-blue), var(--card-background));
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            align-items: center;
+        }
+        .container {
+            max-width: 900px;
+            width: 100%;
+            margin: 20px auto;
+            background-color: var(--card-background);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(247, 147, 26, 0.3);
+        }
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--bitcoin-orange);
+        }
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .input-item {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: var(--light-grey);
+        }
+        input[type="number"], select {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--bitcoin-orange);
+            background-color: var(--input-background);
+            color: var(--text-color);
+            font-size: 1rem;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        input[type="number"]::placeholder {
+            color: rgba(255,255,255,0.6);
+        }
+        .real-time-stats {
+            text-align: center;
+            margin-bottom: 30px;
+            background: var(--dark-blue);
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid rgba(247, 147, 26, 0.5);
+        }
+        .real-time-stats h2 {
+            margin-top: 0;
+            color: var(--bitcoin-orange);
+            font-size: 1.8rem;
+        }
+        .sats-per-hour-value {
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: var(--text-color);
+            margin-bottom: 10px;
+        }
+        .fiat-equivalent {
+            font-size: 1rem;
+            color: var(--light-grey);
+        }
+        .chart-controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .chart-controls button {
+            background-color: var(--button-background);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .chart-controls button:hover {
+            background-color: var(--button-hover);
+        }
+        .chart-container {
+            position: relative;
+            height: 400px;
+            width: 100%;
+        }
+        #satsPerHourChart {
+            background-color: var(--dark-blue);
+            border-radius: 15px;
+            padding: 15px;
+            border: 1px solid rgba(247, 147, 26, 0.3);
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: var(--light-grey);
+            text-decoration: none;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        footer {
+            margin-top: 40px;
+            text-align: center;
+            color: rgba(255,255,255,0.6);
+            font-size: 0.9rem;
+        }
+        footer a {
+            color: var(--bitcoin-orange);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-link">← Back to LivingOnBTC</a>
+        
+        <h1><i class="fas fa-bolt"></i> Real-time Sats Per Hour</h1>
+
+        <div class="input-group">
+            <div class="input-item">
+                <label for="fiatIncome">Your Income (per hour):</label>
+                <input type="number" id="fiatIncome" value="15" placeholder="e.g., 15" min="0">
+            </div>
+            <div class="input-item">
+                <label for="currency">Fiat Currency:</label>
+                <select id="currency">
+                    <option value="gbp">GBP (£)</option>
+                    <option value="usd">USD ($)</option>
+                    <option value="eur">EUR (€)</option>
+                    <option value="cad">CAD ($)</option>
+                    <option value="aud">AUD ($)</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="real-time-stats">
+            <h2>Current Sats Per Hour</h2>
+            <div class="sats-per-hour-value" id="currentSatsPerHour">Loading...</div>
+            <div class="fiat-equivalent" id="currentFiatEquivalent"></div>
+        </div>
+
+        <h2>Historical Sats Per Hour</h2>
+        <div class="chart-controls">
+            <button id="dayView">Day</button>
+            <button id="monthView">Month</button>
+            <button id="yearView">Year</button>
+            <button id="fiveYearView">5 Years</button>
+        </div>
+        <div class="chart-container">
+            <canvas id="satsPerHourChart"></canvas>
+        </div>
+
+        <footer>
+            Data powered by <a href="https://www.coingecko.com/" target="_blank">CoinGecko API</a>. Not financial advice. Made with <i class="fas fa-heart" style="color: #e74c3c;"></i> by LivingOnBTC.
+        </footer>
+    </div>
+
+    <script>
+        const fiatIncomeInput = document.getElementById('fiatIncome');
+        const currencySelect = document.getElementById('currency');
+        const currentSatsPerHourDisplay = document.getElementById('currentSatsPerHour');
+        const currentFiatEquivalentDisplay = document.getElementById('currentFiatEquivalent');
+        const satsPerHourChartCanvas = document.getElementById('satsPerHourChart').getContext('2d');
+        
+        const dayViewBtn = document.getElementById('dayView');
+        const monthViewBtn = document.getElementById('monthView');
+        const yearViewBtn = document.getElementById('yearView');
+        const fiveYearViewBtn = document.getElementById('fiveYearView');
+
+        let satsChart;
+
+        const COINGECKO_API_BASE = 'https://api.coingecko.com/api/v3';
+
+        // Function to format numbers with commas
+        function formatNumber(num) {
+            return new Intl.NumberFormat().format(num);
+        }
+
+        async function fetchBitcoinPrice(currency) {
+            try {
+                const response = await fetch(`${COINGECKO_API_BASE}/simple/price?ids=bitcoin&vs_currencies=${currency}`);
+                const data = await response.json();
+                return data.bitcoin[currency];
+            } catch (error) {
+                console.error('Error fetching Bitcoin price:', error);
+                return null;
+            }
+        }
+
+        async function updateRealtimeStats() {
+            const fiatIncome = parseFloat(fiatIncomeInput.value);
+            const selectedCurrency = currencySelect.value;
+            
+            if (isNaN(fiatIncome) || fiatIncome <= 0) {
+                currentSatsPerHourDisplay.textContent = 'Enter income';
+                currentFiatEquivalentDisplay.textContent = '';
+                return;
+            }
+
+            const bitcoinPrice = await fetchBitcoinPrice(selectedCurrency);
+
+            if (bitcoinPrice) {
+                const satsPerBitcoin = 100_000_000;
+                const satsPerFiatUnit = satsPerBitcoin / bitcoinPrice;
+                const currentSatsPerHour = fiatIncome * satsPerFiatUnit;
+
+                currentSatsPerHourDisplay.textContent = formatNumber(currentSatsPerHour.toFixed(0));
+                currentFiatEquivalentDisplay.textContent = `${getCurrencySymbol(selectedCurrency)}${fiatIncome.toFixed(2)} per hour`;
+            } else {
+                currentSatsPerHourDisplay.textContent = 'Error';
+                currentFiatEquivalentDisplay.textContent = '';
+            }
+        }
+
+        function getCurrencySymbol(currency) {
+            switch (currency.toLowerCase()) {
+                case 'gbp': return '£';
+                case 'usd': return '$';
+                case 'eur': return '€';
+                case 'cad': return 'C$';
+                case 'aud': return 'A$';
+                default: return '';
+            }
+        }
+
+        async function fetchHistoricalData(currency, days) {
+            try {
+                const response = await fetch(`${COINGECKO_API_BASE}/coins/bitcoin/market_chart?vs_currency=${currency}&days=${days}`);
+                const data = await response.json();
+                return data.prices;
+            } catch (error) {
+                console.error('Error fetching historical data:', error);
+                return [];
+            }
+        }
+
+        async function renderChart(timeframe = '24h') {
+            const fiatIncome = parseFloat(fiatIncomeInput.value);
+            const selectedCurrency = currencySelect.value;
+            let days;
+
+            switch (timeframe) {
+                case '24h': days = 1; break;
+                case '30d': days = 30; break;
+                case '1y': days = 365; break;
+                case '5y': days = 1825; break;
+                default: days = 1; // Default to 24h
+            }
+
+            const historicalPrices = await fetchHistoricalData(selectedCurrency, days);
+            const satsPerBitcoin = 100_000_000;
+
+            const labels = historicalPrices.map(price => {
+                const date = new Date(price[0]);
+                if (timeframe === '24h') return date.toLocaleTimeString();
+                return date.toLocaleDateString();
+            });
+            const dataPoints = historicalPrices.map(price => {
+                if (fiatIncome === 0) return 0; // Avoid division by zero
+                return (fiatIncome * satsPerBitcoin / price[1]).toFixed(0);
+            });
+
+            if (satsChart) {
+                satsChart.destroy();
+            }
+
+            satsChart = new Chart(satsPerHourChartCanvas, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: `Sats Per Hour (${getCurrencySymbol(selectedCurrency)}${fiatIncome.toFixed(2)}/hr)`,
+                        data: dataPoints,
+                        borderColor: var(--bitcoin-orange),
+                        backgroundColor: 'rgba(247, 147, 26, 0.2)',
+                        tension: 0.3,
+                        fill: true,
+                        pointRadius: 0,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            type: 'category',
+                            ticks: {
+                                autoSkip: true,
+                                maxTicksLimit: 10,
+                                color: var(--light-grey),
+                            },
+                            grid: {
+                                color: 'rgba(255,255,255,0.1)',
+                            },
+                        },
+                        y: {
+                            beginAtZero: false,
+                            ticks: {
+                                callback: function(value) {
+                                    return formatNumber(value); // Format Y-axis labels
+                                },
+                                color: var(--light-grey),
+                            },
+                            grid: {
+                                color: 'rgba(255,255,255,0.1)',
+                            },
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: var(--light-grey),
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `Sats: ${formatNumber(context.parsed.y)}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Event Listeners
+        fiatIncomeInput.addEventListener('input', () => { updateRealtimeStats(); renderChart('24h'); });
+        currencySelect.addEventListener('change', () => { updateRealtimeStats(); renderChart('24h'); });
+
+        dayViewBtn.addEventListener('click', () => renderChart('24h'));
+        monthViewBtn.addEventListener('click', () => renderChart('30d'));
+        yearViewBtn.addEventListener('click', () => renderChart('1y'));
+        fiveYearViewBtn.addEventListener('click', () => renderChart('5y'));
+
+        // Initial load
+        updateRealtimeStats();
+        renderChart('24h'); // Default to 24h view on load
+
+        // Update real-time stats every 30 seconds
+        setInterval(updateRealtimeStats, 30000);
+    </script>
+</body>
+</html>
