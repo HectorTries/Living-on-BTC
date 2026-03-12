@@ -134,39 +134,41 @@
         
         const fmt = num => new Intl.NumberFormat().format(Math.round(num));
 
+        const symbols = { 
+            gbp: 'BTCGBP', usd: 'BTCUSDT', eur: 'BTCEUR', 
+            jpy: 'BTCJPY', cad: 'BTCCAD', aud: 'BTCAUD' 
+        };
+        
         async function getPrice() {
             try {
-                // Use CoinCap API which doesn't have CORS issues
-                const res = await fetch('https://api.coincap.io/v2/assets/bitcoin');
+                const res = await fetch(`https://api.binance.com/api/v3/ticker/price?symbol=${symbols[state.currency]}`);
                 const data = await res.json();
-                if (data.data && data.data.priceUsd) {
-                    // Convert USD price to selected currency
-                    const usdPrice = parseFloat(data.data.priceUsd);
-                    if (state.currency === 'usd') return usdPrice;
-                    // Get USD to currency rate
-                    const rateRes = await fetch(`https://api.exchangerate.host/latest?base=USD&symbols=${state.currency.toUpperCase()}`);
-                    const rateData = await rateRes.json();
-                    return usdPrice * (rateData.rates?.[state.currency.toUpperCase()] || 1);
-                }
-                return null;
-            } catch (e) { console.error(e); return null; }
+                return parseFloat(data.price);
+            } catch (e) { 
+                console.error(e); 
+                return null; 
+            }
         }
 
         async function getHistory(days) {
             try {
-                const end = Date.now();
-                const start = end - (days * 24 * 60 * 60 * 1000);
-                const res = await fetch(`https://api.coincap.io/v2/assets/bitcoin/history?interval=h1&start=${start}&end=${end}`);
+                const interval = days <= 1 ? '1h' : days <= 30 ? '1h' : '1d';
+                const limit = days <= 1 ? 24 : days <= 30 ? 720 : days <= 365 ? 365 : 1825;
+                const end = Math.floor(Date.now() / 1000);
+                const start = end - (days * 24 * 60 * 60);
+                
+                const res = await fetch(
+                    `https://api.binance.com/api/v3/klines?symbol=${symbols[state.currency]}&interval=${interval}&startTime=${start * 1000}&endTime=${end * 1000}&limit=${limit}`
+                );
                 const data = await res.json();
-                if (data.data) {
-                    // Convert USD prices to selected currency
-                    const rateRes = await fetch(`https://api.exchangerate.host/latest?base=USD&symbols=${state.currency.toUpperCase()}`);
-                    const rateData = await rateRes.json();
-                    const rate = rateData.rates?.[state.currency.toUpperCase()] || 1;
-                    return data.data.map(d => [d.time, parseFloat(d.priceUsd) * rate]);
+                if (data && data.length) {
+                    return data.map(d => [d[0], parseFloat(d[4])]); // [timestamp, close price]
                 }
                 return [];
-            } catch (e) { console.error(e); return []; }
+            } catch (e) { 
+                console.error(e); 
+                return []; 
+            }
         }
 
         // Get average price over period for sats calculation
