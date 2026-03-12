@@ -119,47 +119,32 @@
             timeButtons: document.querySelectorAll('.time-buttons button')
         };
 
-        const binanceSymbols = { gbp: 'BTCGBP', usd: 'BTCUSDT', eur: 'BTCEUR', jpy: 'BTCJPY', cad: 'BTCCAD', aud: 'BTCAUD' };
         const currencyNames = { gbp: '£', usd: '$', eur: '€', jpy: '¥', cad: 'C$', aud: 'A$' };
         const periods = { hourly: 'per hour', weekly: 'per week', monthly: 'per month', yearly: 'per year' };
         const hoursInPeriod = { hourly: 1, weekly: 168, monthly: 730, yearly: 8760 };
         
         const fmt = num => new Intl.NumberFormat().format(Math.round(num || 0));
 
+        const COINGECKO_BASE = 'https://api.coingecko.com/api/v3';
+        
         async function getPrice() {
             try {
-                // Try Binance first
-                const res = await fetch(`https://api.binance.com/api/v3/ticker/price?symbol=${binanceSymbols[state.currency]}`);
+                const res = await fetch(`${COINGECKO_BASE}/simple/price?ids=bitcoin&vs_currencies=${state.currency}`);
                 const data = await res.json();
-                if (data.price) return parseFloat(data.price);
-                throw new Error('No price');
+                return data.bitcoin?.[state.currency] || data.bitcoin?.usd;
             } catch (e) {
-                // Fallback to Coinbase
-                try {
-                    const currencyMap = { gbp: 'gbp', usd: 'usd', eur: 'eur', jpy: 'jpy', cad: 'cad', aud: 'aud' };
-                    const res = await fetch(`https://api.coinbase.com/v2/prices/BTC-${currencyMap[state.currency].toUpperCase()}/spot`);
-                    const data = await res.json();
-                    return parseFloat(data.data.amount);
-                } catch (e2) {
-                    console.error('Price error:', e2);
-                    return null;
-                }
+                console.error('Price error:', e);
+                return null;
             }
         }
 
         async function getHistory(days) {
             try {
-                const interval = days <= 1 ? '1h' : '1d';
-                const limit = days <= 1 ? 24 : days <= 30 ? 30 : days <= 365 ? 365 : 730;
-                const end = Math.floor(Date.now() / 1000);
-                const start = end - (days * 24 * 60 * 60);
-                
                 const res = await fetch(
-                    `https://api.binance.com/api/v3/klines?symbol=${binanceSymbols[state.currency]}&interval=${interval}&startTime=${start * 1000}&limit=${limit}`
+                    `${COINGECKO_BASE}/coins/bitcoin/market_chart?vs_currency=${state.currency}&days=${days}`
                 );
                 const data = await res.json();
-                if (!Array.isArray(data)) throw new Error('No data');
-                return data.map(d => [d[0], parseFloat(d[4])]);
+                return data.prices || [];
             } catch (e) {
                 console.error('History error:', e);
                 return [];
