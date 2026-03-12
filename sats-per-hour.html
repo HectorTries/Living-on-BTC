@@ -136,20 +136,17 @@
 
         async function getPrice() {
             try {
-                // Try multiple CORS proxies
-                const proxies = [
-                    `https://corsproxy.io/?${encodeURIComponent(`https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=${state.currency}`)}`,
-                    `https://api.allorigins.win/raw?url=${encodeURIComponent(`https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=${state.currency}`)}`
-                ];
-                
-                for (const proxyUrl of proxies) {
-                    try {
-                        const res = await fetch(proxyUrl);
-                        if (res.ok) {
-                            const data = await res.json();
-                            return data.bitcoin?.[state.currency] || data.bitcoin;
-                        }
-                    } catch (e) { continue; }
+                // Use CoinCap API which doesn't have CORS issues
+                const res = await fetch('https://api.coincap.io/v2/assets/bitcoin');
+                const data = await res.json();
+                if (data.data && data.data.priceUsd) {
+                    // Convert USD price to selected currency
+                    const usdPrice = parseFloat(data.data.priceUsd);
+                    if (state.currency === 'usd') return usdPrice;
+                    // Get USD to currency rate
+                    const rateRes = await fetch(`https://api.exchangerate.host/latest?base=USD&symbols=${state.currency.toUpperCase()}`);
+                    const rateData = await rateRes.json();
+                    return usdPrice * (rateData.rates?.[state.currency.toUpperCase()] || 1);
                 }
                 return null;
             } catch (e) { console.error(e); return null; }
@@ -157,19 +154,16 @@
 
         async function getHistory(days) {
             try {
-                const proxies = [
-                    `https://corsproxy.io/?${encodeURIComponent(`https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=${state.currency}&days=${days}`)}`,
-                    `https://api.allorigins.win/raw?url=${encodeURIComponent(`https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=${state.currency}&days=${days}`)}`
-                ];
-                
-                for (const proxyUrl of proxies) {
-                    try {
-                        const res = await fetch(proxyUrl);
-                        if (res.ok) {
-                            const data = await res.json();
-                            return data.prices || [];
-                        }
-                    } catch (e) { continue; }
+                const end = Date.now();
+                const start = end - (days * 24 * 60 * 60 * 1000);
+                const res = await fetch(`https://api.coincap.io/v2/assets/bitcoin/history?interval=h1&start=${start}&end=${end}`);
+                const data = await res.json();
+                if (data.data) {
+                    // Convert USD prices to selected currency
+                    const rateRes = await fetch(`https://api.exchangerate.host/latest?base=USD&symbols=${state.currency.toUpperCase()}`);
+                    const rateData = await rateRes.json();
+                    const rate = rateData.rates?.[state.currency.toUpperCase()] || 1;
+                    return data.data.map(d => [d.time, parseFloat(d.priceUsd) * rate]);
                 }
                 return [];
             } catch (e) { console.error(e); return []; }
