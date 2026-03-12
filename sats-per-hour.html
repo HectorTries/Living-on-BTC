@@ -127,27 +127,60 @@
 
         const COINGECKO_BASE = 'https://api.coingecko.com/api/v3';
         
+        // Cache price data to reduce API calls
+        let priceCache = { price: null, timestamp: 0 };
+        let historyCache = { data: null, days: 0, timestamp: 0 };
+        const CACHE_DURATION = 60000; // 1 minute cache
+
         async function getPrice() {
+            const now = Date.now();
+            if (priceCache.price && now - priceCache.timestamp < CACHE_DURATION) {
+                return priceCache.price;
+            }
+            
             try {
                 const res = await fetch(`${COINGECKO_BASE}/simple/price?ids=bitcoin&vs_currencies=${state.currency}`);
                 const data = await res.json();
-                return data.bitcoin?.[state.currency] || data.bitcoin?.usd;
+                const price = data.bitcoin?.[state.currency];
+                if (price) {
+                    priceCache = { price, timestamp: now };
+                }
+                return price;
             } catch (e) {
                 console.error('Price error:', e);
-                return null;
+                return priceCache.price;
             }
         }
 
         async function getHistory(days) {
+            const now = Date.now();
+            if (historyCache.data && historyCache.days === days && now - historyCache.timestamp < CACHE_DURATION) {
+                return historyCache.data;
+            }
+            
             try {
+                // For longer periods, reduce data points to avoid rate limiting
+                const maxPoints = days <= 30 ? 30 : days <= 365 ? 100 : 150;
+                
                 const res = await fetch(
                     `${COINGECKO_BASE}/coins/bitcoin/market_chart?vs_currency=${state.currency}&days=${days}`
                 );
                 const data = await res.json();
-                return data.prices || [];
+                let prices = data.prices || [];
+                
+                // Sample data points if too many
+                if (prices.length > maxPoints) {
+                    const step = Math.ceil(prices.length / maxPoints);
+                    prices = prices.filter((_, i) => i % step === 0);
+                }
+                
+                if (prices.length) {
+                    historyCache = { data: prices, days, timestamp: now };
+                }
+                return prices;
             } catch (e) {
                 console.error('History error:', e);
-                return [];
+                return historyCache.data || [];
             }
         }
 
