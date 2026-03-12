@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --btc-orange: #f7931a; --bg-dark: #0d0d0d; --bg-card: #161616; --bg-elevated: #1e1e1e; --border-subtle: #2a2a2a; --text-primary: #ffffff; --text-secondary: #888888; --success: #00c853; }
+        :root { --btc-orange: #f7931a; --bg-dark: #0d0d0d; --bg-card: #161616; --bg-elevated: #1e1e1e; --border-subtle: #2a2a2a; --text-primary: #ffffff; --text-secondary: #888888; --success: #00c853; --danger: #ff4444; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg-dark); color: var(--text-primary); min-height: 100vh; padding: 20px; }
         .page-wrapper { max-width: 800px; margin: 0 auto; }
@@ -22,26 +22,42 @@
         .sats-display { font-size: 4rem; font-weight: 800; color: var(--btc-orange); line-height: 1; margin-bottom: 8px; }
         .fiat-display { font-size: 1.125rem; color: var(--text-secondary); margin-bottom: 4px; }
         .period-label { font-size: 0.875rem; color: var(--text-secondary); }
-        .live-indicator { display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 200, 83, 0.1); color: var(--success); padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; margin-top: 16px; }
+        .change-badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 12px; font-size: 0.8rem; font-weight: 600; margin-top: 8px; }
+        .change-badge.up { background: rgba(0, 200, 83, 0.15); color: var(--success); }
+        .change-badge.down { background: rgba(255, 68, 68, 0.15); color: var(--danger); }
+        .live-indicator { display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 200, 83, 0.1); color: var(--success); padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; margin-top: 12px; }
         .live-dot { width: 6px; height: 6px; background: var(--success); border-radius: 50%; animation: pulse 2s infinite; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+        
         .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
         @media (max-width: 600px) { .input-grid { grid-template-columns: 1fr; } }
         .input-group { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 20px; }
         .input-group label { display: block; font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 8px; }
         .input-group input, .input-group select { width: 100%; background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 14px 16px; font-size: 1.125rem; font-weight: 600; color: var(--text-primary); outline: none; }
         .input-group input:focus, .input-group select:focus { border-color: var(--btc-orange); }
-        .chart-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 24px; padding: 24px; }
+        
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; }
+        @media (max-width: 500px) { .stats-grid { grid-template-columns: 1fr; } }
+        .stat-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 20px; text-align: center; }
+        .stat-label { font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+        .stat-value { font-size: 1.5rem; font-weight: 700; color: var(--text-primary); }
+        .stat-value.high { color: var(--success); }
+        .stat-value.low { color: var(--danger); }
+        
+        .chart-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 24px; padding: 24px; margin-bottom: 24px; }
         .chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
         .chart-title { font-size: 1.125rem; font-weight: 600; }
         .time-buttons { display: flex; gap: 8px; background: var(--bg-elevated); padding: 4px; border-radius: 12px; }
         .time-buttons button { background: transparent; border: none; color: var(--text-secondary); padding: 8px 16px; font-size: 0.875rem; font-weight: 500; border-radius: 8px; cursor: pointer; }
         .time-buttons button.active { background: var(--btc-orange); color: #000; }
         .chart-container { height: 300px; }
+        
+        .share-btn { display: block; width: 100%; background: var(--btc-orange); color: #000; border: none; border-radius: 16px; padding: 16px; font-size: 1rem; font-weight: 700; cursor: pointer; text-align: center; margin-bottom: 24px; transition: transform 0.2s; }
+        .share-btn:hover { transform: scale(1.02); }
+        
         .back-link { display: inline-flex; align-items: center; gap: 8px; color: var(--text-secondary); text-decoration: none; font-size: 0.875rem; margin-bottom: 24px; }
         .footer { text-align: center; margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--border-subtle); color: #555; font-size: 0.875rem; }
         .footer a { color: var(--btc-orange); }
-        .error-msg { color: #ff4444; font-size: 0.875rem; margin-top: 8px; }
     </style>
 </head>
 <body>
@@ -58,8 +74,13 @@
             <div class="sats-display" id="satsValue">—</div>
             <div class="fiat-display" id="fiatValue">—</div>
             <div class="period-label" id="periodLabel">per hour</div>
+            <div id="changeBadge"></div>
             <div class="live-indicator"><span class="live-dot"></span><span>LIVE</span></div>
         </div>
+        
+        <button class="share-btn" id="shareBtn">
+            <i class="fas fa-share-alt"></i> Share This Tile
+        </button>
         
         <div class="input-grid">
             <div class="input-group">
@@ -84,7 +105,26 @@
                     <option value="jpy">🇯🇵 Japanese Yen (¥)</option>
                     <option value="cad">🇨🇦 Canadian Dollar (C$)</option>
                     <option value="aud">🇦🇺 Australian Dollar (A$)</option>
+                    <option value="sgd">🇸🇬 Singapore Dollar (S$)</option>
+                    <option value="hkd">🇭🇰 Hong Kong Dollar (HK$)</option>
+                    <option value="nzd">🇳🇿 New Zealand Dollar (NZ$)</option>
+                    <option value="chf">🇨🇭 Swiss Franc (Fr)</option>
                 </select>
+            </div>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Highest</div>
+                <div class="stat-value high" id="statHigh">—</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Average</div>
+                <div class="stat-value" id="statAvg">—</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Lowest</div>
+                <div class="stat-value low" id="statLow">—</div>
             </div>
         </div>
         
@@ -101,55 +141,66 @@
             <div class="chart-container"><canvas id="chart"></canvas></div>
         </div>
         
-        <div class="footer">Data from <a href="https://www.binance.com" target="_blank">Binance API</a> • Not financial advice</div>
+        <div class="footer">Data from <a href="https://www.coingecko.com" target="_blank">CoinGecko API</a> • Not financial advice</div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        const state = { currency: 'gbp', income: 15, period: 'hourly', chart: null, chartDays: 1 };
+        const state = { 
+            currency: localStorage.getItem('sats_currency') || 'gbp', 
+            income: parseFloat(localStorage.getItem('sats_income')) || 15, 
+            period: localStorage.getItem('sats_period') || 'hourly',
+            chart: null, 
+            chartDays: 1,
+            currentPrice: null,
+            previousPrice: null
+        };
         
         const els = {
             satsValue: document.getElementById('satsValue'),
             fiatValue: document.getElementById('fiatValue'),
             periodLabel: document.getElementById('periodLabel'),
+            changeBadge: document.getElementById('changeBadge'),
             income: document.getElementById('income'),
             period: document.getElementById('period'),
             currency: document.getElementById('currency'),
             chartCanvas: document.getElementById('chart'),
-            timeButtons: document.querySelectorAll('.time-buttons button')
+            timeButtons: document.querySelectorAll('.time-buttons button'),
+            statHigh: document.getElementById('statHigh'),
+            statAvg: document.getElementById('statAvg'),
+            statLow: document.getElementById('statLow'),
+            shareBtn: document.getElementById('shareBtn')
         };
 
-        const currencyNames = { gbp: '£', usd: '$', eur: '€', jpy: '¥', cad: 'C$', aud: 'A$' };
+        const currencyNames = { gbp: '£', usd: '$', eur: '€', jpy: '¥', cad: 'C$', aud: 'A$', sgd: 'S$', hkd: 'HK$', nzd: 'NZ$', chf: 'Fr' };
+        const currencyFlags = { gbp: '🇬🇧', usd: '🇺🇸', eur: '🇪🇺', jpy: '🇯🇵', cad: '🇨🇦', aud: '🇦🇺', sgd: '🇸🇬', hkd: '🇭🇰', nzd: '🇳🇿', chf: '🇨🇭' };
         const periods = { hourly: 'per hour', weekly: 'per week', monthly: 'per month', yearly: 'per year' };
         const hoursInPeriod = { hourly: 1, weekly: 168, monthly: 730, yearly: 8760 };
         
         const fmt = num => new Intl.NumberFormat().format(Math.round(num || 0));
 
+        // Set initial values from localStorage
+        els.income.value = state.income;
+        els.period.value = state.period;
+        els.currency.value = state.currency;
+
         const COINGECKO_BASE = 'https://api.coingecko.com/api/v3';
-        
-        // Cache price data to reduce API calls
         let priceCache = { price: null, timestamp: 0 };
         let historyCache = { data: null, days: 0, timestamp: 0 };
-        const CACHE_DURATION = 60000; // 1 minute cache
+        const CACHE_DURATION = 60000;
 
         async function getPrice() {
             const now = Date.now();
             if (priceCache.price && now - priceCache.timestamp < CACHE_DURATION) {
                 return priceCache.price;
             }
-            
             try {
                 const res = await fetch(`${COINGECKO_BASE}/simple/price?ids=bitcoin&vs_currencies=${state.currency}`);
                 const data = await res.json();
                 const price = data.bitcoin?.[state.currency];
-                if (price) {
-                    priceCache = { price, timestamp: now };
-                }
+                if (price) priceCache = { price, timestamp: now };
                 return price;
-            } catch (e) {
-                console.error('Price error:', e);
-                return priceCache.price;
-            }
+            } catch (e) { console.error(e); return priceCache.price; }
         }
 
         async function getHistory(days) {
@@ -157,31 +208,18 @@
             if (historyCache.data && historyCache.days === days && now - historyCache.timestamp < CACHE_DURATION) {
                 return historyCache.data;
             }
-            
             try {
-                // For longer periods, reduce data points to avoid rate limiting
                 const maxPoints = days <= 30 ? 30 : days <= 365 ? 100 : 150;
-                
-                const res = await fetch(
-                    `${COINGECKO_BASE}/coins/bitcoin/market_chart?vs_currency=${state.currency}&days=${days}`
-                );
+                const res = await fetch(`${COINGECKO_BASE}/coins/bitcoin/market_chart?vs_currency=${state.currency}&days=${days}`);
                 const data = await res.json();
                 let prices = data.prices || [];
-                
-                // Sample data points if too many
                 if (prices.length > maxPoints) {
                     const step = Math.ceil(prices.length / maxPoints);
                     prices = prices.filter((_, i) => i % step === 0);
                 }
-                
-                if (prices.length) {
-                    historyCache = { data: prices, days, timestamp: now };
-                }
+                if (prices.length) historyCache = { data: prices, days, timestamp: now };
                 return prices;
-            } catch (e) {
-                console.error('History error:', e);
-                return historyCache.data || [];
-            }
+            } catch (e) { console.error(e); return historyCache.data || []; }
         }
 
         function calcSats(income, price) {
@@ -191,26 +229,47 @@
         }
 
         async function updateDisplay() {
-            const price = await getPrice();
+            state.currentPrice = await getPrice();
             
-            if (price) {
-                const sats = calcSats(state.income, price);
+            if (state.currentPrice) {
+                const sats = calcSats(state.income, state.currentPrice);
                 els.satsValue.textContent = fmt(sats);
                 els.fiatValue.textContent = `${currencyNames[state.currency]}${state.income.toLocaleString()}`;
                 els.periodLabel.textContent = periods[state.period];
+                
+                // Compare with start of period
+                const prices = await getHistory(state.chartDays);
+                if (prices.length >= 2) {
+                    const firstPrice = prices[0][1];
+                    const change = ((state.currentPrice - firstPrice) / firstPrice) * 100;
+                    const isUp = change >= 0;
+                    els.changeBadge.innerHTML = isUp 
+                        ? `<span class="change-badge up"><i class="fas fa-arrow-up"></i> ${change.toFixed(1)}% vs ${state.chartDays === 1 ? '24h ago' : state.chartDays === 30 ? '1 month ago' : state.chartDays === 365 ? '1 year ago' : '5 years ago'}</span>`
+                        : `<span class="change-badge down"><i class="fas fa-arrow-down"></i> ${Math.abs(change).toFixed(1)}% vs ${state.chartDays === 1 ? '24h ago' : state.chartDays === 30 ? '1 month ago' : state.chartDays === 365 ? '1 year ago' : '5 years ago'}</span>`;
+                }
             } else {
                 els.satsValue.textContent = '—';
                 els.fiatValue.textContent = 'Loading...';
             }
         }
 
+        async function updateStats() {
+            const prices = await getHistory(state.chartDays);
+            if (!prices.length) return;
+            
+            const satsData = prices.map(p => calcSats(state.income, p[1]));
+            const high = Math.max(...satsData);
+            const low = Math.min(...satsData);
+            const avg = satsData.reduce((a, b) => a + b, 0) / satsData.length;
+            
+            els.statHigh.textContent = fmt(high);
+            els.statAvg.textContent = fmt(avg);
+            els.statLow.textContent = fmt(low);
+        }
+
         async function updateChart() {
             const prices = await getHistory(state.chartDays);
-            
-            if (!prices.length) {
-                console.log('No price data');
-                return;
-            }
+            if (!prices.length) return;
 
             const data = prices.map(([time, price]) => ({
                 x: time,
@@ -250,18 +309,56 @@
                     }
                 }
             });
+            
+            await updateStats();
         }
 
+        // Save preferences
+        function savePrefs() {
+            localStorage.setItem('sats_currency', state.currency);
+            localStorage.setItem('sats_income', state.income);
+            localStorage.setItem('sats_period', state.period);
+        }
+
+        // Share functionality
+        els.shareBtn.addEventListener('click', () => {
+            const text = `I'm earning ${els.satsValue.textContent} sats ${periods[state.period]}! ${currencyNames[state.currency]}${state.income} at current BTC price.`;
+            if (navigator.share) {
+                navigator.share({ title: 'My Sats Calculator', text: text, url: window.location.href });
+            } else {
+                navigator.clipboard.writeText(text);
+                els.shareBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                setTimeout(() => els.shareBtn.innerHTML = '<i class="fas fa-share-alt"></i> Share This Tile', 2000);
+            }
+        });
+
         // Events
-        els.income.addEventListener('input', e => { state.income = parseFloat(e.target.value) || 0; updateDisplay(); updateChart(); });
-        els.period.addEventListener('change', e => { state.period = e.target.value; updateDisplay(); updateChart(); });
-        els.currency.addEventListener('change', e => { state.currency = e.target.value; updateDisplay(); updateChart(); });
+        els.income.addEventListener('input', e => { 
+            state.income = parseFloat(e.target.value) || 0; 
+            savePrefs();
+            updateDisplay(); 
+            updateChart(); 
+        });
+        els.period.addEventListener('change', e => { 
+            state.period = e.target.value; 
+            savePrefs();
+            updateDisplay(); 
+            updateChart(); 
+        });
+        els.currency.addEventListener('change', e => { 
+            state.currency = e.target.value; 
+            priceCache = { price: null, timestamp: 0 }; // Clear cache on currency change
+            savePrefs();
+            updateDisplay(); 
+            updateChart(); 
+        });
         
         els.timeButtons.forEach(btn => {
             btn.addEventListener('click', () => {
                 els.timeButtons.forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 state.chartDays = parseInt(btn.dataset.days);
+                updateDisplay();
                 updateChart();
             });
         });
