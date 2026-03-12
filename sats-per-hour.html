@@ -3,16 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bitcoin Sats Per Hour Calculator | LivingOnBTC</title>
-    <meta name="description" content="Track your real-time Bitcoin sats per hour. See how your earnings change with live BTC price and historical trends.">
+    <title>Bitcoin Sats Calculator | LivingOnBTC</title>
+    <meta name="description" content="Calculate your Bitcoin sats from fiat income. See hourly, weekly, monthly & yearly earnings in real-time.">
     <link rel="canonical" href="https://livingonbtc.com/sats-per-hour.html">
-    
-    <!-- Preconnect -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <style>
         :root {
             --btc-orange: #f7931a;
@@ -24,236 +20,73 @@
             --text-secondary: #888888;
             --success: #00c853;
         }
-        
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body {
-            font-family: 'Inter', -apple-system, sans-serif;
-            background: var(--bg-dark);
-            color: var(--text-primary);
-            min-height: 100vh;
-            padding: 20px;
-        }
-        
-        .page-wrapper {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        
+        body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg-dark); color: var(--text-primary); min-height: 100vh; padding: 20px; }
+        .page-wrapper { max-width: 800px; margin: 0 auto; }
         .header { text-align: center; margin-bottom: 32px; }
-        
-        .header h1 {
-            font-size: 2.5rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #f7931a, #ff6b35);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 8px;
-        }
-        
+        .header h1 { font-size: 2.5rem; font-weight: 800; background: linear-gradient(135deg, #f7931a, #ff6b35); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
         .header p { color: var(--text-secondary); }
+        .hero-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 24px; padding: 40px; text-align: center; margin-bottom: 24px; position: relative; overflow: hidden; }
+        .hero-card::before { content: ''; display: block; height: 3px; background: linear-gradient(90deg, #f7931a, #ff6b35); border-radius: 24px 24px 0 0; margin: -40px -40px 24px -40px; }
+        .hero-label { font-size: 0.875rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; }
+        .sats-display { font-size: 4rem; font-weight: 800; color: var(--btc-orange); line-height: 1; margin-bottom: 8px; }
+        .fiat-display { font-size: 1.125rem; color: var(--text-secondary); margin-bottom: 4px; }
+        .period-label { font-size: 0.875rem; color: var(--text-secondary); }
+        .live-indicator { display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 200, 83, 0.1); color: var(--success); padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; margin-top: 16px; }
+        .live-dot { width: 6px; height: 6px; background: var(--success); border-radius: 50%; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
         
-        .hero-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-subtle);
-            border-radius: 24px;
-            padding: 40px;
-            text-align: center;
-            margin-bottom: 24px;
-        }
-        
-        .hero-card::before {
-            content: '';
-            display: block;
-            height: 3px;
-            background: linear-gradient(90deg, #f7931a, #ff6b35);
-            border-radius: 24px 24px 0 0;
-            margin: -40px -40px 24px -40px;
-        }
-        
-        .hero-label {
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-bottom: 8px;
-        }
-        
-        .sats-display {
-            font-size: 4rem;
-            font-weight: 800;
-            color: var(--btc-orange);
-            line-height: 1;
-            margin-bottom: 8px;
-        }
-        
-        .fiat-display { font-size: 1.125rem; color: var(--text-secondary); }
-        
-        .live-indicator {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: rgba(0, 200, 83, 0.1);
-            color: var(--success);
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin-top: 16px;
-        }
-        
-        .live-dot {
-            width: 6px;
-            height: 6px;
-            background: var(--success);
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
-        }
-        
-        .input-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-        
+        .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
         @media (max-width: 600px) { .input-grid { grid-template-columns: 1fr; } }
+        .input-group { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 20px; }
+        .input-group label { display: block; font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 8px; }
+        .input-group input, .input-group select { width: 100%; background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 14px 16px; font-size: 1.125rem; font-weight: 600; color: var(--text-primary); outline: none; }
+        .input-group input:focus, .input-group select:focus { border-color: var(--btc-orange); }
         
-        .input-group {
-            background: var(--bg-card);
-            border: 1px solid var(--border-subtle);
-            border-radius: 16px;
-            padding: 20px;
-        }
-        
-        .input-group label {
-            display: block;
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-            margin-bottom: 8px;
-        }
-        
-        .input-group input, .input-group select {
-            width: 100%;
-            background: var(--bg-elevated);
-            border: 1px solid var(--border-subtle);
-            border-radius: 12px;
-            padding: 14px 16px;
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            outline: none;
-        }
-        
-        .input-group input:focus, .input-group select:focus {
-            border-color: var(--btc-orange);
-        }
-        
-        .chart-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-subtle);
-            border-radius: 24px;
-            padding: 24px;
-        }
-        
-        .chart-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-        
+        .chart-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 24px; padding: 24px; }
+        .chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
         .chart-title { font-size: 1.125rem; font-weight: 600; }
-        
-        .time-buttons {
-            display: flex;
-            gap: 8px;
-            background: var(--bg-elevated);
-            padding: 4px;
-            border-radius: 12px;
-        }
-        
-        .time-buttons button {
-            background: transparent;
-            border: none;
-            color: var(--text-secondary);
-            padding: 8px 16px;
-            font-size: 0.875rem;
-            font-weight: 500;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-        
-        .time-buttons button.active {
-            background: var(--btc-orange);
-            color: #000;
-        }
-        
+        .time-buttons { display: flex; gap: 8px; background: var(--bg-elevated); padding: 4px; border-radius: 12px; }
+        .time-buttons button { background: transparent; border: none; color: var(--text-secondary); padding: 8px 16px; font-size: 0.875rem; font-weight: 500; border-radius: 8px; cursor: pointer; }
+        .time-buttons button.active { background: var(--btc-orange); color: #000; }
         .chart-container { height: 300px; }
-        
-        .error-msg {
-            color: #ff4444;
-            padding: 20px;
-            text-align: center;
-        }
-        
-        .back-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-size: 0.875rem;
-            margin-bottom: 24px;
-        }
-        
-        .footer {
-            text-align: center;
-            margin-top: 40px;
-            padding-top: 24px;
-            border-top: 1px solid var(--border-subtle);
-            color: #555;
-            font-size: 0.875rem;
-        }
-        
+        .back-link { display: inline-flex; align-items: center; gap: 8px; color: var(--text-secondary); text-decoration: none; font-size: 0.875rem; margin-bottom: 24px; }
+        .footer { text-align: center; margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--border-subtle); color: #555; font-size: 0.875rem; }
         .footer a { color: var(--btc-orange); }
     </style>
 </head>
 <body>
     <div class="page-wrapper">
-        <a href="/" class="back-link">
-            <i class="fas fa-arrow-left"></i> Back to LivingOnBTC
-        </a>
+        <a href="/" class="back-link"><i class="fas fa-arrow-left"></i> Back to LivingOnBTC</a>
         
         <div class="header">
-            <h1><i class="fas fa-bolt" style="color: var(--btc-orange);"></i> Sats Per Hour</h1>
-            <p>See how many satoshis you earn every hour</p>
+            <h1><i class="fas fa-bolt" style="color: var(--btc-orange);"></i> Sats Calculator</h1>
+            <p>See how much Bitcoin you're earning in fiat</p>
         </div>
         
         <div class="hero-card">
-            <div class="hero-label">Your Hourly Earnings</div>
+            <div class="hero-label">Your Sats Earnings</div>
             <div class="sats-display" id="satsValue">—</div>
             <div class="fiat-display" id="fiatValue">—</div>
-            <div class="live-indicator">
-                <span class="live-dot"></span>
-                <span>LIVE</span>
-            </div>
+            <div class="period-label" id="periodLabel">per hour</div>
+            <div class="live-indicator"><span class="live-dot"></span><span>LIVE</span></div>
         </div>
         
         <div class="input-grid">
             <div class="input-group">
-                <label>Your hourly wage</label>
-                <input type="number" id="hourlyIncome" value="15" min="0" step="0.01">
+                <label>Your income</label>
+                <input type="number" id="income" value="15" min="0" step="0.01">
             </div>
             <div class="input-group">
+                <label>Paid</label>
+                <select id="period">
+                    <option value="hourly">Hourly</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="monthly">Monthly</option>
+                    <option value="yearly">Yearly</option>
+                </select>
+            </div>
+            <div class="input-group" style="grid-column: 1 / -1;">
                 <label>Currency</label>
                 <select id="currency">
                     <option value="gbp">🇬🇧 British Pound (£)</option>
@@ -268,7 +101,7 @@
         
         <div class="chart-card">
             <div class="chart-header">
-                <div class="chart-title">Historical Sats Per Hour</div>
+                <div class="chart-title">Average Sats Over Time</div>
                 <div class="time-buttons">
                     <button data-days="1" class="active">24H</button>
                     <button data-days="30">1M</button>
@@ -276,37 +109,29 @@
                     <button data-days="1825">5Y</button>
                 </div>
             </div>
-            <div class="chart-container">
-                <canvas id="chart"></canvas>
-            </div>
+            <div class="chart-container"><canvas id="chart"></canvas></div>
         </div>
         
-        <div class="footer">
-            Data from <a href="https://www.coingecko.com" target="_blank">CoinGecko API</a> • Not financial advice
-        </div>
+        <div class="footer">Data from <a href="https://www.coingecko.com" target="_blank">CoinGecko API</a> • Not financial advice</div>
     </div>
 
-    <!-- Load Chart.js synchronously -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
     <script>
-        const state = {
-            currency: 'gbp',
-            hourlyIncome: 15,
-            chart: null,
-            currentView: 1
-        };
-
+        const state = { currency: 'gbp', income: 15, period: 'hourly', chart: null, chartDays: 1 };
         const els = {
             satsValue: document.getElementById('satsValue'),
             fiatValue: document.getElementById('fiatValue'),
-            hourlyIncome: document.getElementById('hourlyIncome'),
+            periodLabel: document.getElementById('periodLabel'),
+            income: document.getElementById('income'),
+            period: document.getElementById('period'),
             currency: document.getElementById('currency'),
             chartCanvas: document.getElementById('chart'),
             timeButtons: document.querySelectorAll('.time-buttons button')
         };
-
         const symbols = { gbp: '£', usd: '$', eur: '€', jpy: '¥', cad: 'C$', aud: 'A$' };
+        const periods = { hourly: 'per hour', weekly: 'per week', monthly: 'per month', yearly: 'per year' };
+        const hoursInPeriod = { hourly: 1, weekly: 168, monthly: 730, yearly: 8760 }; // Approx hours
+        
         const fmt = num => new Intl.NumberFormat().format(Math.round(num));
 
         async function getPrice() {
@@ -314,36 +139,46 @@
                 const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=${state.currency}`);
                 const data = await res.json();
                 return data.bitcoin[state.currency];
-            } catch (e) {
-                console.error(e);
-                return null;
-            }
+            } catch (e) { console.error(e); return null; }
         }
 
         async function getHistory(days) {
             try {
-                const res = await fetch(
-                    `https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=${state.currency}&days=${days}`
-                );
+                const res = await fetch(`https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=${state.currency}&days=${days}`);
                 const data = await res.json();
                 return data.prices || [];
-            } catch (e) {
-                console.error(e);
-                return [];
-            }
+            } catch (e) { console.error(e); return []; }
         }
 
-        function satsFromPrice(price) {
+        // Get average price over period for sats calculation
+        async function getAveragePriceForPeriod(period) {
+            const prices = await getHistory(state.chartDays);
+            if (!prices.length) return await getPrice();
+            
+            const sum = prices.reduce((acc, p) => acc + p[1], 0);
+            return sum / prices.length;
+        }
+
+        function calcSats(income, price) {
             if (!price) return 0;
-            return (state.hourlyIncome / price) * 100_000_000;
+            // Convert income to hourly equivalent, then to sats
+            const hourlyIncome = income / hoursInPeriod[period];
+            return (hourlyIncome / price) * 100_000_000;
         }
 
         async function updateDisplay() {
             const price = await getPrice();
-            if (price) {
-                const sats = satsFromPrice(price);
-                els.satsValue.textContent = fmt(sats);
-                els.fiatValue.textContent = `${symbols[state.currency]}${state.hourlyIncome.toFixed(2)} / hour`;
+            const avgPrice = await getAveragePriceForPeriod(state.period);
+            
+            if (price && avgPrice) {
+                // Current moment sats (hourly rate)
+                const currentSats = calcSats(state.income, price);
+                // Average sats over the selected period
+                const avgSats = calcSats(state.income, avgPrice);
+                
+                els.satsValue.textContent = fmt(avgSats);
+                els.fiatValue.textContent = `${symbols[state.currency]}${state.income.toLocaleString()}`;
+                els.periodLabel.textContent = periods[state.period];
             } else {
                 els.satsValue.textContent = 'Error';
                 els.fiatValue.textContent = 'API unavailable';
@@ -351,18 +186,18 @@
         }
 
         async function updateChart() {
-            const prices = await getHistory(state.currentView);
+            const prices = await getHistory(state.chartDays);
             if (!prices.length) return;
 
             const data = prices.map(([time, price]) => ({
                 x: time,
-                y: satsFromPrice(price)
+                y: calcSats(state.income, price)
             }));
 
             const labels = data.map(d => {
                 const date = new Date(d.x);
-                if (state.currentView === 1) return date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-                if (state.currentView === 30) return date.toLocaleDateString([], {month:'short', day:'numeric'});
+                if (state.chartDays === 1) return date.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+                if (state.chartDays === 30) return date.toLocaleDateString([], {month:'short', day:'numeric'});
                 return date.toLocaleDateString([], {month:'short', year:'2-digit'});
             });
 
@@ -387,37 +222,23 @@
                     maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
                     scales: {
-                        x: { 
-                            grid: { color: 'rgba(255,255,255,0.05)' },
-                            ticks: { color: '#555', maxTicksLimit: 8 }
-                        },
-                        y: { 
-                            grid: { color: 'rgba(255,255,255,0.05)' },
-                            ticks: { color: '#555', callback: v => fmt(v) }
-                        }
+                        x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#555', maxTicksLimit: 8 } },
+                        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#555', callback: v => fmt(v) } }
                     }
                 }
             });
         }
 
         // Events
-        els.hourlyIncome.addEventListener('input', e => {
-            state.hourlyIncome = parseFloat(e.target.value) || 0;
-            updateDisplay();
-            updateChart();
-        });
-
-        els.currency.addEventListener('change', e => {
-            state.currency = e.target.value;
-            updateDisplay();
-            updateChart();
-        });
-
+        els.income.addEventListener('input', e => { state.income = parseFloat(e.target.value) || 0; updateDisplay(); updateChart(); });
+        els.period.addEventListener('change', e => { state.period = e.target.value; updateDisplay(); updateChart(); });
+        els.currency.addEventListener('change', e => { state.currency = e.target.value; updateDisplay(); updateChart(); });
+        
         els.timeButtons.forEach(btn => {
             btn.addEventListener('click', () => {
                 els.timeButtons.forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
-                state.currentView = parseInt(btn.dataset.days);
+                state.chartDays = parseInt(btn.dataset.days);
                 updateChart();
             });
         });
