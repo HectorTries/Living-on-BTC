@@ -1,0 +1,16 @@
+# Fix Google indexing issues
+# Redirect malformed URLs to correct versions
+
+# Calculator (1) issue - redirect to clean URL
+/calculator\ (1).html    /calculator.html   301
+/calculator%20(1).html   /calculator.html   301
+
+# BitcoinBacktester (1) - redirect (or 404 if it doesn't exist)
+/BitcoinBacktester\ (1).html   /   301
+/BitcoinBacktester%20(1).html  /   301
+
+# BitcoinStandardforCompanies - redirect to home or blog
+/BitcoinStandardforCompanies.html   /blog-index.html   301
+
+# Fix .htm vs .html typo
+/bitcoinfire.htm   /bitcoinfire.html   301
