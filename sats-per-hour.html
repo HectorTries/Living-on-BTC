@@ -234,8 +234,8 @@
 
         function calcSats(income, price) {
             if (!price || !income) return 0;
-            const hourlyIncome = income / hoursInPeriod[state.period];
-            return (hourlyIncome / price) * 100_000_000;
+            // Calculate total sats for the period (not hourly equivalent)
+            return (income / price) * 100_000_000;
         }
 
         async function updateDisplay() {
