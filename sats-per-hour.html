@@ -164,7 +164,6 @@
             satsValue: document.getElementById('satsValue'),
             fiatValue: document.getElementById('fiatValue'),
             periodLabel: document.getElementById('periodLabel'),
-            changeBadge: document.getElementById('changeBadge'),
             changeDisplay: document.getElementById('changeDisplay'),
             income: document.getElementById('income'),
             period: document.getElementById('period'),
@@ -257,11 +256,6 @@
                     // Sats change is inverse of BTC change
                     const satsChange = -change;
                     
-                    const badgeHtml = satsChange >= 0 
-                        ? `<span class="change-badge up"><i class="fas fa-arrow-up"></i> ${satsChange.toFixed(1)}%</span>`
-                        : `<span class="change-badge down"><i class="fas fa-arrow-down"></i> ${Math.abs(satsChange).toFixed(1)}%</span>`;
-                    
-                    els.changeBadge.innerHTML = badgeHtml;
                     els.changeDisplay.style.display = 'block';
                     els.changeDisplay.style.color = satsChange >= 0 ? 'var(--success)' : 'var(--danger)';
                     els.changeDisplay.innerHTML = satsChange >= 0 
