@@ -209,8 +209,14 @@
                 return historyCache.data;
             }
             try {
-                const maxPoints = days <= 30 ? 30 : days <= 365 ? 100 : 150;
+                const maxPoints = days <= 30 ? 30 : 100;
                 const res = await fetch(`${COINGECKO_BASE}/coins/bitcoin/market_chart?vs_currency=${state.currency}&days=${days}`);
+                
+                if (!res.ok) {
+                    console.log('API limit, using cache');
+                    return historyCache.data || [];
+                }
+                
                 const data = await res.json();
                 let prices = data.prices || [];
                 if (prices.length > maxPoints) {
