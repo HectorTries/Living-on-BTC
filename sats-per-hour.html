@@ -242,10 +242,13 @@
                 if (prices.length >= 2) {
                     const firstPrice = prices[0][1];
                     const change = ((state.currentPrice - firstPrice) / firstPrice) * 100;
-                    const isUp = change >= 0;
-                    els.changeBadge.innerHTML = isUp 
-                        ? `<span class="change-badge up"><i class="fas fa-arrow-up"></i> ${change.toFixed(1)}% vs ${state.chartDays === 1 ? '24h ago' : state.chartDays === 30 ? '1 month ago' : state.chartDays === 365 ? '1 year ago' : '5 years ago'}</span>`
-                        : `<span class="change-badge down"><i class="fas fa-arrow-down"></i> ${Math.abs(change).toFixed(1)}% vs ${state.chartDays === 1 ? '24h ago' : state.chartDays === 30 ? '1 month ago' : state.chartDays === 365 ? '1 year ago' : '5 years ago'}</span>`;
+                    const isBtcUp = change >= 0;
+                    // Sats change is inverse of BTC change
+                    const satsChange = -change;
+                    
+                    els.changeBadge.innerHTML = isBtcUp 
+                        ? `<span class="change-badge down"><i class="fas fa-arrow-down"></i> ${satsChange.toFixed(1)}% sats (BTC up ${change.toFixed(1)}%)</span>`
+                        : `<span class="change-badge up"><i class="fas fa-arrow-up"></i> ${Math.abs(satsChange).toFixed(1)}% sats (BTC down ${Math.abs(change).toFixed(1)}%)</span>`;
                 }
             } else {
                 els.satsValue.textContent = '—';
