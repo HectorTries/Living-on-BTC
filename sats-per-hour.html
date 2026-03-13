@@ -20,6 +20,7 @@
         .hero-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 24px; padding: 40px; text-align: center; margin-bottom: 24px; position: relative; overflow: hidden; }
         .hero-card::before { content: ''; display: block; height: 3px; background: linear-gradient(90deg, #f7931a, #ff6b35); border-radius: 24px 24px 0 0; margin: -40px -40px 24px -40px; }
         .hero-card .watermark { position: absolute; bottom: 12px; right: 20px; font-size: 0.7rem; color: rgba(255,255,255,0.3); font-weight: 600; }
+        .hero-card .change-display { position: absolute; top: 20px; right: 20px; font-size: 1.5rem; font-weight: 800; }
         .hero-label { font-size: 0.875rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; }
         .sats-display { font-size: 4rem; font-weight: 800; color: var(--btc-orange); line-height: 1; margin-bottom: 8px; }
         .fiat-display { font-size: 1.125rem; color: var(--text-secondary); margin-bottom: 4px; }
@@ -71,12 +72,12 @@
             <p>See how much Bitcoin you're earning in fiat</p>
         </div>
         
-        <div class="hero-card">
+            <div class="hero-card" id="heroCard">
             <div class="hero-label">Your Sats Earnings</div>
             <div class="sats-display" id="satsValue">—</div>
             <div class="fiat-display" id="fiatValue">—</div>
             <div class="period-label" id="periodLabel">per hour</div>
-            <div id="changeBadge"></div>
+            <div class="change-display" id="changeDisplay" style="display:none;"></div>
             <div class="live-indicator"><span class="live-dot"></span><span>LIVE</span></div>
             <div class="watermark">livingonbtc.com</div>
         </div>
@@ -164,6 +165,7 @@
             fiatValue: document.getElementById('fiatValue'),
             periodLabel: document.getElementById('periodLabel'),
             changeBadge: document.getElementById('changeBadge'),
+            changeDisplay: document.getElementById('changeDisplay'),
             income: document.getElementById('income'),
             period: document.getElementById('period'),
             currency: document.getElementById('currency'),
@@ -255,9 +257,16 @@
                     // Sats change is inverse of BTC change
                     const satsChange = -change;
                     
-                    els.changeBadge.innerHTML = satsChange >= 0 
+                    const badgeHtml = satsChange >= 0 
                         ? `<span class="change-badge up"><i class="fas fa-arrow-up"></i> ${satsChange.toFixed(1)}%</span>`
                         : `<span class="change-badge down"><i class="fas fa-arrow-down"></i> ${Math.abs(satsChange).toFixed(1)}%</span>`;
+                    
+                    els.changeBadge.innerHTML = badgeHtml;
+                    els.changeDisplay.style.display = 'block';
+                    els.changeDisplay.style.color = satsChange >= 0 ? 'var(--success)' : 'var(--danger)';
+                    els.changeDisplay.innerHTML = satsChange >= 0 
+                        ? `<span style="color:var(--success)">▲ ${satsChange.toFixed(1)}%</span>`
+                        : `<span style="color:var(--danger)">▼ ${Math.abs(satsChange).toFixed(1)}%</span>`;
                 }
             } else {
                 els.satsValue.textContent = '—';
@@ -334,14 +343,34 @@
 
         // Share functionality
         els.shareBtn.addEventListener('click', async () => {
-            els.shareBtn.textContent = 'Generating image...';
+            els.shareBtn.textContent = 'Generating...';
             
             try {
-                const heroCard = document.querySelector('.hero-card');
-                const canvas = await html2canvas(heroCard, {
+                // Get current sats value and change
+                const satsText = els.satsValue.textContent;
+                const fiatText = els.fiatValue.textContent;
+                const periodText = els.periodLabel.textContent;
+                const changeText = els.changeDisplay.innerHTML || '';
+                const isUp = els.changeDisplay.innerHTML.includes('▲');
+                
+                // Create a square container for the capture
+                const container = document.createElement('div');
+                container.style.cssText = 'width: 500px; height: 500px; background: #161616; display: flex; align-items: center; justify-content: center; padding: 40px; box-sizing: border-box; flex-direction: column; position: relative;';
+                container.innerHTML = `
+                    <div style="font-size: 0.8rem; color: #888; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.1em;">Your Sats Earnings</div>
+                    <div style="font-size: 4rem; font-weight: 800; color: #f7931a; line-height: 1; margin-bottom: 8px;">${satsText}</div>
+                    <div style="font-size: 1.2rem; color: #888; margin-bottom: 4px;">${fiatText} ${periodText}</div>
+                    <div style="font-size: 2rem; font-weight: 800; margin-top: 16px; ${isUp ? 'color: #00c853;' : 'color: #ff4444;'}">${changeText}</div>
+                    <div style="position: absolute; bottom: 20px; right: 20px; font-size: 0.8rem; color: rgba(255,255,255,0.3);">livingonbtc.com</div>
+                `;
+                document.body.appendChild(container);
+                
+                const canvas = await html2canvas(container, {
                     backgroundColor: '#161616',
                     scale: 2
                 });
+                
+                document.body.removeChild(container);
                 
                 canvas.toBlob(async (blob) => {
                     const file = new File([blob], 'sats-calculator.png', { type: 'image/png' });
