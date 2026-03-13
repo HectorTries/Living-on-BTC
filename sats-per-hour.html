@@ -8,6 +8,7 @@
     <link rel="canonical" href="https://livingonbtc.com/sats-per-hour.html">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <style>
         :root { --btc-orange: #f7931a; --bg-dark: #0d0d0d; --bg-card: #161616; --bg-elevated: #1e1e1e; --border-subtle: #2a2a2a; --text-primary: #ffffff; --text-secondary: #888888; --success: #00c853; --danger: #ff4444; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -330,14 +331,47 @@
         }
 
         // Share functionality
-        els.shareBtn.addEventListener('click', () => {
-            const text = `I'm earning ${els.satsValue.textContent} sats ${periods[state.period]}! ${currencyNames[state.currency]}${state.income} at current BTC price.`;
-            if (navigator.share) {
-                navigator.share({ title: 'My Sats Calculator', text: text, url: window.location.href });
-            } else {
+        els.shareBtn.addEventListener('click', async () => {
+            els.shareBtn.textContent = 'Generating image...';
+            
+            try {
+                const heroCard = document.querySelector('.hero-card');
+                const canvas = await html2canvas(heroCard, {
+                    backgroundColor: '#161616',
+                    scale: 2
+                });
+                
+                canvas.toBlob(async (blob) => {
+                    const file = new File([blob], 'sats-calculator.png', { type: 'image/png' });
+                    
+                    if (navigator.share && navigator.canShare({ files: [file] })) {
+                        await navigator.share({
+                            title: 'My Sats Calculator',
+                            text: `I'm earning ${els.satsValue.textContent} sats ${periods[state.period]}!`,
+                            files: [file]
+                        });
+                    } else {
+                        // Fallback: download image
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'sats-calculator.png';
+                        a.click();
+                        URL.revokeObjectURL(url);;
+                        els.shareBtn.innerHTML = '<i class="fas fa-download"></i> Downloaded!';
+                        setTimeout(() => els.shareBtn.innerHTML = '<i class="fas fa-share-alt"></i> Share Tile', 2000);
+                        return;
+                    }
+                    els.shareBtn.innerHTML = '<i class="fas fa-check"></i> Shared!';
+                    setTimeout(() => els.shareBtn.innerHTML = '<i class="fas fa-share-alt"></i> Share Tile', 2000);
+                });
+            } catch (e) {
+                console.error(e);
+                // Fallback to text
+                const text = `I'm earning ${els.satsValue.textContent} sats ${periods[state.period]}!`;
                 navigator.clipboard.writeText(text);
                 els.shareBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
-                setTimeout(() => els.shareBtn.innerHTML = '<i class="fas fa-share-alt"></i> Share This Tile', 2000);
+                setTimeout(() => els.shareBtn.innerHTML = '<i class="fas fa-share-alt"></i> Share Tile', 2000);
             }
         });
 
