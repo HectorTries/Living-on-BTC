@@ -246,9 +246,9 @@
                     // Sats change is inverse of BTC change
                     const satsChange = -change;
                     
-                    els.changeBadge.innerHTML = isBtcUp 
-                        ? `<span class="change-badge down"><i class="fas fa-arrow-down"></i> ${satsChange.toFixed(1)}% sats (BTC up ${change.toFixed(1)}%)</span>`
-                        : `<span class="change-badge up"><i class="fas fa-arrow-up"></i> ${Math.abs(satsChange).toFixed(1)}% sats (BTC down ${Math.abs(change).toFixed(1)}%)</span>`;
+                    els.changeBadge.innerHTML = satsChange >= 0 
+                        ? `<span class="change-badge up"><i class="fas fa-arrow-up"></i> ${satsChange.toFixed(1)}%</span>`
+                        : `<span class="change-badge down"><i class="fas fa-arrow-down"></i> ${Math.abs(satsChange).toFixed(1)}%</span>`;
                 }
             } else {
                 els.satsValue.textContent = '—';
