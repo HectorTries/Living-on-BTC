@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <!-- Google tag (gtag.js) -->
@@ -10,9 +10,55 @@
         gtag('js', new Date());
         gtag('config', 'G-C25ZWRJKXL');
     </script>
-    <title>Bitcoin vs Global Wages - LivingOnBTC</title>
+    <title>Bitcoin vs Global Labour | Hours to Earn BTC by Wage Level</title>
+    <meta name="description" content="Calculate how many hours of minimum and median wage work it takes to afford Bitcoin across UK, US, Turkey, Mexico, Canada, and Japan. Track sats earned per hour over time.">
+    <meta name="keywords" content="Bitcoin salary, Bitcoin wages, hours to buy Bitcoin, sats per hour, minimum wage Bitcoin, global Bitcoin comparison">
     <link rel="canonical" href="https://livingonbtc.com/bitcoin-salary.html">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://livingonbtc.com/bitcoin-salary.html">
+    <meta property="og:title" content="Bitcoin vs Global Labour | Hours to Earn BTC by Wage Level">
+    <meta property="og:description" content="See how many hours of minimum and median wage work it takes to afford Bitcoin across different countries. Track your sats earned per hour.">
+    <meta property="og:image" content="https://livingonbtc.com/images/og-bitcoin-salary.png">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Bitcoin vs Global Labour | Hours to Earn BTC">
+    <meta name="twitter:description" content="Track how many hours of minimum and median wage work it takes to afford Bitcoin across different countries.">
+    <meta name="twitter:image" content="https://livingonbtc.com/images/og-bitcoin-salary.png">
+    
+    <!-- Structured Data - WebApplication -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Bitcoin Labour Calculator",
+      "alternateName": "Bitcoin vs Global Wages",
+      "description": "Calculate how many hours of minimum and median wage work it takes to afford Bitcoin across UK, US, Turkey, Mexico, Canada, and Japan.",
+      "url": "https://livingonbtc.com/bitcoin-salary.html",
+      "applicationCategory": "FinanceApplication",
+      "operatingSystem": "All",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "featureList": [
+        "Compare Bitcoin across 6 countries",
+        "Calculate hours to buy Bitcoin",
+        "Track sats earned per hour",
+        "View historical wage data"
+      ],
+      "creator": {
+        "@type": "Organization",
+        "name": "LivingOnBTC",
+        "url": "https://livingonbtc.com"
+      }
+    }
+    </script>
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <style>
@@ -235,6 +281,18 @@
             margin-bottom: 2rem;
             backdrop-filter: blur(10px);
         }
+        
+        .chart-container figure {
+            margin: 0;
+        }
+        
+        .chart-title {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
 
         .chart-wrapper {
             position: relative;
@@ -322,9 +380,14 @@
             }
             
             .header h1 {
-                font-size: 2rem;
+                font-size: 1.75rem;
                 flex-direction: column;
                 gap: 10px;
+            }
+            
+            .header p {
+                font-size: 1rem;
+                padding: 0 1rem;
             }
             
             .live-metrics {
@@ -333,19 +396,111 @@
                 gap: 1rem;
             }
             
+            .btc-price-card {
+                width: 100%;
+                max-width: 280px;
+            }
+            
             .sats-metrics {
                 justify-content: center;
-                gap: 1rem;
+                gap: 0.75rem;
+                width: 100%;
+            }
+            
+            .sats-metric {
+                flex: 1;
+                min-width: 140px;
+                padding: 1rem;
             }
             
             .chart-wrapper {
-                height: 400px;
+                height: 350px;
             }
             
             .controls {
                 flex-direction: column;
                 align-items: center;
+                gap: 1rem;
             }
+            
+            .country-selector, .time-selector {
+                width: 100%;
+                justify-content: flex-start;
+                padding: 0.25rem;
+            }
+            
+            .country-btn, .time-btn {
+                padding: 8px 12px;
+                font-size: 0.85rem;
+                white-space: nowrap;
+            }
+            
+            .metrics-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .metric-card {
+                padding: 1.25rem;
+            }
+            
+            .metric-card h3 {
+                font-size: 0.95rem;
+            }
+            
+            .metric-value {
+                font-size: 1.5rem;
+            }
+            
+            .explanation {
+                padding: 1.25rem;
+            }
+            
+            .explanation h2 {
+                font-size: 1.35rem;
+            }
+            
+            .explanation p {
+                font-size: 0.95rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .sats-metric {
+                min-width: 100%;
+            }
+            
+            .chart-wrapper {
+                height: 300px;
+            }
+            
+            .nav-back a {
+                font-size: 0.9rem;
+                padding: 8px 12px;
+            }
+        }
+        
+        /* Touch-friendly improvements */
+        .country-btn, .time-btn, .nav-back a {
+            min-height: 44px;
+            min-width: 44px;
+            touch-action: manipulation;
+        }
+        
+        /* Improve readability */
+        body {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        /* Better focus states for accessibility */
+        .country-btn:focus, .time-btn:focus, .nav-back a:focus {
+            outline: 2px solid var(--bitcoin-orange);
+            outline-offset: 2px;
         }
     </style>
 </head>
@@ -409,11 +564,12 @@
         </div>
 
         <div id="content" style="display: none;">
-            <div class="chart-container">
+            <figure class="chart-container" role="img" aria-labelledby="chart-title">
+                <figcaption id="chart-title" class="chart-title">Bitcoin Labour Hours Comparison</figcaption>
                 <div class="chart-wrapper">
-                    <canvas id="comparisonChart"></canvas>
+                    <canvas id="comparisonChart" aria-label="Line chart showing sats per hour earned from minimum and median wages over time"></canvas>
                 </div>
-            </div>
+            </figure>
 
             <div class="metrics-grid">
                 <div class="metric-card">
