@@ -10,9 +10,53 @@
         gtag('js', new Date());
         gtag('config', 'G-C25ZWRJKXL');
     </script>
-    <title>Bitcoin FIRE Calculator | LivingOnBTC</title>
+    <title>Bitcoin FIRE Calculator | When Will Your BTC Replace Your Income?</title>
+    <meta name="description" content="Calculate when your Bitcoin holdings could generate enough annual appreciation to replace your income. Plan your path to financial freedom on the Bitcoin standard.">
     <link rel="canonical" href="https://livingonbtc.com/bitcoinfire.html">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://livingonbtc.com/bitcoinfire.html">
+    <meta property="og:title" content="Bitcoin FIRE Calculator - When Can BTC Replace Your Income?">
+    <meta property="og:description" content="Calculate when your Bitcoin holdings could generate enough annual appreciation to replace your income. Plan your path to financial freedom on the Bitcoin standard.">
+    <meta property="og:image" content="https://livingonbtc.com/images/og-bitcoinfire.png">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Bitcoin FIRE Calculator - When Can BTC Replace Your Income?">
+    <meta name="twitter:description" content="Calculate when your Bitcoin holdings could generate enough annual appreciation to replace your income.">
+    <meta name="twitter:image" content="https://livingonbtc.com/images/og-bitcoinfire.png">
+    
+    <!-- Structured Data - WebApplication -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Bitcoin FIRE Calculator",
+      "alternateName": "Bitcoin Freedom Calculator",
+      "description": "Calculate when your Bitcoin holdings could generate enough annual appreciation to replace your income. Plan your path to financial freedom on the Bitcoin standard.",
+      "url": "https://livingonbtc.com/bitcoinfire.html",
+      "applicationCategory": "FinanceApplication",
+      "operatingSystem": "All",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "featureList": [
+        "Calculate Bitcoin freedom date",
+        "Project BTC appreciation vs income",
+        "Model monthly DCA contributions",
+        "Track path to financial independence"
+      ],
+      "creator": {
+        "@type": "Organization",
+        "name": "LivingOnBTC",
+        "url": "https://livingonbtc.com"
+      }
+    }
+    </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
     <style>
@@ -257,6 +301,96 @@
                 radial-gradient(circle at 90% 65%, var(--bitcoin-orange) 0%, transparent 0.6%);
         }
 
+        /* Skip Link for Accessibility */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--bitcoin-orange);
+            color: white;
+            padding: 8px 16px;
+            z-index: 100;
+            transition: top 0.3s;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+                margin: 1rem auto;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .tab {
+                margin: 0.25rem 0;
+            }
+            
+            .input-card {
+                padding: 1.5rem;
+            }
+            
+            .milestone-date {
+                font-size: 2rem;
+            }
+            
+            .result-card {
+                padding: 1.5rem;
+            }
+            
+            .chart-container {
+                height: 300px;
+            }
+            
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-links {
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .input-group input {
+                font-size: 1rem;
+                padding: 0.75rem;
+            }
+            
+            .stat-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .container {
+                padding: 0.75rem;
+            }
+            
+            .input-card {
+                padding: 1rem;
+            }
+            
+            button {
+                padding: 0.75rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+
         h1 {
             text-align: center;
             font-size: 2.5rem;
@@ -330,22 +464,25 @@
     </style>
 </head>
 <body>
+    <!-- Skip Link for Accessibility -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    
     <div class="bitcoin-particles"></div>
-    <div class="container">
-        <h1><i class="fab fa-bitcoin"></i> Bitcoin Freedom Calculator</h1>
+    <div class="container" id="main-content">
+        <h1><i class="fab fa-bitcoin" aria-hidden="true"></i> Bitcoin Freedom Calculator</h1>
         
         <div class="nav-links" style="margin-bottom: 2rem;">
-            <a href="index.html" class="nav-link"><i class="fas fa-home"></i> Home</a>
-            <a href="calculator.html" class="nav-link"><i class="fas fa-calculator"></i> Standard Calculator</a>
+            <a href="index.html" class="nav-link" aria-label="Go to home page"><i class="fas fa-home" aria-hidden="true"></i> Home</a>
+            <a href="calculator.html" class="nav-link" aria-label="Go to standard calculator"><i class="fas fa-calculator" aria-hidden="true"></i> Standard Calculator</a>
         </div>
         
-        <div class="tabs">
-            <div class="tab active" data-tab="calculator">Calculator</div>
-            <div class="tab" data-tab="about">About</div>
+        <div class="tabs" role="tablist" aria-label="Calculator sections">
+            <div class="tab active" data-tab="calculator" role="tab" aria-selected="true" tabindex="0">Calculator</div>
+            <div class="tab" data-tab="about" role="tab" aria-selected="false" tabindex="0">About</div>
         </div>
         
-        <div class="tab-content active" id="calculator">
-            <div class="input-card">
+        <div class="tab-content active" id="calculator" role="tabpanel" aria-labelledby="tab-calculator">
+            <form class="input-card" id="fireCalculatorForm" aria-label="Bitcoin FIRE Calculator inputs">
                 <div class="input-group">
                     <label for="annualIncome">Your Annual Net Income</label>
                     <input type="number" id="annualIncome" min="1000" value="50000">
@@ -376,12 +513,13 @@
                     <div class="helper-text">Assumed annual raise to your net income (default 3%)</div>
                 </div>
 
-                <button id="calculateBtn">
-                    <i class="fas fa-calculator"></i> Calculate Freedom Date
+                <button id="calculateBtn" aria-label="Calculate your Bitcoin freedom date">
+                    <i class="fas fa-calculator" aria-hidden="true"></i> Calculate Freedom Date
                 </button>
+            </form>
             </div>
 
-            <div class="results-container" id="results" style="display: none;">
+            <div class="results-container" id="results" style="display: none;" aria-live="polite">
                 <div class="result-card">
                     <h2>Your Bitcoin Freedom Date</h2>
                     <div class="milestone-date" id="freedomDate">-</div>
@@ -395,7 +533,7 @@
             </div>
         </div>
 
-        <div class="tab-content" id="about">
+        <div class="tab-content" id="about" role="tabpanel" aria-labelledby="tab-about">
             <h2>About the Bitcoin Freedom Calculator</h2>
             <p>This calculator helps you determine when your Bitcoin holdings might generate enough annual appreciation to replace your income.</p>
             
@@ -414,25 +552,25 @@
             </div>
         </div>
 
-        <div class="card-grid">
-            <div class="related-card">
-                <i class="fas fa-calculator"></i>
+        <section class="card-grid" aria-label="Related calculators">
+            <article class="related-card">
+                <i class="fas fa-calculator" aria-hidden="true"></i>
                 <h3>Standard Calculator</h3>
                 <p>Track your purchasing power on the Bitcoin standard</p>
-                <a href="calculator.html">Use Calculator</a>
-            </div>
-            <div class="related-card">
-                <i class="fas fa-building"></i>
+                <a href="calculator.html" aria-label="Use the Standard Calculator">Use Calculator</a>
+            </article>
+            <article class="related-card">
+                <i class="fas fa-building" aria-hidden="true"></i>
                 <h3>Corporate Treasury</h3>
                 <p>Model corporate Bitcoin allocation strategies</p>
-                <a href="bitcoin-salary.html">Analyze Strategy</a>
-            </div>
-            <div class="related-card">
-                <i class="fas fa-chart-line"></i>
+                <a href="bitcoin-salary.html" aria-label="Analyze Corporate Treasury Strategy">Analyze Strategy</a>
+            </article>
+            <article class="related-card">
+                <i class="fas fa-chart-line" aria-hidden="true"></i>
                 <h3>Loan Backtest</h3>
                 <p>Analyze Bitcoin-backed loans historically</p>
-            </div>
-        </div>
+            </article>
+        </section>
     </div>
 
     <script>

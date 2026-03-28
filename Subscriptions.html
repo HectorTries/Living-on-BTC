@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <!-- Google tag (gtag.js) -->
@@ -10,9 +10,91 @@
         gtag('js', new Date());
         gtag('config', 'G-C25ZWRJKXL');
     </script>
-    <title>Bitcoin Subscription Calculator | LivingOnBTC</title>
+    <title>Bitcoin Subscription Calculator | Pre-Fund Your Bills with BTC</title>
+    <meta name="description" content="Calculate how much Bitcoin you need today to fund your subscriptions indefinitely. Backtest your strategy against historical Bitcoin prices.">
+    <meta name="keywords" content="Bitcoin subscription calculator, BTC subscriptions, pre-fund Bitcoin, perpetual Bitcoin, subscription sustainability, Netflix Bitcoin, streaming subscriptions BTC">
     <link rel="canonical" href="https://livingonbtc.com/Subscriptions.html">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1a1f36">
+    
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://livingonbtc.com/Subscriptions.html">
+    <meta property="og:title" content="Bitcoin Subscription Calculator - Fund Your Bills with BTC Forever">
+    <meta property="og:description" content="Calculate how much Bitcoin you need today to fund your subscriptions indefinitely. See if your investment would have been sustainable.">
+    <meta property="og:image" content="https://livingonbtc.com/images/og-subscriptions.png">
+    <meta property="og:site_name" content="LivingOnBTC">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Bitcoin Subscription Calculator - Fund Your Bills with BTC Forever">
+    <meta name="twitter:description" content="Calculate how much Bitcoin you need today to fund your subscriptions indefinitely.">
+    <meta name="twitter:image" content="https://livingonbtc.com/images/og-subscriptions.png">
+    
+    <!-- Structured Data - WebApplication -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Bitcoin Subscription Calculator",
+      "alternateName": "BTC Subscription Backtester",
+      "description": "Calculate how much Bitcoin you need today to fund your subscriptions indefinitely. Backtest your strategy against historical Bitcoin prices.",
+      "url": "https://livingonbtc.com/Subscriptions.html",
+      "applicationCategory": "FinanceApplication",
+      "operatingSystem": "All",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "featureList": [
+        "Calculate initial investment for perpetual subscriptions",
+        "Backtest against historical Bitcoin prices",
+        "Support for multiple currencies (USD, EUR, GBP, JPY, AUD)",
+        "Model Bitcoin 4-year cycle performance",
+        "Track BTC balance and portfolio value over time"
+      ],
+      "creator": {
+        "@type": "Organization",
+        "name": "LivingOnBTC",
+        "url": "https://livingonbtc.com"
+      }
+    }
+    </script>
+    
+    <!-- Structured Data - FAQPage for SEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How does the Bitcoin subscription calculator work?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The calculator determines how much Bitcoin you need to set aside today to fund your subscriptions indefinitely. It backtests your strategy against historical Bitcoin prices to show whether your initial investment would have been sufficient."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the Bitcoin 4-year cycle?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Bitcoin historically follows a 4-year cycle with approximately 3 bull years of growth followed by 1 bear year with significant decline. The calculator uses this pattern to project future Bitcoin prices for sustainability analysis."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is past performance indicative of future results?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No, past performance does not guarantee future results. The calculator provides historical backtesting and projections based on historical patterns, but Bitcoin's future performance may differ significantly."
+          }
+        }
+      ]
+    }
+    </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
     <style>
@@ -179,6 +261,141 @@
         .summary-value {
             font-weight: bold;
             color: var(--bitcoin-orange);
+        }
+
+        /* Enhanced responsive breakpoints */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem;
+                margin: 10px auto;
+                width: 94%;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .tagline {
+                font-size: 1.1rem;
+                margin-bottom: 2rem;
+            }
+            
+            .input-row {
+                flex-direction: column;
+            }
+            
+            .input-col {
+                width: 100%;
+                margin-bottom: 1rem;
+            }
+            
+            .subscription-presets {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+            
+            .preset-btn {
+                min-height: 90px;
+                padding: 0.8rem;
+            }
+            
+            .preset-btn .amount {
+                font-size: 1.2rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .chart-container {
+                height: 300px;
+            }
+            
+            table {
+                font-size: 0.85rem;
+            }
+            
+            th, td {
+                padding: 0.6rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 1rem;
+                margin: 5px auto;
+                width: 96%;
+                border-radius: 12px;
+            }
+            
+            h1 {
+                font-size: 1.6rem;
+            }
+            
+            .tagline {
+                font-size: 1rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            .tabs {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .tab {
+                margin: 0;
+            }
+            
+            .subscription-presets {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+            
+            .preset-btn {
+                min-height: 80px;
+                padding: 0.6rem;
+            }
+            
+            .preset-btn .amount {
+                font-size: 1.1rem;
+            }
+            
+            .preset-btn .service {
+                font-size: 0.75rem;
+            }
+            
+            input, select {
+                font-size: 1rem;
+                padding: 0.8rem;
+            }
+            
+            #calculateBtn {
+                font-size: 1.1rem;
+                padding: 1rem;
+            }
+            
+            .result-highlight {
+                font-size: 1.3rem;
+                padding: 1rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .chart-container {
+                height: 250px;
+            }
+            
+            .table-container {
+                overflow-x: auto;
+            }
+            
+            table {
+                font-size: 0.8rem;
+                min-width: 500px;
+            }
         }
 
         @media (max-width: 600px) {
