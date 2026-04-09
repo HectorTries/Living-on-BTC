@@ -306,14 +306,14 @@
                 </div>
                 <div class="form-group">
                     <label for="sharePrice">Share Price ($)</label>
-                    <input type="number" id="sharePrice" value="90" min="0" step="0.01">
+                    <input type="number" id="sharePrice" value="100" min="0" step="0.01" placeholder="100 (pegged)">
                 </div>
             </div>
             
             <div class="grid-2">
                 <div class="form-group">
                     <label for="dividendRate">Annual Dividend Rate (%)</label>
-                    <input type="number" id="dividendRate" value="9.0" min="0" max="20" step="0.1">
+                    <input type="number" id="dividendRate" value="11.5" min="0" max="20" step="0.1">
                 </div>
                 <div class="form-group">
                     <label for="gbpUsd">GBP/USD Exchange Rate</label>
@@ -324,7 +324,7 @@
             <div class="rate-info">
                 <i class="fas fa-info-circle"></i>
                 <strong>STRC</strong> is Strategy Inc's (formerly MicroStrategy) Stretch Preferred Stock. 
-                Current rate: ~9% annually (variable, paid monthly). Price: $90/share.
+                <strong>Pegged at $100/share</strong> • Current yield: <strong>11.5%</strong> ($11.50/year, paid monthly).
             </div>
             
             <button class="btn-primary" onclick="calculate()">
