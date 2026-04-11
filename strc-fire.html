@@ -219,6 +219,11 @@
                 <input type="number" id="numShares" placeholder="e.g. 100" min="0">
             </div>
             
+            <div class="form-group">
+                <label for="gbpUsd">GBP/USD Exchange Rate</label>
+                <input type="number" id="gbpUsd" value="1.27" min="0" step="0.01">
+            </div>
+            
             <div class="rate-info">
                 <i class="fas fa-info-circle"></i>
                 <strong>STRC</strong> = Strategy Inc Stretch Preferred Stock<br>
@@ -240,16 +245,16 @@
             
             <div class="stats-grid">
                 <div class="stat-box">
-                    <div class="value" id="annualIncome">£0</div>
+                    <div class="value" id="monthlyIncomeUsd">$0</div>
+                    <div class="label">per month (USD)</div>
+                </div>
+                <div class="stat-box">
+                    <div class="value" id="annualIncome">£0 / $0</div>
                     <div class="label">per year</div>
                 </div>
                 <div class="stat-box">
-                    <div class="value" id="totalValue">£0</div>
+                    <div class="value" id="totalValue">£0 / $0</div>
                     <div class="label">share value</div>
-                </div>
-                <div class="stat-box">
-                    <div class="value" id="yieldPercent">11.5%</div>
-                    <div class="label">annual yield</div>
                 </div>
             </div>
             
@@ -271,7 +276,7 @@
     <script>
         function calculate() {
             const numShares = parseFloat(document.getElementById('numShares').value);
-            const gbpUsd = 1.27;
+            const gbpUsd = parseFloat(document.getElementById('gbpUsd').value) || 1.27;
             
             if (!numShares || numShares <= 0) {
                 alert('Please enter number of shares');
@@ -291,15 +296,18 @@
             const totalValueGbp = totalValueUsd / gbpUsd;
             
             document.getElementById('monthlyIncome').textContent = '£' + Math.round(monthlyIncomeGbp).toLocaleString();
-            document.getElementById('annualIncome').textContent = '£' + Math.round(annualIncomeGbp).toLocaleString();
-            document.getElementById('totalValue').textContent = '£' + Math.round(totalValueGbp).toLocaleString();
+            document.getElementById('monthlyIncomeUsd').textContent = '$' + Math.round(monthlyIncomeUsd).toLocaleString();
+            document.getElementById('annualIncome').textContent = '£' + Math.round(annualIncomeGbp).toLocaleString() + ' / $' + Math.round(annualIncomeUsd).toLocaleString();
+            document.getElementById('totalValue').textContent = '£' + Math.round(totalValueGbp).toLocaleString() + ' / $' + Math.round(totalValueUsd).toLocaleString();
             
             document.getElementById('result').classList.add('show');
             document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
         }
         
-        document.getElementById('numShares').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') calculate();
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') calculate();
+            });
         });
     </script>
 </body>
