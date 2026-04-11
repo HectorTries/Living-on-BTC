@@ -219,6 +219,11 @@
                 <input type="number" id="numShares" placeholder="e.g. 100" min="0">
             </div>
             
+            <div class="form-group">
+                <label for="yearsToCompound">Years to Reinvest Dividends (optional)</label>
+                <input type="number" id="yearsToCompound" placeholder="e.g. 10" min="0" max="50">
+            </div>
+            
             <div class="rate-info">
                 <i class="fas fa-info-circle"></i>
                 <strong>STRC</strong> = Strategy Inc Stretch Preferred Stock<br>
@@ -249,6 +254,13 @@
                 </div>
             </div>
             
+            <div id="compoundSection" style="display:none;">
+                <div class="stat-box" style="margin-top:15px;border:2px solid var(--primary);">
+                    <div class="value" style="color:var(--primary);" id="compoundValue">$0</div>
+                    <div class="label" id="compoundYears">in 0 years</div>
+                </div>
+            </div>
+            
             <div class="disclaimer">
                 <i class="fas fa-exclamation-triangle"></i>
                 <strong>Note:</strong> STRC dividend rate is variable. This is for estimation only.
@@ -267,6 +279,7 @@
     <script>
         function calculate() {
             const numShares = parseFloat(document.getElementById('numShares').value);
+            const years = parseInt(document.getElementById('yearsToCompound').value) || 0;
             
             if (!numShares || numShares <= 0) {
                 alert('Please enter number of shares');
@@ -285,12 +298,30 @@
             document.getElementById('annualIncome').textContent = '$' + Math.round(annualIncome).toLocaleString();
             document.getElementById('totalValue').textContent = '$' + Math.round(totalValue).toLocaleString();
             
+            // Compound calculation (dividends reinvested to buy more shares at $100)
+            if (years > 0) {
+                const rate = 0.115; // 11.5%
+                // Future value with contributions (annual dividends reinvested)
+                let futureValue = totalValue * Math.pow(1 + rate, years);
+                // Add compound effect of reinvested dividends
+                // Using formula for compound interest with annual contributions
+                const compounded = totalValue * Math.pow(1 + rate, years);
+                
+                document.getElementById('compoundValue').textContent = '$' + Math.round(compounded).toLocaleString();
+                document.getElementById('compoundYears').textContent = 'in ' + years + ' years (reinvested)';
+                document.getElementById('compoundSection').style.display = 'block';
+            } else {
+                document.getElementById('compoundSection').style.display = 'none';
+            }
+            
             document.getElementById('result').classList.add('show');
             document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
         }
         
-        document.getElementById('numShares').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') calculate();
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') calculate();
+            });
         });
     </script>
 </body>
