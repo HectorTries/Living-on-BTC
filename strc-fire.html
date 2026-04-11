@@ -12,7 +12,7 @@
     </script>
     <title>STRC Dividend Calculator | Strategy Inc Preferred Stock Income</title>
     <meta name="description" content="Calculate your monthly dividend income from Strategy Inc (STRC) preferred shares. See how much passive income your shares generate.">
-    <meta name="keywords" content="STRC dividend calculator, Strategy Inc preferred stock, dividend income, passive income, $100 share price">
+    <meta name="keywords" content="STRC dividend calculator, Strategy Inc preferred stock, dividend income, passive income">
     <link rel="canonical" href="https://livingonbtc.com/strc-fire.html">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
@@ -100,7 +100,7 @@
             color: var(--text-secondary);
         }
         
-        .form-group input, .form-group select {
+        .form-group input {
             width: 100%;
             padding: 14px 16px;
             border-radius: 10px;
@@ -111,7 +111,7 @@
             transition: border-color 0.2s, box-shadow 0.2s;
         }
         
-        .form-group input:focus, .form-group select:focus {
+        .form-group input:focus {
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(0, 212, 170, 0.2);
@@ -160,7 +160,7 @@
         
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(2, 1fr);
             gap: 15px;
             margin-top: 25px;
         }
@@ -219,15 +219,10 @@
                 <input type="number" id="numShares" placeholder="e.g. 100" min="0">
             </div>
             
-            <div class="form-group">
-                <label for="gbpUsd">GBP/USD Exchange Rate</label>
-                <input type="number" id="gbpUsd" value="1.27" min="0" step="0.01">
-            </div>
-            
             <div class="rate-info">
                 <i class="fas fa-info-circle"></i>
                 <strong>STRC</strong> = Strategy Inc Stretch Preferred Stock<br>
-                <strong>Pegged at $100/share</strong> • Yield: <strong>11.5% ($11.50/year)</strong> • Paid monthly
+                <strong>$100/share</strong> • <strong>11.5% yield ($11.50/year)</strong> • Paid monthly
             </div>
             
             <button class="btn-primary" onclick="calculate()">
@@ -239,21 +234,17 @@
             <h2><i class="fas fa-hand-holding-dollar"></i> Your Dividend Income</h2>
             
             <div class="big-number">
-                <span id="monthlyIncome">£0</span>
+                <span id="monthlyIncome">$0</span>
                 <span class="label">per month</span>
             </div>
             
             <div class="stats-grid">
                 <div class="stat-box">
-                    <div class="value" id="monthlyIncomeUsd">$0</div>
-                    <div class="label">per month (USD)</div>
-                </div>
-                <div class="stat-box">
-                    <div class="value" id="annualIncome">£0 / $0</div>
+                    <div class="value" id="annualIncome">$0</div>
                     <div class="label">per year</div>
                 </div>
                 <div class="stat-box">
-                    <div class="value" id="totalValue">£0 / $0</div>
+                    <div class="value" id="totalValue">$0</div>
                     <div class="label">share value</div>
                 </div>
             </div>
@@ -276,7 +267,6 @@
     <script>
         function calculate() {
             const numShares = parseFloat(document.getElementById('numShares').value);
-            const gbpUsd = parseFloat(document.getElementById('gbpUsd').value) || 1.27;
             
             if (!numShares || numShares <= 0) {
                 alert('Please enter number of shares');
@@ -287,27 +277,20 @@
             const annualDividendPerShare = 11.50;
             const monthlyDividendPerShare = annualDividendPerShare / 12;
             
-            const monthlyIncomeUsd = numShares * monthlyDividendPerShare;
-            const annualIncomeUsd = numShares * annualDividendPerShare;
-            const totalValueUsd = numShares * 100;
+            const monthlyIncome = numShares * monthlyDividendPerShare;
+            const annualIncome = numShares * annualDividendPerShare;
+            const totalValue = numShares * 100;
             
-            const monthlyIncomeGbp = monthlyIncomeUsd / gbpUsd;
-            const annualIncomeGbp = annualIncomeUsd / gbpUsd;
-            const totalValueGbp = totalValueUsd / gbpUsd;
-            
-            document.getElementById('monthlyIncome').textContent = '£' + Math.round(monthlyIncomeGbp).toLocaleString();
-            document.getElementById('monthlyIncomeUsd').textContent = '$' + Math.round(monthlyIncomeUsd).toLocaleString();
-            document.getElementById('annualIncome').textContent = '£' + Math.round(annualIncomeGbp).toLocaleString() + ' / $' + Math.round(annualIncomeUsd).toLocaleString();
-            document.getElementById('totalValue').textContent = '£' + Math.round(totalValueGbp).toLocaleString() + ' / $' + Math.round(totalValueUsd).toLocaleString();
+            document.getElementById('monthlyIncome').textContent = '$' + Math.round(monthlyIncome).toLocaleString();
+            document.getElementById('annualIncome').textContent = '$' + Math.round(annualIncome).toLocaleString();
+            document.getElementById('totalValue').textContent = '$' + Math.round(totalValue).toLocaleString();
             
             document.getElementById('result').classList.add('show');
             document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
         }
         
-        document.querySelectorAll('input').forEach(input => {
-            input.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') calculate();
-            });
+        document.getElementById('numShares').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') calculate();
         });
     </script>
 </body>
