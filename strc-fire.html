@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="theme-color" content="#1a1f36">
-    <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-C25ZWRJKXL"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
@@ -11,41 +10,32 @@
         gtag('js', new Date());
         gtag('config', 'G-C25ZWRJKXL');
     </script>
-    <title>STRC FIRE Calculator | When Will Your Strategy Shares Replace Your Income?</title>
-    <meta name="description" content="Calculate how many Strategy Inc (STRC) preferred shares you need to achieve financial independence. See when your dividend income covers your expenses.">
-    <meta name="keywords" content="STRC FIRE calculator, Strategy Inc FIRE, MSTR preferred stock, financial independence, dividend investing, passive income calculator">
+    <title>STRC Dividend Calculator | Strategy Inc Preferred Stock Income</title>
+    <meta name="description" content="Calculate your monthly dividend income from Strategy Inc (STRC) preferred shares. See how much passive income your shares generate.">
+    <meta name="keywords" content="STRC dividend calculator, Strategy Inc preferred stock, dividend income, passive income, $100 share price">
     <link rel="canonical" href="https://livingonbtc.com/strc-fire.html">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <!-- Open Graph / Social Media -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://livingonbtc.com/strc-fire.html">
-    <meta property="og:title" content="STRC FIRE Calculator - When Can Strategy Shares Replace Your Income?">
-    <meta property="og:description" content="Calculate how many STRC shares you need to cover your monthly expenses with dividend income.">
+    <meta property="og:title" content="STRC Dividend Calculator - Monthly Income from Strategy Shares">
+    <meta property="og:description" content="Calculate your monthly dividend income from STRC preferred shares.">
     <meta property="og:image" content="https://livingonbtc.com/images/og-strc-fire.png">
     
-    <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="STRC FIRE Calculator - When Can Strategy Shares Replace Your Income?">
-    <meta name="twitter:description" content="Calculate how many STRC shares you need to cover your monthly expenses.">
+    <meta name="twitter:title" content="STRC Dividend Calculator">
+    <meta name="twitter:description" content="Calculate your monthly dividend income from STRC preferred shares.">
     <meta name="twitter:image" content="https://livingonbtc.com/images/og-strc-fire.png">
     
-    <!-- Structured Data -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "WebApplication",
-      "name": "STRC FIRE Calculator",
-      "alternateName": "Strategy Share Freedom Calculator",
-      "description": "Calculate how many Strategy Inc (STRC) preferred shares you need to achieve financial independence through dividend income.",
+      "name": "STRC Dividend Calculator",
+      "description": "Calculate monthly dividend income from Strategy Inc STRC preferred shares",
       "url": "https://livingonbtc.com/strc-fire.html",
       "applicationCategory": "FinanceApplication",
-      "operatingSystem": "All",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "USD"
-      }
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
     }
     </script>
     
@@ -75,16 +65,9 @@
             padding: 0;
         }
         
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
         
-        header {
-            text-align: center;
-            padding: 40px 0 30px;
-        }
+        header { text-align: center; padding: 40px 0 30px; }
         
         header h1 {
             font-size: 2.5rem;
@@ -96,10 +79,7 @@
             background-clip: text;
         }
         
-        header p {
-            color: var(--text-secondary);
-            font-size: 1.1rem;
-        }
+        header p { color: var(--text-secondary); font-size: 1.1rem; }
         
         .card {
             background: var(--bg-card);
@@ -109,15 +89,9 @@
             border: 1px solid var(--border);
         }
         
-        .card h2 {
-            font-size: 1.25rem;
-            margin: 0 0 20px;
-            color: var(--text-primary);
-        }
+        .card h2 { font-size: 1.25rem; margin: 0 0 20px; color: var(--text-primary); }
         
-        .form-group {
-            margin-bottom: 20px;
-        }
+        .form-group { margin-bottom: 20px; }
         
         .form-group label {
             display: block;
@@ -143,16 +117,6 @@
             box-shadow: 0 0 0 3px rgba(0, 212, 170, 0.2);
         }
         
-        .grid-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-        
-        @media (max-width: 600px) {
-            .grid-2 { grid-template-columns: 1fr; }
-        }
-        
         .btn-primary {
             width: 100%;
             padding: 16px;
@@ -171,15 +135,9 @@
             box-shadow: 0 8px 20px rgba(0, 212, 170, 0.3);
         }
         
-        .result-card {
-            display: none;
-            text-align: center;
-        }
+        .result-card { display: none; text-align: center; }
         
-        .result-card.show {
-            display: block;
-            animation: fadeIn 0.5s ease;
-        }
+        .result-card.show { display: block; animation: fadeIn 0.5s ease; }
         
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
@@ -207,9 +165,7 @@
             margin-top: 25px;
         }
         
-        @media (max-width: 600px) {
-            .stats-grid { grid-template-columns: 1fr; }
-        }
+        @media (max-width: 600px) { .stats-grid { grid-template-columns: 1fr; } }
         
         .stat-box {
             background: #0f172a;
@@ -218,17 +174,8 @@
             text-align: center;
         }
         
-        .stat-box .value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: white;
-        }
-        
-        .stat-box .label {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            margin-top: 5px;
-        }
+        .stat-box .value { font-size: 1.5rem; font-weight: 700; color: white; }
+        .stat-box .label { font-size: 0.85rem; color: var(--text-secondary); margin-top: 5px; }
         
         .disclaimer {
             background: rgba(255, 193, 7, 0.1);
@@ -240,23 +187,7 @@
             color: #ffc107;
         }
         
-        .disclaimer i {
-            margin-right: 8px;
-        }
-        
-        .link-bitcoin {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            color: var(--primary);
-            text-decoration: none;
-            font-weight: 500;
-            margin-top: 20px;
-        }
-        
-        .link-bitcoin:hover {
-            text-decoration: underline;
-        }
+        .disclaimer i { margin-right: 8px; }
         
         .rate-info {
             background: rgba(0, 212, 170, 0.1);
@@ -267,64 +198,31 @@
             color: var(--primary);
         }
         
-        .rate-info strong {
-            color: white;
-        }
+        .rate-info strong { color: white; }
         
-        footer {
-            text-align: center;
-            padding: 30px;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
-        
-        footer a {
-            color: var(--primary);
-            text-decoration: none;
-        }
+        footer { text-align: center; padding: 30px; color: var(--text-secondary); font-size: 0.9rem; }
+        footer a { color: var(--primary); text-decoration: none; }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1><i class="fas fa-chart-line"></i> STRC FIRE Calculator</h1>
-            <p>How many Strategy Inc preferred shares do you need to replace your income?</p>
+            <h1><i class="fas fa-chart-line"></i> STRC Dividend Calculator</h1>
+            <p>Calculate your monthly income from Strategy Inc preferred shares</p>
         </header>
         
         <div class="card">
-            <h2><i class="fas fa-calculator"></i> Your Financial Profile</h2>
+            <h2><i class="fas fa-calculator"></i> Enter Your Shares</h2>
             
             <div class="form-group">
-                <label for="monthlyExpenses">Monthly Expenses (£)</label>
-                <input type="number" id="monthlyExpenses" placeholder="e.g. 2000" min="0" step="50">
-            </div>
-            
-            <div class="grid-2">
-                <div class="form-group">
-                    <label for="currentShares">Current STRC Shares</label>
-                    <input type="number" id="currentShares" placeholder="0" min="0">
-                </div>
-                <div class="form-group">
-                    <label for="sharePrice">Share Price ($)</label>
-                    <input type="number" id="sharePrice" value="100" min="0" step="0.01" placeholder="100 (pegged)">
-                </div>
-            </div>
-            
-            <div class="grid-2">
-                <div class="form-group">
-                    <label for="dividendRate">Annual Dividend Rate (%)</label>
-                    <input type="number" id="dividendRate" value="11.5" min="0" max="20" step="0.1">
-                </div>
-                <div class="form-group">
-                    <label for="gbpUsd">GBP/USD Exchange Rate</label>
-                    <input type="number" id="gbpUsd" value="1.27" min="0" step="0.01">
-                </div>
+                <label for="numShares">Number of STRC Shares</label>
+                <input type="number" id="numShares" placeholder="e.g. 100" min="0">
             </div>
             
             <div class="rate-info">
                 <i class="fas fa-info-circle"></i>
-                <strong>STRC</strong> is Strategy Inc's (formerly MicroStrategy) Stretch Preferred Stock. 
-                <strong>Pegged at $100/share</strong> • Current yield: <strong>11.5%</strong> ($11.50/year, paid monthly).
+                <strong>STRC</strong> = Strategy Inc Stretch Preferred Stock<br>
+                <strong>Pegged at $100/share</strong> • Yield: <strong>11.5% ($11.50/year)</strong> • Paid monthly
             </div>
             
             <button class="btn-primary" onclick="calculate()">
@@ -333,47 +231,34 @@
         </div>
         
         <div class="card result-card" id="result">
-            <h2><i class="fas fa-flag-checkered"></i> Your FIRE Number</h2>
+            <h2><i class="fas fa-hand-holding-dollar"></i> Your Dividend Income</h2>
             
             <div class="big-number">
-                <span id="sharesNeeded">0</span>
-                <span class="label">STRC shares needed</span>
+                <span id="monthlyIncome">£0</span>
+                <span class="label">per month</span>
             </div>
             
             <div class="stats-grid">
                 <div class="stat-box">
-                    <div class="value" id="totalInvestment">£0</div>
-                    <div class="label">Total Investment Required</div>
-                </div>
-                <div class="stat-box">
                     <div class="value" id="annualIncome">£0</div>
-                    <div class="label">Annual Dividend Income</div>
+                    <div class="label">per year</div>
                 </div>
                 <div class="stat-box">
-                    <div class="value" id="monthsToFire">0</div>
-                    <div class="label">Monthly Dividend per Share</div>
+                    <div class="value" id="totalValue">£0</div>
+                    <div class="label">share value</div>
                 </div>
-            </div>
-            
-            <div id="progressSection">
-                <div class="form-group" style="margin-top: 25px;">
-                    <label>Your Progress</label>
-                    <div style="background: #0f172a; height: 24px; border-radius: 12px; overflow: hidden;">
-                        <div id="progressBar" style="background: linear-gradient(90deg, #00d4aa, #00b894); width: 0%; height: 100%; transition: width 0.5s;"></div>
-                    </div>
-                    <p style="text-align: center; margin-top: 8px; color: var(--text-secondary);">
-                        <span id="progressPercent">0</span>% of target (<span id="currentSharesDisplay">0</span> shares)
-                    </p>
+                <div class="stat-box">
+                    <div class="value" id="yieldPercent">11.5%</div>
+                    <div class="label">annual yield</div>
                 </div>
             </div>
             
             <div class="disclaimer">
                 <i class="fas fa-exclamation-triangle"></i>
-                <strong>Important:</strong> STRC dividend rate is variable and can change. 
-                Past performance doesn't guarantee future results. This is for educational purposes only.
+                <strong>Note:</strong> STRC dividend rate is variable. This is for estimation only.
             </div>
             
-            <a href="bitcoinfire.html" class="link-bitcoin">
+            <a href="bitcoinfire.html" style="display:inline-flex;align-items:center;gap:8px;color:var(--primary);text-decoration:none;font-weight:500;margin-top:20px;">
                 <i class="fab fa-bitcoin"></i> Compare with Bitcoin FIRE Calculator
             </a>
         </div>
@@ -385,64 +270,36 @@
     
     <script>
         function calculate() {
-            // Get inputs
-            const monthlyExpenses = parseFloat(document.getElementById('monthlyExpenses').value);
-            const currentShares = parseFloat(document.getElementById('currentShares').value) || 0;
-            const sharePrice = parseFloat(document.getElementById('sharePrice').value) || 90;
-            const dividendRate = parseFloat(document.getElementById('dividendRate').value) || 9.0;
-            const gbpUsd = parseFloat(document.getElementById('gbpUsd').value) || 1.27;
+            const numShares = parseFloat(document.getElementById('numShares').value);
+            const gbpUsd = 1.27;
             
-            if (!monthlyExpenses || monthlyExpenses <= 0) {
-                alert('Please enter your monthly expenses');
+            if (!numShares || numShares <= 0) {
+                alert('Please enter number of shares');
                 return;
             }
             
-            // Convert monthly expenses to USD
-            const monthlyExpensesUsd = monthlyExpenses * gbpUsd;
+            // STRC: $100 price, 11.5% annual dividend = $11.50 per share per year
+            const annualDividendPerShare = 11.50;
+            const monthlyDividendPerShare = annualDividendPerShare / 12;
             
-            // Calculate annual dividend needed
-            const annualDividendNeeded = monthlyExpensesUsd * 12;
+            const monthlyIncomeUsd = numShares * monthlyDividendPerShare;
+            const annualIncomeUsd = numShares * annualDividendPerShare;
+            const totalValueUsd = numShares * 100;
             
-            // Calculate dividend per share annually ($100 stated * rate)
-            const dividendPerShare = 100 * (dividendRate / 100);
+            const monthlyIncomeGbp = monthlyIncomeUsd / gbpUsd;
+            const annualIncomeGbp = annualIncomeUsd / gbpUsd;
+            const totalValueGbp = totalValueUsd / gbpUsd;
             
-            // Calculate shares needed
-            const sharesNeeded = Math.ceil(annualDividendNeeded / dividendPerShare);
+            document.getElementById('monthlyIncome').textContent = '£' + Math.round(monthlyIncomeGbp).toLocaleString();
+            document.getElementById('annualIncome').textContent = '£' + Math.round(annualIncomeGbp).toLocaleString();
+            document.getElementById('totalValue').textContent = '£' + Math.round(totalValueGbp).toLocaleString();
             
-            // Calculate total investment
-            const totalInvestmentUsd = sharesNeeded * sharePrice;
-            const totalInvestmentGbp = totalInvestmentUsd / gbpUsd;
-            
-            // Calculate monthly dividend per share
-            const monthlyDividendPerShare = dividendPerShare / 12;
-            
-            // Calculate current annual income from dividends
-            const currentAnnualDividend = currentShares * dividendPerShare;
-            
-            // Calculate progress percentage
-            const progress = currentShares > 0 ? Math.min(100, (currentShares / sharesNeeded) * 100) : 0;
-            
-            // Display results
-            document.getElementById('sharesNeeded').textContent = sharesNeeded.toLocaleString();
-            document.getElementById('totalInvestment').textContent = '£' + Math.round(totalInvestmentGbp).toLocaleString();
-            document.getElementById('annualIncome').textContent = '£' + Math.round(monthlyExpenses * 12).toLocaleString();
-            document.getElementById('monthsToFire').textContent = '$' + monthlyDividendPerShare.toFixed(2);
-            document.getElementById('progressPercent').textContent = Math.round(progress);
-            document.getElementById('currentSharesDisplay').textContent = currentShares;
-            document.getElementById('progressBar').style.width = progress + '%';
-            
-            // Show result
             document.getElementById('result').classList.add('show');
-            
-            // Scroll to result
             document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
         }
         
-        // Allow Enter key to calculate
-        document.querySelectorAll('input').forEach(input => {
-            input.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') calculate();
-            });
+        document.getElementById('numShares').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') calculate();
         });
     </script>
 </body>
