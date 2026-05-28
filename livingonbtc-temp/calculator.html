@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1a1f36">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-C25ZWRJKXL"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-C25ZWRJKXL');
+    </script>
+    <title>Bitcoin FIRE Calculator - LivingOnBTC</title>
+    <meta name="description" content="Calculate your Bitcoin FIRE number and see how much BTC you need to achieve financial independence. Track your purchasing power over time on the Bitcoin standard.">
+    <meta name="keywords" content="Bitcoin FIRE calculator, BTC calculator, Bitcoin purchasing power, financial independence, Bitcoin standard, satoshis, BTC wealth">
+    <link rel="canonical" href="https://livingonbtc.com/calculator.html">
+    <meta name="theme-color" content="#1a1f36">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="LivingOnBTC">
+    <meta name="twitter:site" content="@livingonbtc">
+    <meta name="twitter:creator" content="@livingonbtc">
+    
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://livingonbtc.com/calculator.html">
+    <meta property="og:title" content="Bitcoin FIRE Calculator - LivingOnBTC">
+    <meta property="og:description" content="Calculate your Bitcoin FIRE number and see how much BTC you need to achieve financial independence. Track your purchasing power over time on the Bitcoin standard.">
+    <meta property="og:image" content="https://livingonbtc.com/images/og-calculator.png">
+    <meta property="og:site_name" content="LivingOnBTC">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Bitcoin FIRE Calculator - LivingOnBTC">
+    <meta name="twitter:description" content="Calculate your Bitcoin FIRE number and see how much Bitcoin you need for financial independence.">
+    <meta name="twitter:image" content="https://livingonbtc.com/images/og-calculator.png">
+    <meta name="twitter:site" content="@livingonbtc">
+    <meta name="twitter:creator" content="@livingonbtc">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>₿</text></svg>">
+    
+    <!-- Additional SEO -->
+    <meta name="robots" content="index, follow">
+    <link rel="next" href="https://livingonbtc.com/bitcoinfire.html">
+    <link rel="prev" href="https://livingonbtc.com/bitcoin-salary.html">
+    
+    <!-- Structured Data - FAQPage for SEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is the Bitcoin FIRE Calculator?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The Bitcoin FIRE Calculator helps you calculate how much your purchasing power has changed since adopting the Bitcoin standard. It compares Bitcoin prices from your start date to today, showing whether your life has become cheaper or more expensive in Bitcoin terms."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How does the Bitcoin standard affect purchasing power?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "When you live on the Bitcoin standard, your wealth is denominated in Bitcoin rather than fiat currency. If Bitcoin appreciates significantly against your local currency, your living costs in Bitcoin terms decrease, meaning you need less Bitcoin to maintain the same lifestyle."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What currencies are supported?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The calculator supports 10 currencies: USD, EUR, GBP, JPY, AUD, CAD, CHF, CNY, INR, and BRL. This allows users from major economies to calculate their Bitcoin purchasing power."
+          }
+        }
+      ]
+    }
+    </script>
+    
+    <!-- Structured Data - WebApplication -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Bitcoin FIRE Calculator",
+      "description": "Calculate your Bitcoin FIRE number and see how much BTC you need to achieve financial independence on the Bitcoin standard.",
+      "url": "https://livingonbtc.com/calculator.html",
+      "applicationCategory": "FinanceApplication",
+      "operatingSystem": "All",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "creator": {
+        "@type": "Organization",
+        "name": "LivingOnBTC",
+        "url": "https://livingonbtc.com"
+      }
+    }
+    </script>
+    
+    <!-- Structured Data - HowTo for Calculator Steps -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "HowTo",
+      "name": "How to Calculate Your Bitcoin Purchasing Power",
+      "description": "Calculate how much your life costs in Bitcoin and track your purchasing power over time on the Bitcoin standard.",
+      "step": [
+        {
+          "@type": "HowToStep",
+          "name": "Select Your Start Date",
+          "text": "Choose when you started living on the Bitcoin standard or when you first bought Bitcoin.",
+          "url": "https://livingonbtc.com/calculator.html"
+        },
+        {
+          "@type": "HowToStep",
+          "name": "Enter Monthly Spending",
+          "text": "Input your monthly spending in your local currency. This is used to calculate your life cost in Bitcoin.",
+          "url": "https://livingonbtc.com/calculator.html"
+        },
+        {
+          "@type": "HowToStep",
+          "name": "Select Currency",
+          "text": "Choose your local currency (USD, EUR, GBP, JPY, etc.) from the dropdown menu.",
+          "url": "https://livingonbtc.com/calculator.html"
+        },
+        {
+          "@type": "HowToStep",
+          "name": "View Your Results",
+          "text": "See how much your life costs in Bitcoin, your total sats needed, and the percentage change in purchasing power.",
+          "url": "https://livingonbtc.com/calculator.html"
+        }
+      ]
+    }
+    </script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <style>
+        :root {
+            --bitcoin-orange: #f7931a;
+            --dark-blue: #1a1f36;
+            --light-blue: #2a3050;
+            --accent-cyan: #00d4ff;
+            --success-green: #2ecc71;
+            --text-primary: #ffffff;
+            --text-secondary: #aabbcc;
+            --card-bg: rgba(255, 255, 255, 0.08);
+            --card-border: rgba(255, 255, 255, 0.12);
+        }
+        
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+        
+        /* Touch optimization for mobile */
+        select, input[type="date"], button, .btn {
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Focus visible for accessibility */
+        select:focus, input[type="date"]:focus, button:focus, .btn:focus {
+            outline: 2px solid var(--accent-cyan);
+            outline-offset: 2px;
+        }
+        
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--bitcoin-orange);
+            color: white;
+            padding: 8px 16px;
+            z-index: 100;
+            text-decoration: none;
+            border-radius: 0 0 8px 0;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', Arial, sans-serif;
+            background: linear-gradient(135deg, var(--dark-blue), var(--light-blue));
+            color: var(--text-primary);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            position: relative;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .container {
+            background-color: var(--dark-blue);
+            padding: 2rem;
+            border-radius: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            max-width: 520px;
+            width: 100%;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+            border: 1px solid rgba(247, 147, 26, 0.25);
+        }
+        .subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            max-width: 90%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2rem;
+            margin-top: 0;
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 1.4rem;
+            color: var(--text-primary);
+            margin: 2rem 0 1rem 0;
+            font-weight: 600;
+        }
+
+        h1 {
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--bitcoin-orange), #ffd74d);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+        h1 i {
+            margin-right: 0.5rem;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+        }
+        .nav-links {
+            margin-top: 1.5rem;
+            text-align: center;
+        }
+        .nav-link {
+            display: inline-block;
+            color: var(--bitcoin-orange);
+            text-decoration: none;
+            font-weight: 600;
+            margin: 0.5rem;
+            padding: 0.6rem 1.2rem;
+            border-radius: 12px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            transition: all 0.3s ease;
+        }
+        .nav-link:hover {
+            color: #ffd74d;
+            background: rgba(247, 147, 26, 0.15);
+            transform: translateY(-2px);
+        }
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        /* Mobile Optimizations */
+        @media (max-width: 480px) {
+            body {
+                padding: 12px;
+            }
+            .container {
+                padding: 1.5rem 1.25rem;
+                border-radius: 16px;
+            }
+            h1 {
+                font-size: 1.6rem;
+            }
+            .subtitle {
+                font-size: 0.95rem;
+                max-width: 100%;
+            }
+            select, input[type="date"] {
+                padding: 12px 14px;
+                font-size: 16px; /* Prevent iOS zoom */
+            }
+            label {
+                font-size: 0.95rem;
+            }
+            .result-value {
+                font-size: 1.8rem;
+            }
+            .btn {
+                padding: 14px 20px;
+                font-size: 1rem;
+            }
+            .nav-link {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+            .helper-text {
+                font-size: 0.8rem;
+            }
+            .share-buttons {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+            .share-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .container {
+                padding: 1.25rem 1rem;
+            }
+            h1 {
+                font-size: 1.4rem;
+            }
+            .result-value {
+                font-size: 1.5rem;
+            }
+        }
+        .helper-text {
+            font-size: 0.85rem;
+            color: #aab;
+            margin-top: 0.5rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #fff;
+            font-weight: 500;
+        }
+        select, input[type="date"] {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+
+        select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='%23ffffff' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            padding-right: 44px;
+            cursor: pointer;
+        }
+
+        select option {
+            background: var(--dark-blue);
+            color: var(--text-primary);
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: var(--bitcoin-orange);
+            box-shadow: 0 0 0 3px rgba(247, 147, 26, 0.2);
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        select:focus-visible, input:focus-visible {
+            outline: 2px solid var(--bitcoin-orange);
+            outline-offset: 2px;
+        }
+        
+        button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--bitcoin-orange), #e68210);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(247, 147, 26, 0.45);
+        }
+
+        button:active {
+            transform: translateY(-1px);
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(247, 147, 26, 0.3);
+        }
+        #result {
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 1.2rem;
+            padding: 1rem;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+        }
+        #result.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 1rem 0;
+        }
+        .loading i {
+            color: var(--bitcoin-orange);
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+        .currency-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 10px;
+            margin-bottom: 1.5rem;
+        }
+        .currency-btn {
+            background: var(--card-bg);
+            border: 2px solid var(--card-border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            padding: 14px 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            font-weight: 600;
+            touch-action: manipulation;
+        }
+
+        .currency-btn:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.25);
+        }
+
+        .currency-btn.selected {
+            background: linear-gradient(135deg, var(--bitcoin-orange), #e68210);
+            border-color: var(--bitcoin-orange);
+            box-shadow: 0 0 20px rgba(247, 147, 26, 0.45);
+        }
+        /* MOBILE RESPONSIVE */
+        @media (max-width: 600px) {
+            .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--bitcoin-orange);
+            color: white;
+            padding: 8px 16px;
+            z-index: 100;
+            text-decoration: none;
+            border-radius: 0 0 8px 0;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        body { padding: 12px; }
+            .container { padding: 1.5rem 1.25rem; border-radius: 20px; }
+            h1 { font-size: 1.65rem; margin-bottom: 1.25rem; }
+            .nav-link { display: block; margin: 0.5rem auto; max-width: 200px; }
+            .currency-grid { grid-template-columns: repeat(5, 1fr); gap: 8px; }
+            .currency-btn { padding: 12px 6px; font-size: 0.85rem; }
+            .helper-text { font-size: 0.8rem; }
+            #result { font-size: 1rem; }
+            .result-card { padding: 1.5rem; }
+            .result-card .percentage { font-size: 2.5rem; }
+            .result-card .message { font-size: 1.1rem; }
+            .result-card::before { font-size: 10rem; right: -2rem; bottom: -3rem; }
+            .card-grid { grid-template-columns: 1fr; }
+            .social-share-buttons { flex-direction: column; align-items: center; }
+            .social-btn { width: 100%; max-width: 200px; }
+        }
+
+        @media (max-width: 380px) {
+            h1 { font-size: 1.4rem; }
+            .currency-grid { grid-template-columns: repeat(3, 1fr); }
+            .currency-btn { padding: 10px 6px; }
+            .result-card .percentage { font-size: 2.2rem; }
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root { --dark-blue: #0d1117; --light-blue: #161b22; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+        }
+
+        @media print {
+            .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--bitcoin-orange);
+            color: white;
+            padding: 8px 16px;
+            z-index: 100;
+            text-decoration: none;
+            border-radius: 0 0 8px 0;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        body { background: white; color: black; }
+            .container, .result-card { box-shadow: none; border: 1px solid #ccc; }
+        }
+        .result-card {
+            background: linear-gradient(135deg, #1a1f36 0%, #2a2f46 100%);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-top: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            position: relative;
+            overflow: auto;
+            padding-bottom: 3.5rem; /* Increase padding for brand footer */
+        }
+
+        .result-card::before {
+            content: '₿';
+            position: absolute;
+            font-size: 12rem;
+            opacity: 0.05;
+            right: -2rem;
+            bottom: -4rem;
+            transform: rotate(-15deg);
+        }
+
+        .result-card .percentage {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--bitcoin-orange), #ffd700);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 1rem 0;
+        }
+
+        .result-card .message {
+            font-size: 1.2rem;
+            line-height: 1.5;
+            margin-bottom: 1.5rem;
+        }
+
+        .result-card .date-range {
+            font-size: 0.9rem;
+            color: #aab;
+            margin-top: 1rem;
+        }
+
+        .share-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            color: #fff;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 1rem;
+        }
+
+        .share-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        @media (max-width: 480px) {
+            .result-card {
+                padding: 1.5rem;
+            }
+            .result-card .percentage {
+                font-size: 2.5rem;
+            }
+            .result-card .message {
+                font-size: 1.1rem;
+            }
+        }
+
+        .result-card .brand {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.2);
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            border-bottom-left-radius: 16px;
+            border-bottom-right-radius: 16px;
+        }
+
+        .result-card .brand a {
+            color: var(--bitcoin-orange);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .result-card::after {
+            content: 'LivingOnBTC';
+            position: absolute;
+            font-size: 4rem;
+            opacity: 0.03;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%) rotate(-30deg);
+            white-space: nowrap;
+            pointer-events: none;
+        }
+
+        .social-share-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        .social-btn {
+            padding: 0.8rem;
+            border-radius: 8px;
+            color: #fff;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
+            transition: all 0.3s ease;
+        }
+
+        .twitter-share {
+            background: #1DA1F2;
+        }
+
+        .facebook-share {
+            background: #4267B2;
+        }
+
+        .social-btn:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+        }
+
+        .bitcoin-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.1;
+            overflow: auto;
+            pointer-events: none;
+            background-image: 
+                radial-gradient(circle at 80% 40%, var(--bitcoin-orange) 0%, transparent 0.8%),
+                radial-gradient(circle at 20% 25%, var(--bitcoin-orange) 0%, transparent 0.5%),
+                radial-gradient(circle at 40% 70%, var(--bitcoin-orange) 0%, transparent 0.7%),
+                radial-gradient(circle at 70% 90%, var(--bitcoin-orange) 0%, transparent 0.6%),
+                radial-gradient(circle at 10% 60%, var(--bitcoin-orange) 0%, transparent 0.5%),
+                radial-gradient(circle at 60% 10%, var(--bitcoin-orange) 0%, transparent 0.4%),
+                radial-gradient(circle at 90% 65%, var(--bitcoin-orange) 0%, transparent 0.6%);
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .related-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid var(--card-border);
+        }
+
+        .related-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            border-color: var(--bitcoin-orange);
+        }
+
+        .related-card i {
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+            color: var(--bitcoin-orange);
+        }
+
+        .related-card h3 {
+            font-size: 1.1rem;
+            margin: 0.5rem 0;
+            color: var(--text-primary);
+        }
+
+        .related-card p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .related-card a {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--bitcoin-orange), #e68210);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .related-card a:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(247, 147, 26, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <div class="bitcoin-particles"></div>
+    <div class="container" id="main-content">
+        <header>
+            <h1><i class="fab fa-bitcoin" aria-hidden="true"></i> Bitcoin FIRE Calculator</h1>
+            <p class="subtitle">Calculate your Bitcoin purchasing power over time</p>
+        </header>
+        
+        <nav class="nav-links" style="margin-bottom: 2rem;" aria-label="Main navigation">
+            <a href="index.html" class="nav-link"><i class="fas fa-home" aria-hidden="true"></i> Home</a>
+            <a href="bitcoinfire.html" class="nav-link"><i class="fas fa-fire" aria-hidden="true"></i> FIRE Calculator</a>
+        </nav>
+
+        <main>
+            <section class="input-group" aria-labelledby="currency-label">
+                <label id="currency-label">Select Your Currency:</label>
+            <div class="currency-grid">
+                <button class="currency-btn" data-currency="USD">USD</button>
+                <button class="currency-btn" data-currency="EUR">EUR</button>
+                <button class="currency-btn" data-currency="GBP">GBP</button>
+                <button class="currency-btn" data-currency="JPY">JPY</button>
+                <button class="currency-btn" data-currency="AUD">AUD</button>
+                <button class="currency-btn" data-currency="CAD">CAD</button>
+                <button class="currency-btn" data-currency="CHF">CHF</button>
+                <button class="currency-btn" data-currency="CNY">CNY</button>
+                <button class="currency-btn" data-currency="INR">INR</button>
+                <button class="currency-btn" data-currency="BRL">BRL</button>
+            </div>
+            <p class="helper-text" id="currency-help">Tap to choose your local currency</p>
+        </section>
+
+        <section class="input-group" aria-labelledby="startdate-label">
+            <label for="startDate" id="startdate-label">When did you start living on the Bitcoin Standard?</label>
+            <input type="date" id="startDate" aria-describedby="startdate-help">
+            <p class="helper-text" id="startdate-help">Select the date when you started living on The Bitcoin Standard.</p>
+        </section>
+
+        <button onclick="calculate()" aria-label="Calculate your Bitcoin purchasing power">
+            <i class="fas fa-calculator"></i> Calculate Savings
+        </button>
+
+        <div class="loading" role="status" aria-live="polite">
+            <i class="fas fa-spinner fa-2x"></i>
+        </div>
+
+        <div id="result" role="region" aria-live="polite" aria-label="Calculation results"></div>
+
+        <section aria-labelledby="related-calculators-heading">
+            <h2 id="related-calculators-heading">Related Bitcoin Calculators</h2>
+        <div class="card-grid">
+            <div class="related-card">
+                <i class="fas fa-fire" aria-hidden="true"></i>
+                <h3>Bitcoin FIRE</h3>
+                <p>Calculate your path to financial freedom with Bitcoin</p>
+                <a href="bitcoinfire.html" aria-label="Use the Bitcoin FIRE Calculator">Freedom Calculator</a>
+            </div>
+            <div class="related-card">
+                <i class="fas fa-chart-line" aria-hidden="true"></i>
+                <h3>Loan Backtest</h3>
+                <p>Analyze Bitcoin-backed loans historically</p>
+                <a href="#" aria-label="Use the Loan Backtest Calculator">Backtest Loans</a>
+            </div>
+        </section>
+    </main>
+</div>
+
+    <script>
+        let selectedCurrency = null;
+
+        // Add currency button handlers
+        document.querySelectorAll('.currency-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.currency-btn').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                selectedCurrency = btn.dataset.currency;
+            });
+        });
+
+        async function calculate() {
+            if (!selectedCurrency) {
+                alert('Please select a currency');
+                return;
+            }
+
+            const startDate = document.getElementById("startDate").value;
+            const resultDiv = document.getElementById("result");
+            const loadingDiv = document.querySelector(".loading");
+            
+            resultDiv.classList.remove("show");
+            loadingDiv.style.display = "block";
+
+            if (!startDate) {
+                resultDiv.textContent = "Please enter both currency and start date.";
+                loadingDiv.style.display = "none";
+                return;
+            }
+
+            try {
+                const startPrice = await getBitcoinPrice(startDate, selectedCurrency);
+                const today = new Date().toISOString().slice(0, 10);
+                const currentPrice = await getBitcoinPrice(today, selectedCurrency);
+
+                if (startPrice === null) {
+                    resultDiv.textContent = `Could not retrieve Bitcoin price for the start date (${startDate}). Please check the date and currency.`;
+                    loadingDiv.style.display = "none";
+                    return;
+                }
+                if (currentPrice === null) {
+                    resultDiv.textContent = `Could not retrieve Bitcoin price for today. Please try again later.`;
+                    loadingDiv.style.display = "none";
+                    return;
+                }
+
+                if (startPrice === 0 || currentPrice === 0) {
+                    resultDiv.textContent = "One of the Bitcoin prices is zero. Calculation not possible.";
+                    loadingDiv.style.display = "none";
+                    return;
+                }
+
+                const priceMultiple = currentPrice / startPrice;
+                const percentageCheaper = (1 - (1 / priceMultiple)) * 100;
+
+                if (percentageCheaper > 0) {
+                    resultDiv.innerHTML = `
+                        <div class="result-card" id="capture">
+                            <div class="percentage">+${percentageCheaper.toFixed(2)}%</div>
+                            <div class="message">
+                                Your life has become cheaper<br>
+                                since living on the Bitcoin Standard
+                            </div>
+                            <div class="date-range">
+                                ${new Date(startDate).toLocaleDateString()} → Today
+                            </div>
+                            <button class="share-btn" onclick="shareResult()">
+                                <i class="fas fa-share-alt"></i> Share
+                            </button>
+                            <div class="social-share-buttons">
+                                <button class="social-btn twitter-share" onclick="shareToTwitter()">
+                                    <i class="fab fa-twitter fa-lg"></i>
+                                </button>
+                                <button class="social-btn facebook-share" onclick="shareToFacebook()">
+                                    <i class="fab fa-facebook-f fa-lg"></i>
+                                </button>
+                            </div>
+                            <div class="brand">
+                                Part of the <a href="index.html">LivingOnBTC</a> suite of Bitcoin tools
+                            </div>
+                        </div>`;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="result-card" id="capture">
+                            <div class="percentage">${percentageCheaper.toFixed(2)}%</div>
+                            <div class="message">
+                                Keep stacking sats!<br>
+                                Your Bitcoin journey continues
+                            </div>
+                            <div class="date-range">
+                                ${new Date(startDate).toLocaleDateString()} → Today
+                            </div>
+                            <button class="share-btn" onclick="shareResult()">
+                                <i class="fas fa-share-alt"></i> Share
+                            </button>
+                            <div class="social-share-buttons">
+                                <button class="social-btn twitter-share" onclick="shareToTwitter()">
+                                    <i class="fab fa-twitter fa-lg"></i>
+                                </button>
+                                <button class="social-btn facebook-share" onclick="shareToFacebook()">
+                                    <i class="fab fa-facebook-f fa-lg"></i>
+                                </button>
+                            </div>
+                            <div class="brand">
+                                Part of the <a href="index.html">LivingOnBTC</a> suite of Bitcoin tools
+                            </div>
+                        </div>`;
+                }
+
+                resultDiv.classList.add("show");
+
+            } catch (error) {
+                console.error("Error:", error);
+                resultDiv.textContent = "An error occurred. Please try again later.";
+            } finally {
+                loadingDiv.style.display = "none";
+            }
+        }
+
+        async function getBitcoinPrice(date, currency) {
+            const timestamp = Math.floor(new Date(date).getTime() / 1000);
+            const apiUrl = `https://min-api.cryptocompare.com/data/pricehistorical?fsym=BTC&tsyms=${currency.toUpperCase()}&ts=${timestamp}`;
+
+            try {
+                const response = await fetch(apiUrl);
+
+                if (!response.ok) {
+                    if (response.status === 400 || response.status === 429) {
+                        const errorData = await response.json();
+                        console.error("CryptoCompare API Error:", errorData);
+                        return null;
+                    }
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                if (data && data.BTC && data.BTC[currency.toUpperCase()]) {
+                    return data.BTC[currency.toUpperCase()];
+                } else {
+                    console.warn("Unexpected data format from CryptoCompare:", data);
+                    return null;
+                }
+
+            } catch (error) {
+                console.error("Error fetching Bitcoin price:", error);
+                return null;
+            }
+        }
+
+        function shareResult() {
+            const percentage = document.querySelector('.result-card .percentage').textContent;
+            const startDate = document.querySelector('.date-range').textContent.split('→')[0].trim();
+            
+            const shareText = `My life has become ${percentage} cheaper since living on the Bitcoin Standard in ${startDate}\n\nCalculate yours at: LivingOnBTC.com`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Living On BTC Calculator',
+                    text: shareText,
+                    url: 'https://LivingOnBTC.com'
+                }).catch(console.error);
+            } else {
+                navigator.clipboard.writeText(shareText)
+                    .then(() => alert('Copied to clipboard!'))
+                    .catch(() => alert('Could not copy to clipboard'));
+            }
+        }
+
+        async function generateImage() {
+            const element = document.querySelector('#capture');
+            try {
+                const canvas = await html2canvas(element, {
+                    backgroundColor: null,
+                    scale: 2, // Higher quality
+                    logging: false,
+                    useCORS: true
+                });
+                return canvas.toDataURL('image/png');
+            } catch (error) {
+                console.error('Error generating image:', error);
+                return null;
+            }
+        }
+
+        async function shareToTwitter() {
+            const imageData = await generateImage();
+            if (!imageData) {
+                alert('Could not generate image');
+                return;
+            }
+
+            const percentage = document.querySelector('.percentage').textContent;
+            const startDate = document.querySelector('.date-range').textContent.split('→')[0].trim();
+            const text = `My life has become ${percentage} cheaper since living on the Bitcoin Standard in ${startDate}\n\nCalculate yours at LivingOnBTC.com`;
+            
+            const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
+            window.open(twitterUrl, '_blank');
+        }
+
+        async function shareToFacebook() {
+            const imageData = await generateImage();
+            if (!imageData) {
+                alert('Could not generate image');
+                return;
+            }
+
+            const percentage = document.querySelector('.percentage').textContent;
+            const startDate = document.querySelector('.date-range').textContent.split('→')[0].trim();
+            
+            // For Facebook, we'll add the text as a quote parameter
+            const url = 'https://LivingOnBTC.com';
+            const text = `My life has become ${percentage} cheaper since living on the Bitcoin Standard in ${startDate}`;
+            const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(text)}`;
+            window.open(facebookUrl, '_blank');
+        }
+
+        // Tab switching functionality
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Remove active class from all tabs
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                // Add active class to clicked tab
+                this.classList.add('active');
+                
+                // Hide all tab content
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.style.display = 'none';
+                });
+                
+                // Show selected tab content
+                const tabId = this.getAttribute('data-tab');
+                document.getElementById(tabId).style.display = 'block';
+            });
+        });
+    </script>
+
+</body>
+</html>
