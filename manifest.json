@@ -1,0 +1,26 @@
+{
+  "name": "LivingOnBTC — Bitcoin Calculators",
+  "short_name": "LivingOnBTC",
+  "description": "Free Bitcoin calculators: purchasing power, salary equivalent, FIRE, and subscription cost tracker. See how much work time each Bitcoin represents.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0d1117",
+  "theme_color": "#1a1f36",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/images/favicon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/images/favicon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["finance", "productivity", "utilities"]
+}

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1a1f36">
+    <meta name="robots" content="noindex">
+    <title>404 — Page Not Found | LivingOnBTC</title>
+    <link rel="canonical" href="https://livingonbtc.com/">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>₿</text></svg>">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .error-wrap {
+            min-height: 70vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .error-code {
+            font-size: clamp(5rem, 15vw, 9rem);
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--bitcoin-orange), #ffb84d);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            line-height: 1;
+        }
+    </style>
+</head>
+<body>
+    <main class="container error-wrap">
+        <div>
+            <div class="error-code">404</div>
+            <h1>Page not found</h1>
+            <p class="subtitle">That page must have been rekt by a 51% attack. Try one of these instead:</p>
+            <div class="tools-grid" style="max-width: 500px; margin: 30px auto 0;">
+                <a href="/" class="tool-card">
+                    <i class="fab fa-bitcoin"></i>
+                    <h2>Home</h2>
+                    <p>Back to all calculators.</p>
+                </a>
+                <a href="/calculator.html" class="tool-card">
+                    <i class="fas fa-calculator"></i>
+                    <h2>Purchasing Power</h2>
+                    <p>Calculate Bitcoin vs fiat.</p>
+                </a>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#1a1f36">
+    <title>Bitcoin DCA Simulator | LivingOnBTC</title>
+    <meta name="description" content="See what dollar-cost averaging into Bitcoin would have returned. Calculate historical DCA outcomes with real BTC prices — sats per day, stack over time, lifetime returns.">
+    <meta name="keywords" content="Bitcoin DCA, dollar cost averaging, Bitcoin accumulation calculator, DCA simulator, sats per day, Bitcoin stack, BTC investment history, Bitcoin savings plan">
+    <link rel="canonical" href="https://livingonbtc.com/dca.html">
+    <link rel="alternate" hreflang="en" href="https://livingonbtc.com/dca.html">
+    <link rel="alternate" hreflang="en-gb" href="https://livingonbtc.com/dca.html">
+    <link rel="alternate" hreflang="en-us" href="https://livingonbtc.com/dca.html">
+    <link rel="alternate" hreflang="x-default" href="https://livingonbtc.com/dca.html">
+    <link rel="prev" href="https://livingonbtc.com/index.html">
+    <link rel="next" href="https://livingonbtc.com/bitcoin-salary.html">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://livingonbtc.com/dca.html">
+    <meta property="og:title" content="Bitcoin DCA Simulator | LivingOnBTC">
+    <meta property="og:description" content="See what dollar-cost averaging into Bitcoin would have returned. Calculate historical DCA outcomes with real BTC prices.">
+    <meta property="og:image" content="https://livingonbtc.com/images/og-dca.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Bitcoin DCA Simulator - Calculate what consistent Bitcoin buys would have returned">
+    <meta property="og:site_name" content="LivingOnBTC">
+    <meta property="og:locale" content="en_GB">
+    <meta property="og:locale:alternate" content="en_US">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Bitcoin DCA Simulator | LivingOnBTC">
+    <meta name="twitter:description" content="See what dollar-cost averaging into Bitcoin would have returned. Calculate historical DCA outcomes.">
+    <meta name="twitter:image" content="https://livingonbtc.com/images/og-dca.png">
+    <meta name="twitter:image:alt" content="Bitcoin DCA Simulator">
+    <meta name="twitter:site" content="@livingonbtc">
+    <meta name="twitter:creator" content="@livingonbtc">
+
+    <!-- Platform -->
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <meta name="author" content="LivingOnBTC">
+    <meta name="googlebot" content="index, follow">
+    <meta name="googlebot-news" content="index, follow">
+    <meta name="creator" content="LivingOnBTC">
+    <meta name="publisher" content="LivingOnBTC">
+    <meta name="revisit-after" content="7 days">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="BTC DCA">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/images/favicon-32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="/images/favicon.png">
+    <link rel="apple-touch-icon" href="/images/favicon-192.png">
+
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="dns-prefetch" href="https://api.coingecko.com">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/styles.css">
+
+    <!-- Preload critical assets -->
+    <link rel="preload" href="/app.js" as="script">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" as="script">
+
+    <!-- Schema.org WebApplication -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Bitcoin DCA Simulator",
+      "description": "Calculate historical dollar-cost averaging returns on Bitcoin with real price data",
+      "url": "https://livingonbtc.com/dca.html",
+      "applicationCategory": "FinanceApplication",
+      "operatingSystem": "Any (Web)",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "creator": {
+        "@type": "Organization",
+        "name": "LivingOnBTC",
+        "url": "https://livingonbtc.com"
+      }
+    }
+    </script>
+
+    <!-- FAQ Schema -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is Bitcoin DCA?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Dollar-cost averaging (DCA) is an investment strategy where you buy a fixed amount of Bitcoin at regular intervals, regardless of price. This smooths out volatility and removes the need to time the market."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What if I bought £25/week of Bitcoin since 2017?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Enter £25 in the monthly field, pick weekly frequency, and start date 2017-01-01. The simulator will use historical BTC prices to show your total stack and current value."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How are prices calculated?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The simulator uses daily BTC closing prices from CoinGecko's historical data API. Each buy is executed at that day's price, then we calculate the current value at today's price."
+          }
+        }
+      ]
+    }
+    </script>
+
+    <script src="/app.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <main id="main-content" class="container">
+        <header class="page-header">
+            <h1><i class="fab fa-bitcoin"></i> Bitcoin DCA Simulator</h1>
+            <p class="page-subtitle">See what consistent Bitcoin buys would have actually returned</p>
+            <div style="margin-top: 16px;">
+                <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+                    <i class="fas fa-moon"></i>
+                    <span class="theme-label">Dark</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- INPUT FORM -->
+        <section class="card" aria-labelledby="form-heading">
+            <h2 id="form-heading" class="visually-hidden">DCA Inputs</h2>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+                <div class="form-group">
+                    <label class="form-label" for="currency">Currency</label>
+                    <select id="currency" class="form-select">
+                        <option value="USD">USD ($)</option>
+                        <option value="GBP" selected>GBP (£)</option>
+                        <option value="EUR">EUR (€)</option>
+                        <option value="CAD">CAD (C$)</option>
+                        <option value="AUD">AUD (A$)</option>
+                        <option value="JPY">JPY (¥)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="frequency">Frequency</label>
+                    <select id="frequency" class="form-select">
+                        <option value="daily">Daily</option>
+                        <option value="weekly" selected>Weekly</option>
+                        <option value="monthly">Monthly</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="amount">Amount per period</label>
+                    <input id="amount" type="number" class="form-input" min="1" step="1" value="25" placeholder="25">
+                    <div class="form-help" id="currency-symbol">£</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="start-date">Start date</label>
+                    <input id="start-date" type="date" class="form-input" min="2013-01-01" value="2020-01-01">
+                    <div class="form-help">Earliest: Jan 2013</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="end-date">End date</label>
+                    <input id="end-date" type="date" class="form-input" value="">
+                    <div class="form-help">Leave blank for today</div>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 16px;">
+                <button id="run-sim" class="btn btn-primary">
+                    <i class="fas fa-play"></i> Run simulation
+                </button>
+                <button id="share-results" class="btn btn-secondary" disabled>
+                    <i class="fas fa-share"></i> Share results
+                </button>
+            </div>
+
+            <div id="form-error" class="alert alert-danger" role="alert" style="display: none; margin-top: 16px;"></div>
+        </section>
+
+        <!-- PRESETS -->
+        <section style="margin-top: 20px;">
+            <h2 style="font-size: 1rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px;">Quick presets</h2>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <button class="country-pill preset-btn" data-amount="25" data-freq="weekly" data-start="2017-01-01">£25/week since 2017</button>
+                <button class="country-pill preset-btn" data-amount="100" data-freq="weekly" data-start="2020-01-01">£100/week since 2020</button>
+                <button class="country-pill preset-btn" data-amount="500" data-freq="monthly" data-start="2021-01-01">£500/month since 2021</button>
+                <button class="country-pill preset-btn" data-amount="10" data-freq="daily" data-start="2013-01-01">£10/day since 2013</button>
+                <button class="country-pill preset-btn" data-amount="1000" data-freq="monthly" data-start="2022-01-01">£1000/month since 2022</button>
+            </div>
+        </section>
+
+        <!-- LOADING -->
+        <div id="loading" class="card" style="display: none; margin-top: 20px; text-align: center; padding: 40px;">
+            <div class="loading-spinner" style="margin: 0 auto 12px;"></div>
+            <p style="color: var(--text-secondary);">Fetching historical Bitcoin prices...</p>
+        </div>
+
+        <!-- RESULTS -->
+        <section id="results" aria-live="polite" style="display: none;">
+            <div class="metric-grid" style="margin-top: 24px;">
+                <div class="metric">
+                    <div class="metric-label">Total invested</div>
+                    <div class="metric-value" id="m-invested">—</div>
+                    <div class="metric-sub" id="m-periods">—</div>
+                </div>
+                <div class="metric metric-success">
+                    <div class="metric-label">Current value</div>
+                    <div class="metric-value" id="m-current-value">—</div>
+                    <div class="metric-sub" id="m-as-of">—</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Bitcoin accumulated</div>
+                    <div class="metric-value" id="m-btc">—</div>
+                    <div class="metric-sub" id="m-sats">—</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Return</div>
+                    <div class="metric-value" id="m-return">—</div>
+                    <div class="metric-sub" id="m-return-sub">—</div>
+                </div>
+            </div>
+
+            <div class="chart-wrapper">
+                <h2 style="margin-top: 0;">Stack vs invested over time</h2>
+                <canvas id="dca-chart" aria-label="DCA simulation chart showing cumulative investment vs portfolio value over time"></canvas>
+            </div>
+
+            <div class="card" style="margin-top: 16px;">
+                <h2 style="margin-top: 0;">What this means</h2>
+                <p id="narrative" style="font-size: 1.05rem; color: var(--text-secondary);"></p>
+            </div>
+        </section>
+
+        <!-- ABOUT -->
+        <section style="margin-top: 40px;">
+            <h2>About this calculator</h2>
+            <p>Enter how much you'd have invested at each interval, when you started, and how often you bought. We'll fetch historical Bitcoin closing prices from CoinGecko's free API and simulate buying that fixed amount at each interval — then show what your stack is worth at today's price.</p>
+            <p><strong>Historical data goes back to 2013</strong> — Bitcoin's early days. The chart shows your cumulative investment (the dull line) versus the current value of your Bitcoin stack (the exciting line).</p>
+
+            <h3 style="margin-top: 24px;">Why DCA works</h3>
+            <p>Dollar-cost averaging removes emotion from investing. By buying a fixed amount on a schedule, you automatically buy more Bitcoin when it's cheap and less when it's expensive. Over long periods, this has historically outperformed lump-sum investing in Bitcoin's case because of the volatility.</p>
+
+            <h3 style="margin-top: 24px;">A note on fees</h3>
+            <p>This calculator doesn't include exchange fees. Most major exchanges charge 0.1%–1.5% per trade, which over years adds up. Use the <a href="/Subscriptions.html" style="color: var(--bitcoin-orange);">Subscription Calculator</a> to see what your exchange fees cost in sats.</p>
+
+            <div class="alert alert-info" style="margin-top: 20px;">
+                <strong>Not financial advice.</strong> Past performance doesn't guarantee future results. Bitcoin's volatility means historical returns may not be representative of what you'll see going forward.
+            </div>
+        </section>
+
+        <footer class="site-footer">
+            <nav class="footer-nav">
+                <a href="/">Home</a>
+                <a href="/calculator.html">Purchasing Power</a>
+                <a href="/bitcoin-salary.html">Labour Calculator</a>
+                <a href="/bitcoinfire.html">FIRE Calculator</a>
+                <a href="/Subscriptions.html">Subscriptions</a>
+            </nav>
+            <p>Built for the Bitcoin standard. <a href="https://twitter.com/livingonbtc" target="_blank" rel="noopener">@LivingOnBTC</a></p>
+            <p class="footer-disclaimer">Not financial advice. Always do your own research.</p>
+        </footer>
+    </main>
+
+    <script>
+    (function () {
+        'use strict';
+
+        // ===== State =====
+        const $ = id => document.getElementById(id);
+        const F = window.LivingOnBTC.Format;
+        const Price = window.LivingOnBTC.Price;
+        let chart = null;
+        let lastResult = null;
+
+        // ===== Currency symbols =====
+        const SYMBOLS = { USD: '$', GBP: '£', EUR: '€', CAD: 'C$', AUD: 'A$', JPY: '¥' };
+
+        // ===== Bindings =====
+        function bindUI() {
+            $('currency').addEventListener('change', updateCurrencySymbol);
+            updateCurrencySymbol();
+            $('end-date').value = new Date().toISOString().slice(0, 10);
+
+            // Presets
+            document.querySelectorAll('.preset-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    $('amount').value = btn.dataset.amount;
+                    $('frequency').value = btn.dataset.freq;
+                    $('start-date').value = btn.dataset.start;
+                    runSim();
+                });
+            });
+
+            $('run-sim').addEventListener('click', runSim);
+            $('share-results').addEventListener('click', shareResults);
+        }
+
+        function updateCurrencySymbol() {
+            const cur = $('currency').value;
+            $('currency-symbol').textContent = SYMBOLS[cur] || cur;
+        }
+
+        // ===== Date helpers =====
+        function generateDates(start, end, freq) {
+            const dates = [];
+            const d = new Date(start);
+            const e = new Date(end);
+            while (d <= e) {
+                dates.push(new Date(d));
+                if (freq === 'daily') d.setDate(d.getDate() + 1);
+                else if (freq === 'weekly') d.setDate(d.getDate() + 7);
+                else d.setMonth(d.getMonth() + 1);
+            }
+            return dates;
+        }
+
+        function dateKey(d) {
+            return d.toISOString().slice(0, 10);
+        }
+
+        // ===== CoinGecko historical price fetch =====
+        // /coins/bitcoin/market_chart/range?vs_currency=X&from=ts&to=ts
+        async function fetchHistoricalPrices(currency, fromTs, toTs) {
+            const url = `https://api.coingecko.com/api/v3/coins/bitcoin/market_chart/range?vs_currency=${currency.toLowerCase()}&from=${fromTs}&to=${toTs}`;
+            const res = await fetch(url);
+            if (!res.ok) throw new Error(`CoinGecko returned HTTP ${res.status}`);
+            const data = await res.json();
+            // data.prices = [[ts, price], ...]
+            const byDate = {};
+            for (const [ts, price] of data.prices) {
+                const d = new Date(ts);
+                const k = dateKey(d);
+                if (!byDate[k]) byDate[k] = price; // first price of the day
+            }
+            return byDate;
+        }
+
+        // ===== Simulation =====
+        async function runSim() {
+            const currency = $('currency').value;
+            const amount = parseFloat($('amount').value);
+            const freq = $('frequency').value;
+            const startDate = $('start-date').value;
+            const endDate = $('end-date').value || new Date().toISOString().slice(0, 10);
+
+            // Validation
+            const err = $('form-error');
+            err.style.display = 'none';
+            if (!amount || amount <= 0) { showError('Enter an amount greater than zero.'); return; }
+            if (!startDate) { showError('Pick a start date.'); return; }
+            if (new Date(startDate) >= new Date(endDate)) { showError('Start date must be before end date.'); return; }
+
+            // Convert to USD (CoinGecko needs USD for non-USD conversion? Actually no, it accepts any vs_currency)
+            // But CoinGecko free tier has rate limits — let's just use the selected currency directly
+            $('loading').style.display = 'block';
+            $('results').style.display = 'none';
+            $('run-sim').disabled = true;
+
+            try {
+                const fromTs = Math.floor(new Date(startDate).getTime() / 1000);
+                const toTs = Math.floor(new Date(endDate).getTime() / 1000);
+
+                const prices = await fetchHistoricalPrices(currency, fromTs, toTs);
+
+                // Get current price
+                const currentPrice = await Price.getBtcPrice(currency);
+                if (!currentPrice) throw new Error('Could not fetch current BTC price.');
+
+                // Generate buy dates
+                const buyDates = generateDates(startDate, endDate, freq);
+
+                let totalInvested = 0;
+                let totalBtc = 0;
+                const series = []; // [{date, invested, value}]
+
+                for (const date of buyDates) {
+                    const k = dateKey(date);
+                    const price = prices[k] || findNearestPrice(prices, k);
+                    if (!price) continue;
+
+                    const btcBought = amount / price;
+                    totalInvested += amount;
+                    totalBtc += btcBought;
+                    series.push({
+                        date: new Date(date),
+                        invested: totalInvested,
+                        btc: totalBtc,
+                        price
+                    });
+                }
+
+                if (series.length === 0) throw new Error('No price data available for the selected range. Try a more recent start date.');
+
+                // Final value at current price
+                const finalValue = totalBtc * currentPrice;
+                const returnPct = ((finalValue - totalInvested) / totalInvested) * 100;
+                const multiple = finalValue / totalInvested;
+                const sats = Math.round(totalBtc * 100000000);
+
+                lastResult = {
+                    currency,
+                    amount, freq, startDate, endDate,
+                    totalInvested, totalBtc, currentPrice,
+                    finalValue, returnPct, multiple,
+                    sats, series
+                };
+
+                renderResults(lastResult);
+            } catch (e) {
+                showError(e.message || 'Simulation failed. Try a more recent start date or check your connection.');
+                console.error(e);
+            } finally {
+                $('loading').style.display = 'none';
+                $('run-sim').disabled = false;
+            }
+        }
+
+        function findNearestPrice(byDate, target) {
+            // Find closest earlier date (within 7 days)
+            const t = new Date(target).getTime();
+            let best = null, bestDiff = Infinity;
+            for (const k in byDate) {
+                const diff = Math.abs(new Date(k).getTime() - t);
+                if (diff < bestDiff) { bestDiff = diff; best = byDate[k]; }
+            }
+            return best;
+        }
+
+        function showError(msg) {
+            const err = $('form-error');
+            err.textContent = msg;
+            err.style.display = 'block';
+            $('loading').style.display = 'none';
+            $('run-sim').disabled = false;
+        }
+
+        function renderResults(r) {
+            const sym = SYMBOLS[r.currency];
+            $('results').style.display = 'block';
+
+            $('m-invested').textContent = F.currency(r.totalInvested, sym, 0);
+            $('m-periods').textContent = `${r.series.length} buys · ${r.freq}`;
+
+            $('m-current-value').textContent = F.currency(r.finalValue, sym, 0);
+            $('m-as-of').textContent = `at ${F.currency(r.currentPrice, sym, 0)} / BTC`;
+
+            $('m-btc').textContent = F.btc(r.totalBtc);
+            $('m-sats').textContent = F.sats(r.sats) + ' stacked';
+
+            $('m-return').textContent = (r.returnPct >= 0 ? '+' : '') + F.percent(r.returnPct);
+            const returnSub = $('m-return-sub');
+            returnSub.textContent = `${r.multiple.toFixed(2)}× your money`;
+            const m = $('m-return').parentElement;
+            m.classList.toggle('metric-success', r.returnPct >= 0);
+            m.classList.toggle('metric-danger', r.returnPct < 0);
+
+            // Narrative
+            const years = (new Date(r.endDate) - new Date(r.startDate)) / (1000 * 60 * 60 * 24 * 365.25);
+            const avgCost = r.totalInvested / r.totalBtc;
+            $('narrative').innerHTML = `
+                Over <strong>${years.toFixed(1)} years</strong>, ${r.series.length} buys of
+                <strong>${F.currency(r.amount, sym, 0)}</strong> stacked you
+                <strong>${F.btc(r.totalBtc)}</strong> at an average cost of
+                <strong>${F.currency(avgCost, sym, 0)}</strong> per BTC. Today that stack is worth
+                <strong>${F.currency(r.finalValue, sym, 0)}</strong>${r.returnPct >= 0 ? ` — that's a <strong>${F.percent(r.returnPct)}</strong> return on <strong>${F.currency(r.totalInvested, sym, 0)}</strong> invested.` : `.`}
+            `;
+
+            drawChart(r);
+            $('share-results').disabled = false;
+            $('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function drawChart(r) {
+            const ctx = $('dca-chart').getContext('2d');
+            const sym = SYMBOLS[r.currency];
+
+            // Sample for performance — keep ~120 points max
+            const step = Math.max(1, Math.floor(r.series.length / 120));
+            const points = r.series.filter((_, i) => i % step === 0 || i === r.series.length - 1);
+
+            if (chart) chart.destroy();
+
+            const labels = points.map(p => p.date.toLocaleDateString('en-GB', { year: 'numeric', month: 'short' }));
+            const investedData = points.map(p => p.invested);
+            const valueData = points.map(p => p.btc * r.currentPrice);
+
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [
+                        {
+                            label: `Total invested (${sym})`,
+                            data: investedData,
+                            borderColor: '#8b949e',
+                            backgroundColor: 'rgba(139, 148, 158, 0.1)',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.1,
+                            pointRadius: 0
+                        },
+                        {
+                            label: `Portfolio value (${sym})`,
+                            data: valueData,
+                            borderColor: '#f7931a',
+                            backgroundColor: 'rgba(247, 147, 26, 0.15)',
+                            borderWidth: 2.5,
+                            fill: true,
+                            tension: 0.1,
+                            pointRadius: 0
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: v => sym + F.compact(v)
+                            },
+                            grid: { color: 'rgba(139, 148, 158, 0.1)' }
+                        },
+                        x: {
+                            ticks: { maxTicksLimit: 10 },
+                            grid: { color: 'rgba(139, 148, 158, 0.05)' }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: { color: getComputedStyle(document.body).getPropertyValue('--text-primary') }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: ctx => `${ctx.dataset.label}: ${F.currency(ctx.parsed.y, sym, 0)}`
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        async function shareResults() {
+            if (!lastResult) return;
+            const r = lastResult;
+            const sym = SYMBOLS[r.currency];
+            const text = `If I'd ${r.freq} bought ${F.currency(r.amount, sym, 0)} of Bitcoin from ${r.startDate} to ${r.endDate}, I'd have stacked ${F.btc(r.totalBtc)} (${F.sats(r.sats)}) worth ${F.currency(r.finalValue, sym, 0)} today — a ${F.percent(r.returnPct)} return.\n\nlivingonbtc.com/dca.html`;
+            const url = 'https://livingonbtc.com/dca.html';
+            if (navigator.share) {
+                try { await navigator.share({ title: 'Bitcoin DCA result', text, url }); return; } catch {}
+            }
+            // Fallback: copy to clipboard
+            try {
+                await navigator.clipboard.writeText(text + '\n' + url);
+                const btn = $('share-results');
+                const orig = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                setTimeout(() => btn.innerHTML = orig, 2000);
+            } catch {
+                window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
+            }
+        }
+
+        // ===== Init =====
+        bindUI();
+    })();
+    </script>
+</body>
+</html>

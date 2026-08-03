@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#1a1f36">
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f7931a">
+    <title>LivingOnBTC | Bitcoin Calculators & Tools</title>
+    <meta name="description" content="Free Bitcoin calculators: purchasing power, salary equivalent, FIRE calculator, DCA simulator, and subscription cost tracker. See how much work time each Bitcoin represents.">
+    <meta name="keywords" content="Bitcoin calculators, BTC purchasing power, Bitcoin salary, FIRE, DCA, dollar cost averaging, sats, satoshis, Bitcoin standard, financial independence">
+    <meta name="author" content="LivingOnBTC">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <meta name="googlebot" content="index, follow">
+    <meta name="revisit-after" content="7 days">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="LivingOnBTC">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="DC.language" content="en">
+    <meta name="DC.publisher" content="LivingOnBTC">
+    <meta name="DC.title" content="LivingOnBTC - Bitcoin Calculators & Tools">
+    <meta name="DC.creator" content="LivingOnBTC">
+    <meta name="DC.subject" content="Bitcoin calculators, DCA, FIRE, salary, purchasing power">
+    <meta name="DC.description" content="Free Bitcoin calculators and tools">
+
+    <!-- Canonical & hreflang -->
+    <link rel="canonical" href="https://livingonbtc.com/">
+    <link rel="alternate" hreflang="en" href="https://livingonbtc.com/">
+    <link rel="alternate" hreflang="en-gb" href="https://livingonbtc.com/">
+    <link rel="alternate" hreflang="en-us" href="https://livingonbtc.com/">
+    <link rel="alternate" hreflang="x-default" href="https://livingonbtc.com/">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://livingonbtc.com/">
+    <meta property="og:title" content="LivingOnBTC | Bitcoin Calculators & Tools">
+    <meta property="og:description" content="Free Bitcoin calculators: purchasing power, salary equivalent, FIRE, DCA simulator, and subscription cost tracker. See how much work time each Bitcoin represents.">
+    <meta property="og:image" content="https://livingonbtc.com/images/og-dca.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="LivingOnBTC - Bitcoin calculators and tools">
+    <meta property="og:site_name" content="LivingOnBTC">
+    <meta property="og:locale" content="en_GB">
+    <meta property="og:locale:alternate" content="en_US">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="LivingOnBTC | Bitcoin Calculators & Tools">
+    <meta name="twitter:description" content="Free Bitcoin calculators. See how much work time each Bitcoin represents.">
+    <meta name="twitter:image" content="https://livingonbtc.com/images/og-dca.png">
+    <meta name="twitter:image:alt" content="LivingOnBTC Bitcoin Calculators">
+    <meta name="twitter:site" content="@livingonbtc">
+    <meta name="twitter:creator" content="@livingonbtc">
+
+    <!-- Favicon & PWA -->
+    <link rel="icon" type="image/png" href="/images/favicon.png" sizes="32x32">
+    <link rel="apple-touch-icon" href="/images/favicon-192.png">
+    <link rel="manifest" href="/manifest.json">
+
+    <!-- Preconnect & DNS -->
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="https://api.coingecko.com">
+
+    <!-- Styles & Scripts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/styles.css">
+    <script src="/app.js" defer></script>
+
+    <!-- Schemas -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "LivingOnBTC",
+      "url": "https://livingonbtc.com/",
+      "description": "Free Bitcoin calculators and tools",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://livingonbtc.com/{search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "LivingOnBTC",
+      "url": "https://livingonbtc.com",
+      "sameAs": [
+        "https://twitter.com/livingonbtc",
+        "https://github.com/HectorTries"
+      ]
+    }
+    </script>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <main id="main-content" class="container">
+        <header class="hub-header">
+            <h1><i class="fab fa-bitcoin bitcoin-icon" style="color: var(--bitcoin-orange);"></i> LivingOnBTC</h1>
+            <p class="hub-subtitle">See what your Bitcoin is really worth in work time</p>
+            <div style="margin-top: 20px;">
+                <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+                    <i class="fas fa-moon"></i>
+                    <span class="theme-label">Dark</span>
+                </button>
+            </div>
+        </header>
+
+        <div class="tool-grid">
+            <a href="dca.html" class="tool-card">
+                <i class="fas fa-chart-line tool-card-icon"></i>
+                <h2>DCA Simulator<span class="tool-badge">NEW</span></h2>
+                <p>See what consistent Bitcoin buys would have returned. Calculate historical DCA outcomes with real BTC prices.</p>
+            </a>
+
+            <a href="calculator.html" class="tool-card">
+                <i class="fas fa-calculator tool-card-icon"></i>
+                <h2>Purchasing Power</h2>
+                <p>Calculate how much Bitcoin equals your salary, savings, or any amount in fiat. See the purchasing power over time.</p>
+            </a>
+
+            <a href="bitcoin-salary.html" class="tool-card">
+                <i class="fas fa-coins tool-card-icon"></i>
+                <h2>Bitcoin Labour Calculator</h2>
+                <p>See how many hours of work different jobs around the world need to afford 1 BTC. Compare minimum wage, median salary, and more.</p>
+            </a>
+
+            <a href="bitcoinfire.html" class="tool-card">
+                <i class="fas fa-fire tool-card-icon"></i>
+                <h2>Bitcoin FIRE Calculator</h2>
+                <p>Calculate when you can retire based on your Bitcoin holdings and savings rate. See compound growth projections.</p>
+            </a>
+
+            <a href="Subscriptions.html" class="tool-card">
+                <i class="fas fa-repeat tool-card-icon"></i>
+                <h2>Subscription Cost Calculator</h2>
+                <p>See how much Bitcoin you need to cover recurring costs like Netflix, Spotify, or any subscription service.</p>
+            </a>
+        </div>
+
+        <footer class="site-footer">
+            <nav class="footer-nav">
+                <a href="dca.html">DCA Simulator</a>
+                <a href="calculator.html">Purchasing Power</a>
+                <a href="bitcoin-salary.html">Labour Calculator</a>
+                <a href="bitcoinfire.html">FIRE Calculator</a>
+                <a href="Subscriptions.html">Subscriptions</a>
+            </nav>
+            <p>Built for the Bitcoin standard. <a href="https://twitter.com/livingonbtc" target="_blank" rel="noopener">@LivingOnBTC</a></p>
+            <p class="footer-disclaimer">Not financial advice. Always do your own research.</p>
+        </footer>
+    </main>
+</body>
+</html>
