@@ -430,9 +430,13 @@
         }
 
         async function fetchHistoricalPrices(currency, fromTs, toTs) {
-            // 1) CoinGecko handles the last 365 days natively (multi-currency)
-            const cg = await fetchCoingeckoPrices(currency, fromTs, toTs);
-            if (cg && Object.keys(cg).length > 0) return cg;
+            // 1) CoinGecko handles the last 365 days natively (multi-currency) —
+            //    skip it for older ranges since the free tier rejects them (401/10012)
+            const cutoff = Date.now() / 1000 - 365 * 86400;
+            if (fromTs >= cutoff) {
+                const cg = await fetchCoingeckoPrices(currency, fromTs, toTs);
+                if (cg && Object.keys(cg).length > 0) return cg;
+            }
 
             // 2) Older ranges: Bitstamp BTC/USD + ECB FX
             const history = await fetchBtcUsdHistory();
