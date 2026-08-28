@@ -406,7 +406,12 @@
                 const res = await fetch(url);
                 if (res.ok) {
                     const data = await res.json();
-                    Object.assign(rates, data.rates || {});
+                    // Timeseries rates are nested per currency: {date: {CUR: rate}}
+                    const series = data.rates || {};
+                    for (const [day, r] of Object.entries(series)) {
+                        if (r && typeof r === 'object') rates[day] = r[currency];
+                        else rates[day] = r; // flat fallback
+                    }
                 }
                 cur = new Date(ce);
                 cur.setDate(cur.getDate() + 1);
