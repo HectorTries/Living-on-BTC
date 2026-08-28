@@ -2022,25 +2022,11 @@
             }
         }
 
-        // ============ Price data layer (free, keyless APIs) ============
-        // BTC/USD daily history: blockchain.info  |  Historical FX: Frankfurter (ECB)
-        let btcUsdHistoryCache = null;
+        // ============ Price data layer ============
+        // CoinGecko primary (free, CORS-enabled) — falls back to Bitstamp for
+        // dates older than 365 days (CoinGecko free tier only serves recent data)
+        let btcUsdCache = null;
         const fxCache = {};
-
-        async function fetchBtcUsdHistory() {
-            if (btcUsdHistoryCache) return btcUsdHistoryCache;
-            const res = await fetch('https://api.blockchain.info/charts/market-price?timespan=all&format=json');
-            if (!res.ok) throw new Error('Could not fetch BTC price history');
-            const data = await res.json();
-            const map = {};
-            (data.values || []).forEach(pt => {
-                const d = new Date(pt.x * 1000);
-                const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-                map[key] = pt.y;
-            });
-            btcUsdHistoryCache = map;
-            return map;
-        }
 
         function toKey(date) {
             const d = new Date(date);
@@ -2061,7 +2047,7 @@
         async function getFxRate(dateKey, currency) {
             if (currency === 'USD') return 1;
             if (fxCache[currency] && fxCache[currency].date === dateKey) return fxCache[currency].rate;
-            const url = `https://api.frankfurter.app/${dateKey}?from=USD&to=${currency}`;
+            const url = `https://api.frankfurter.dev/v1/${dateKey}?from=USD&to=${currency}`;
             const res = await fetch(url);
             if (!res.ok) return null;
             const data = await res.json();
@@ -2070,10 +2056,43 @@
             return rate;
         }
 
+        // Full Bitstamp daily BTC/USD history (2013+, CORS-enabled)
+        async function fetchBtcUsdHistory() {
+            if (btcUsdCache) return btcUsdCache;
+            const map = {};
+            let start = 1356998400; // 2013-01-01
+            while (true) {
+                const url = `https://www.bitstamp.net/api/v2/ohlc/btcusd/?step=86400&limit=1000&start=${start}`;
+                const res = await fetch(url);
+                if (!res.ok) throw new Error('Could not fetch BTC price history');
+                const data = await res.json();
+                const ohlc = data?.data?.ohlc || [];
+                if (!ohlc.length) break;
+                for (const c of ohlc) {
+                    map[toKey(new Date(parseInt(c.timestamp) * 1000))] = parseFloat(c.close);
+                }
+                const last = parseInt(ohlc[ohlc.length - 1].timestamp);
+                if (ohlc.length < 1000) break;
+                start = last + 1;
+            }
+            btcUsdCache = map;
+            return map;
+        }
+
         async function getBitcoinPrice(date, currency) {
             try {
-                const history = await fetchBtcUsdHistory();
                 const dateKey = toKey(date);
+                // CoinGecko first (multi-currency, one call, last 365 days)
+                const [dd, mm, yyyy] = [dateKey.slice(8), dateKey.slice(5, 7), dateKey.slice(0, 4)];
+                const cgRes = await fetch(`https://api.coingecko.com/api/v3/coins/bitcoin/history?date=${dd}-${mm}-${yyyy}&localization=false`);
+                if (cgRes.ok) {
+                    const cgData = await cgRes.json();
+                    const price = cgData?.market_data?.current_price?.[currency.toLowerCase()];
+                    if (price) return price;
+                }
+
+                // Fallback: Bitstamp BTC/USD x ECB FX (any date back to 2013)
+                const history = await fetchBtcUsdHistory();
                 const usdPrice = nearestOnOrBefore(history, dateKey);
                 if (!usdPrice) return null;
                 const fx = await getFxRate(dateKey, currency.toUpperCase());

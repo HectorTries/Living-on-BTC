@@ -2212,16 +2212,16 @@
             updateMetrics(years);
         }
 
-        // Live price API (Binance - free, keyless, reliable)
-        const BINANCE_API = 'https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT';
+        // Live price API (CoinGecko - free, keyless, CORS-enabled)
+        const COINGECKO_API = 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd';
         const UPDATE_INTERVAL = 5 * 60 * 1000; // 5 minutes
 
-        // Fetch live Bitcoin price from Binance
+        // Fetch live Bitcoin price from CoinGecko
         async function fetchLiveBitcoinPrice() {
             try {
-                const response = await fetch(BINANCE_API);
+                const response = await fetch(COINGECKO_API);
                 const data = await response.json();
-                liveBtcPrice = parseFloat(data.price);
+                liveBtcPrice = data.bitcoin.usd;
                 
                 // Also update the historical data with this latest price
                 const today = new Date();
@@ -2240,37 +2240,38 @@
             }
         }
 
-        // Fetch historical Bitcoin prices from blockchain.info (all-time daily data)
+        // Fetch historical Bitcoin prices from Bitstamp (all-time daily data, CORS-enabled)
         async function fetchHistoricalBitcoinPrices() {
             try {
                 // Fetch all daily data (covers 1yr, 3yr and 5yr views)
-                const response = await fetch('https://api.blockchain.info/charts/market-price?timespan=all&format=json');
-                const data = await response.json();
-                
-                if (data.values && Array.isArray(data.values)) {
-                    // Group by month and average
-                    const monthlyPrices = {};
-                    
-                    data.values.forEach(pt => {
-                        const date = new Date(pt.x * 1000);
+                const allPrices = {};
+                let start = 1356998400; // 2013-01-01
+                while (true) {
+                    const response = await fetch(`https://www.bitstamp.net/api/v2/ohlc/btcusd/?step=86400&limit=1000&start=${start}`);
+                    if (!response.ok) throw new Error('Bitstamp returned HTTP ' + response.status);
+                    const data = await response.json();
+                    const ohlc = data?.data?.ohlc || [];
+                    if (!ohlc.length) break;
+                    ohlc.forEach(c => {
+                        const date = new Date(parseInt(c.timestamp) * 1000);
                         const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-                        
-                        if (!monthlyPrices[key]) {
-                            monthlyPrices[key] = [];
-                        }
-                        monthlyPrices[key].push(pt.y);
+                        if (!allPrices[key]) allPrices[key] = [];
+                        allPrices[key].push(parseFloat(c.close));
                     });
-                    
-                    // Calculate monthly average
-                    Object.keys(monthlyPrices).forEach(key => {
-                        const prices = monthlyPrices[key];
-                        const avg = prices.reduce((sum, p) => sum + p, 0) / prices.length;
-                        historicalBtcPrices[key] = Math.round(avg);
-                    });
-                    
-                    console.log('Historical BTC prices fetched:', historicalBtcPrices);
-                    return historicalBtcPrices;
+                    const last = parseInt(ohlc[ohlc.length - 1].timestamp);
+                    if (ohlc.length < 1000) break;
+                    start = last + 1;
                 }
+
+                // Calculate monthly average
+                Object.keys(allPrices).forEach(key => {
+                    const prices = allPrices[key];
+                    const avg = prices.reduce((sum, p) => sum + p, 0) / prices.length;
+                    historicalBtcPrices[key] = Math.round(avg);
+                });
+                
+                console.log('Historical BTC prices fetched:', Object.keys(historicalBtcPrices).length, 'months');
+                return historicalBtcPrices;
             } catch (error) {
                 console.error('Error fetching historical Bitcoin prices:', error);
             }

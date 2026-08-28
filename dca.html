@@ -342,25 +342,51 @@
             return d.toISOString().slice(0, 10);
         }
 
-        // ===== Historical price fetch (free, keyless APIs) =====
-        // BTC/USD daily history: blockchain.info  |  Historical FX: Frankfurter (ECB)
-        let btcUsdHistoryCache = null;
-        let fxSeriesCache = {}; // currency -> {dateKey: rate}
+        // ===== Historical price fetch =====
+        // CoinGecko primary (free, CORS-enabled) — falls back to Bitstamp for
+        // ranges older than 365 days (CoinGecko free tier only serves recent data)
+        let btcUsdCache = null;        // Bitstamp daily BTC/USD (full history)
+        let fxSeriesCache = {};        // currency -> {dateKey: rate}
 
-        async function fetchBtcUsdHistory() {
-            if (btcUsdHistoryCache) return btcUsdHistoryCache;
-            const res = await fetch('https://api.blockchain.info/charts/market-price?timespan=all&format=json');
-            if (!res.ok) throw new Error('Could not fetch BTC price history');
+        // --- CoinGecko (last 365 days) ---
+        async function fetchCoingeckoPrices(currency, fromTs, toTs) {
+            const url = `https://api.coingecko.com/api/v3/coins/bitcoin/market_chart/range?vs_currency=${currency.toLowerCase()}&from=${fromTs}&to=${toTs}`;
+            const res = await fetch(url);
+            if (!res.ok) return null;
             const data = await res.json();
-            const map = {};
-            for (const pt of data.values || []) {
-                const d = new Date(pt.x * 1000);
-                map[dateKey(d)] = pt.y;
+            if (!data.prices || !data.prices.length) return null;
+            const byDate = {};
+            for (const [ts, price] of data.prices) {
+                const k = dateKey(new Date(ts));
+                if (!byDate[k]) byDate[k] = price;
             }
-            btcUsdHistoryCache = map;
+            return byDate;
+        }
+
+        // --- Bitstamp daily BTC/USD (full history since 2011, CORS-enabled) ---
+        async function fetchBtcUsdHistory() {
+            if (btcUsdCache) return btcUsdCache;
+            const map = {};
+            let start = 1356998400; // 2013-01-01
+            while (true) {
+                const url = `https://www.bitstamp.net/api/v2/ohlc/btcusd/?step=86400&limit=1000&start=${start}`;
+                const res = await fetch(url);
+                if (!res.ok) throw new Error('Could not fetch BTC price history');
+                const data = await res.json();
+                const ohlc = data?.data?.ohlc || [];
+                if (!ohlc.length) break;
+                for (const c of ohlc) {
+                    map[dateKey(new Date(parseInt(c.timestamp) * 1000))] = parseFloat(c.close);
+                }
+                const last = parseInt(ohlc[ohlc.length - 1].timestamp);
+                if (ohlc.length < 1000) break;
+                start = last + 1;
+            }
+            btcUsdCache = map;
             return map;
         }
 
+        // --- FX: USD -> currency via ECB (Frankfurter) ---
         async function fetchFxSeries(currency, fromTs, toTs) {
             currency = currency.toUpperCase();
             if (currency === 'USD') return {};
@@ -373,7 +399,7 @@
                 const chunkEnd = new Date(cur);
                 chunkEnd.setFullYear(chunkEnd.getFullYear() + 1);
                 const ce = chunkEnd > end ? end : chunkEnd;
-                const url = `https://api.frankfurter.app/${dateKey(cur)}..${dateKey(ce)}?from=USD&to=${currency}`;
+                const url = `https://api.frankfurter.dev/v1/${dateKey(cur)}..${dateKey(ce)}?from=USD&to=${currency}`;
                 const res = await fetch(url);
                 if (res.ok) {
                     const data = await res.json();
@@ -396,6 +422,11 @@
         }
 
         async function fetchHistoricalPrices(currency, fromTs, toTs) {
+            // 1) CoinGecko handles the last 365 days natively (multi-currency)
+            const cg = await fetchCoingeckoPrices(currency, fromTs, toTs);
+            if (cg && Object.keys(cg).length > 0) return cg;
+
+            // 2) Older ranges: Bitstamp BTC/USD + ECB FX
             const history = await fetchBtcUsdHistory();
             const fx = await fetchFxSeries(currency, fromTs, toTs);
             const byDate = {};
