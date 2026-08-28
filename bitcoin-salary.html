@@ -2212,16 +2212,21 @@
             updateMetrics(years);
         }
 
-        // Live price API (CoinGecko - free, keyless, CORS-enabled)
+        // Live price API (CoinGecko primary, Binance fallback)
         const COINGECKO_API = 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd';
+        const BINANCE_API = 'https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT';
         const UPDATE_INTERVAL = 5 * 60 * 1000; // 5 minutes
 
-        // Fetch live Bitcoin price from CoinGecko
+        // Fetch live Bitcoin price from CoinGecko (falls back to Binance)
         async function fetchLiveBitcoinPrice() {
             try {
                 const response = await fetch(COINGECKO_API);
-                const data = await response.json();
-                liveBtcPrice = data.bitcoin.usd;
+                if (response.ok) {
+                    const data = await response.json();
+                    liveBtcPrice = data.bitcoin.usd;
+                } else {
+                    throw new Error('CoinGecko HTTP ' + response.status);
+                }
                 
                 // Also update the historical data with this latest price
                 const today = new Date();
@@ -2231,8 +2236,23 @@
                 updateLiveMetrics();
                 return liveBtcPrice;
             } catch (error) {
-                console.error('Error fetching Bitcoin price:', error);
-                // Fallback to latest price from historical data
+                console.error('Error fetching Bitcoin price from CoinGecko:', error);
+                // Fallback: Binance ticker
+                try {
+                    const binanceRes = await fetch(BINANCE_API);
+                    if (binanceRes.ok) {
+                        const binanceData = await binanceRes.json();
+                        liveBtcPrice = parseFloat(binanceData.price);
+                        const today = new Date();
+                        const key = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
+                        historicalBtcPrices[key] = liveBtcPrice;
+                        updateLiveMetrics();
+                        return liveBtcPrice;
+                    }
+                } catch (e) {
+                    console.error('Error fetching Bitcoin price from Binance:', e);
+                }
+                // Last resort: latest price from historical data
                 const keys = Object.keys(historicalBtcPrices);
                 liveBtcPrice = keys.length > 0 ? historicalBtcPrices[keys.sort().pop()] : DATA.bitcoinPrices['2026-07'];
                 updateLiveMetrics();
