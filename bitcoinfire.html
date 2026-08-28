@@ -1753,25 +1753,28 @@
 
             const initialBtcValue = (initialAnnualIncome * btcPercentage) / 100;
             let annualIncome = initialAnnualIncome;
-            const monthlyDCA = (initialAnnualIncome * savingsRate) / (100 * 12);
+            let monthlyDCA = (initialAnnualIncome * savingsRate) / (100 * 12);
             const monthlyRate = Math.pow(1 + expectedCagr/100, 1/12) - 1;
             let months = 0;
             let currentValue = initialBtcValue;
+            let cumulativeDca = 0;
             const maxMonths = 360;
             const projectionData = [];
 
             while (months < maxMonths) {
                 if (months > 0 && months % 12 === 0) {
                     annualIncome *= (1 + annualRaise);
+                    monthlyDCA = (annualIncome * savingsRate) / (100 * 12);
                 }
                 currentValue += monthlyDCA;
+                cumulativeDca += monthlyDCA;
                 currentValue *= (1 + monthlyRate);
                 const annualAppreciation = currentValue * (expectedCagr/100);
                 projectionData.push({
                     month: months,
                     value: currentValue,
                     appreciation: annualAppreciation,
-                    dcaContribution: monthlyDCA * (months + 1),
+                    dcaContribution: cumulativeDca,
                     initialGrowth: initialBtcValue * Math.pow(1 + monthlyRate, months + 1),
                     annualIncome: annualIncome
                 });

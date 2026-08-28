@@ -2022,31 +2022,63 @@
             }
         }
 
+        // ============ Price data layer (free, keyless APIs) ============
+        // BTC/USD daily history: blockchain.info  |  Historical FX: Frankfurter (ECB)
+        let btcUsdHistoryCache = null;
+        const fxCache = {};
+
+        async function fetchBtcUsdHistory() {
+            if (btcUsdHistoryCache) return btcUsdHistoryCache;
+            const res = await fetch('https://api.blockchain.info/charts/market-price?timespan=all&format=json');
+            if (!res.ok) throw new Error('Could not fetch BTC price history');
+            const data = await res.json();
+            const map = {};
+            (data.values || []).forEach(pt => {
+                const d = new Date(pt.x * 1000);
+                const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+                map[key] = pt.y;
+            });
+            btcUsdHistoryCache = map;
+            return map;
+        }
+
+        function toKey(date) {
+            const d = new Date(date);
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        }
+
+        // Closest value on or before the given date (walks back up to 14 days)
+        function nearestOnOrBefore(map, dateKey, maxLookback = 14) {
+            const d = new Date(dateKey + 'T00:00:00Z');
+            for (let i = 0; i <= maxLookback; i++) {
+                const key = toKey(new Date(d.getTime() - i * 86400000));
+                if (map[key] !== undefined) return map[key];
+            }
+            return null;
+        }
+
+        // USD -> currency rate on a given date (ECB reference rates)
+        async function getFxRate(dateKey, currency) {
+            if (currency === 'USD') return 1;
+            if (fxCache[currency] && fxCache[currency].date === dateKey) return fxCache[currency].rate;
+            const url = `https://api.frankfurter.app/${dateKey}?from=USD&to=${currency}`;
+            const res = await fetch(url);
+            if (!res.ok) return null;
+            const data = await res.json();
+            const rate = data.rates && data.rates[currency];
+            fxCache[currency] = { date: dateKey, rate: rate };
+            return rate;
+        }
+
         async function getBitcoinPrice(date, currency) {
-            const timestamp = Math.floor(new Date(date).getTime() / 1000);
-            const apiUrl = `https://min-api.cryptocompare.com/data/pricehistorical?fsym=BTC&tsyms=${currency.toUpperCase()}&ts=${timestamp}`;
-
             try {
-                const response = await fetch(apiUrl);
-
-                if (!response.ok) {
-                    if (response.status === 400 || response.status === 429) {
-                        const errorData = await response.json();
-                        console.error("CryptoCompare API Error:", errorData);
-                        return null;
-                    }
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                const data = await response.json();
-
-                if (data && data.BTC && data.BTC[currency.toUpperCase()]) {
-                    return data.BTC[currency.toUpperCase()];
-                } else {
-                    console.warn("Unexpected data format from CryptoCompare:", data);
-                    return null;
-                }
-
+                const history = await fetchBtcUsdHistory();
+                const dateKey = toKey(date);
+                const usdPrice = nearestOnOrBefore(history, dateKey);
+                if (!usdPrice) return null;
+                const fx = await getFxRate(dateKey, currency.toUpperCase());
+                if (!fx) return null;
+                return usdPrice * fx;
             } catch (error) {
                 console.error("Error fetching Bitcoin price:", error);
                 return null;

@@ -52,8 +52,7 @@
     <meta name="format-detection" content="telephone=no">
 
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="/images/favicon-32.png" sizes="32x32">
-    <link rel="icon" type="image/png" href="/images/favicon.png">
+    <link rel="icon" type="image/png" href="/images/favicon.png" sizes="32x32">
     <link rel="apple-touch-icon" href="/images/favicon-192.png">
 
     <!-- PWA -->
@@ -343,19 +342,75 @@
             return d.toISOString().slice(0, 10);
         }
 
-        // ===== CoinGecko historical price fetch =====
-        // /coins/bitcoin/market_chart/range?vs_currency=X&from=ts&to=ts
-        async function fetchHistoricalPrices(currency, fromTs, toTs) {
-            const url = `https://api.coingecko.com/api/v3/coins/bitcoin/market_chart/range?vs_currency=${currency.toLowerCase()}&from=${fromTs}&to=${toTs}`;
-            const res = await fetch(url);
-            if (!res.ok) throw new Error(`CoinGecko returned HTTP ${res.status}`);
+        // ===== Historical price fetch (free, keyless APIs) =====
+        // BTC/USD daily history: blockchain.info  |  Historical FX: Frankfurter (ECB)
+        let btcUsdHistoryCache = null;
+        let fxSeriesCache = {}; // currency -> {dateKey: rate}
+
+        async function fetchBtcUsdHistory() {
+            if (btcUsdHistoryCache) return btcUsdHistoryCache;
+            const res = await fetch('https://api.blockchain.info/charts/market-price?timespan=all&format=json');
+            if (!res.ok) throw new Error('Could not fetch BTC price history');
             const data = await res.json();
-            // data.prices = [[ts, price], ...]
+            const map = {};
+            for (const pt of data.values || []) {
+                const d = new Date(pt.x * 1000);
+                map[dateKey(d)] = pt.y;
+            }
+            btcUsdHistoryCache = map;
+            return map;
+        }
+
+        async function fetchFxSeries(currency, fromTs, toTs) {
+            currency = currency.toUpperCase();
+            if (currency === 'USD') return {};
+            if (fxSeriesCache[currency]) return fxSeriesCache[currency];
+            const rates = {};
+            const start = new Date(fromTs * 1000);
+            const end = new Date(toTs * 1000);
+            let cur = new Date(start);
+            while (cur <= end) {
+                const chunkEnd = new Date(cur);
+                chunkEnd.setFullYear(chunkEnd.getFullYear() + 1);
+                const ce = chunkEnd > end ? end : chunkEnd;
+                const url = `https://api.frankfurter.app/${dateKey(cur)}..${dateKey(ce)}?from=USD&to=${currency}`;
+                const res = await fetch(url);
+                if (res.ok) {
+                    const data = await res.json();
+                    Object.assign(rates, data.rates || {});
+                }
+                cur = new Date(ce);
+                cur.setDate(cur.getDate() + 1);
+            }
+            fxSeriesCache[currency] = rates;
+            return rates;
+        }
+
+        function nearestOnOrBefore(map, dateKeyStr, maxLookback = 21) {
+            const d = new Date(dateKeyStr + 'T00:00:00Z');
+            for (let i = 0; i <= maxLookback; i++) {
+                const k = dateKey(new Date(d.getTime() - i * 86400000));
+                if (map[k] !== undefined) return map[k];
+            }
+            return null;
+        }
+
+        async function fetchHistoricalPrices(currency, fromTs, toTs) {
+            const history = await fetchBtcUsdHistory();
+            const fx = await fetchFxSeries(currency, fromTs, toTs);
             const byDate = {};
-            for (const [ts, price] of data.prices) {
-                const d = new Date(ts);
+            const start = new Date(fromTs * 1000);
+            const end = new Date(toTs * 1000);
+            const d = new Date(start);
+            const isUsd = currency.toUpperCase() === 'USD';
+            while (d <= end) {
                 const k = dateKey(d);
-                if (!byDate[k]) byDate[k] = price; // first price of the day
+                const usd = nearestOnOrBefore(history, k);
+                if (usd) {
+                    const rate = isUsd ? 1 : nearestOnOrBefore(fx, k);
+                    if (rate) byDate[k] = usd * rate;
+                }
+                d.setDate(d.getDate() + 1);
             }
             return byDate;
         }

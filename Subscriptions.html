@@ -2332,10 +2332,7 @@
     <script>
         // ...existing Google Analytics code...
 
-        // Add price caching and API setup
-        const priceCache = new Map();
-        let lastApiCall = 0;
-        const API_RATE_LIMIT = 100; // milliseconds between calls
+        // API setup
         let selectedCurrency = null;
         let resultChart = null;
 
@@ -2371,51 +2368,92 @@
             }
         });
 
-        // Add proper Bitcoin price fetching function
+        // ============ Price data layer (free, keyless APIs) ============
+        // BTC/USD daily history: blockchain.info  |  Historical FX: Frankfurter (ECB)
+        let btcUsdHistoryCache = null;
+        let fxSeriesCache = {};      // currency -> { dateKey: rate }
+        let fxRangeLoaded = {};      // currency -> true once series fetched
+
+        function toKey(date) {
+            const d = new Date(date);
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        }
+
+        // Closest value on or before the given date (walks back up to 21 days)
+        function nearestOnOrBefore(map, dateKey, maxLookback = 21) {
+            const d = new Date(dateKey + 'T00:00:00Z');
+            for (let i = 0; i <= maxLookback; i++) {
+                const key = toKey(new Date(d.getTime() - i * 86400000));
+                if (map[key] !== undefined) return map[key];
+            }
+            return null;
+        }
+
+        async function fetchBtcUsdHistory() {
+            if (btcUsdHistoryCache) return btcUsdHistoryCache;
+            const res = await fetch('https://api.blockchain.info/charts/market-price?timespan=all&format=json');
+            if (!res.ok) throw new Error('Could not fetch BTC price history');
+            const data = await res.json();
+            const map = {};
+            (data.values || []).forEach(pt => {
+                const d = new Date(pt.x * 1000);
+                const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+                map[key] = pt.y;
+            });
+            btcUsdHistoryCache = map;
+            return map;
+        }
+
+        // Fetch USD -> currency rates across the whole range (chunked by year, ECB weekdays only)
+        async function fetchFxSeries(startDate, endDate, currency) {
+            if (currency === 'USD') return {};
+            if (fxRangeLoaded[currency]) return fxSeriesCache[currency] || {};
+            const rates = {};
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            let cur = new Date(start);
+            while (cur <= end) {
+                const chunkEnd = new Date(cur);
+                chunkEnd.setFullYear(chunkEnd.getFullYear() + 1);
+                const ce = chunkEnd > end ? end : chunkEnd;
+                const url = `https://api.frankfurter.app/${toKey(cur)}..${toKey(ce)}?from=USD&to=${currency}`;
+                const res = await fetch(url);
+                if (res.ok) {
+                    const data = await res.json();
+                    Object.assign(rates, data.rates || {});
+                }
+                cur = new Date(ce);
+                cur.setDate(cur.getDate() + 1);
+            }
+            fxSeriesCache[currency] = rates;
+            fxRangeLoaded[currency] = true;
+            return rates;
+        }
+
+        // Load all price data for the range up front (then all lookups are local)
+        async function initPriceData(startDate, endDate, currency) {
+            await fetchBtcUsdHistory();
+            await fetchFxSeries(startDate, endDate, currency);
+        }
+
         async function getBitcoinPrice(date, currency) {
-            const cacheKey = `${date}-${currency}`;
-            if (priceCache.has(cacheKey)) {
-                return priceCache.get(cacheKey);
-            }
-
-            // Rate limiting
-            const now = Date.now();
-            const timeToWait = Math.max(0, API_RATE_LIMIT - (now - lastApiCall));
-            if (timeToWait > 0) {
-                await new Promise(resolve => setTimeout(resolve, timeToWait));
-            }
-            lastApiCall = Date.now();
-
+            // Don't allow future dates
             const requestDate = new Date(date);
             const today = new Date();
             if (requestDate > today) {
                 requestDate.setTime(today.getTime());
             }
-            
-            const timestamp = Math.floor(requestDate.getTime() / 1000);
-            const apiUrl = `https://min-api.cryptocompare.com/data/pricehistorical?fsym=BTC&tsyms=${currency.toUpperCase()}&ts=${timestamp}`;
 
-            try {
-                const response = await fetch(apiUrl);
-                if (!response.ok) {
-                    if (response.status === 429) {
-                        await new Promise(resolve => setTimeout(resolve, 1000));
-                        return getBitcoinPrice(date, currency);
-                    }
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
+            const history = await fetchBtcUsdHistory();
+            const dateKey = toKey(requestDate);
+            const usdPrice = nearestOnOrBefore(history, dateKey);
+            if (!usdPrice) throw new Error(`No BTC price data for ${date}`);
+            if (currency === 'USD') return usdPrice;
 
-                const data = await response.json();
-                if (data?.BTC?.[currency.toUpperCase()]) {
-                    const price = data.BTC[currency.toUpperCase()];
-                    priceCache.set(cacheKey, price);
-                    return price;
-                }
-                throw new Error(`Could not parse Bitcoin price for ${date}`);
-            } catch (error) {
-                console.error("Error fetching Bitcoin price:", error);
-                throw error;
-            }
+            const rates = fxSeriesCache[currency] || {};
+            const fx = nearestOnOrBefore(rates, dateKey);
+            if (!fx) throw new Error(`No FX rate for ${date} (${currency})`);
+            return usdPrice * fx;
         }
 
         // Add calculate button handler with proper error handling
@@ -2463,6 +2501,9 @@
             const initialInvestment = monthlyAmount * initialMonths;
             const sellFeeDecimal = sellFee / 100;
             
+            // Load all price data up front (single API calls, then local lookups)
+            await initPriceData(startDate, new Date().toISOString().split('T')[0], selectedCurrency);
+
             // Get initial BTC price and calculate initial BTC purchase
             const initialPrice = await getBitcoinPrice(startDate, selectedCurrency);
             const initialBtc = initialInvestment / initialPrice;
@@ -2555,153 +2596,6 @@
             });
         });
 
-        // Modify the display results function
-        function displaySubscriptionResults(results) {
-            const resultsDiv = document.getElementById('results');
-            
-            // Update sustainability indicator
-            const indicator = document.getElementById('sustainabilityIndicator');
-            indicator.className = `sustainability-indicator ${results.sustainable ? 'sustainable' : 'not-sustainable'}`;
-            indicator.innerHTML = results.sustainable ? 
-                '<i class="fas fa-check-circle"></i> Sustainable! Your investment should cover subscriptions indefinitely.' :
-                '<i class="fas fa-exclamation-circle"></i> Not Sustainable. Consider increasing initial investment.';
-            
-            // Update stats
-            document.getElementById('requiredInvestment').textContent = formatCurrency(results.initialInvestment);
-            document.getElementById('initialBtc').textContent = results.initialBtc.toFixed(8) + ' BTC';
-            document.getElementById('remainingBtc').textContent = results.finalBtc.toFixed(8) + ' BTC';
-            
-        }
-
-        async function calculateSubscriptionStrategy(startDate, monthlyAmount, initialPeriod, sellFee) {
-            // ...existing initialization code...
-            
-            // Get historical data first
-            const today = new Date();
-            let currentDate = new Date(startDate);
-            let historicalData = [];
-            
-            while (currentDate <= today) {
-                const dateString = currentDate.toISOString().split('T')[0];
-                const price = await getBitcoinPrice(dateString, selectedCurrency);
-                historicalData.push({
-                    date: new Date(currentDate),
-                    btcPrice: price
-                });
-                currentDate.setMonth(currentDate.getMonth() + 1);
-            }
-            
-            // Generate future price projections
-            const futurePrices = simulateBitcoinPrices(
-                historicalData[historicalData.length - 1].btcPrice,
-                60  // 5 years of monthly data
-            );
-            
-            // Combine historical and projected data
-            const allPriceData = [...historicalData, ...futurePrices];
-            
-            // Calculate BTC spending and portfolio values
-            let currentBtc = initialBtc;
-            
-            // Rest of calculation using allPriceData instead of fetching prices
-            // ...existing code...
-        }
-
-        function simulateBitcoinPrices(startPrice, months) {
-            const yearlyGrowth = 1.30; // 30% CAGR
-            const monthlyGrowth = Math.pow(yearlyGrowth, 1/12);
-            const prices = [];
-            let currentPrice = startPrice;
-            let currentDate = new Date();
-            
-            // Define the 4-year cycle
-            const cycleMonths = 48;
-            const bullMarkets = [
-                { duration: 12, growth: 2.5 },    // Year 1: 150% growth
-                { duration: 12, growth: 2.0 },    // Year 2: 100% growth
-                { duration: 12, growth: 1.8 },    // Year 3: 80% growth
-                { duration: 12, growth: 0.25 }    // Year 4: 75% decline
-            ];
-            
-            for (let month = 0; month < months; month++) {
-                // Determine which phase of the cycle we're in
-                const cyclePosition = month % cycleMonths;
-                let cycleMonth = 0;
-                let currentPhase = null;
-                
-                for (const phase of bullMarkets) {
-                    if (cyclePosition >= cycleMonth && cyclePosition < cycleMonth + phase.duration) {
-                        currentPhase = phase;
-                        break;
-                    }
-                    cycleMonth += phase.duration;
-                }
-                
-                // Apply the growth rate for current phase
-                const monthlyPhaseGrowth = Math.pow(currentPhase.growth, 1/12);
-                currentPrice *= monthlyPhaseGrowth;
-                
-                // Add some randomness (±10%)
-                const volatility = 0.10;
-                const randomFactor = 1 + (Math.random() * 2 - 1) * volatility;
-                currentPrice *= randomFactor;
-                
-                currentDate.setMonth(currentDate.getMonth() + 1);
-                prices.push({
-                    date: new Date(currentDate),
-                    btcPrice: currentPrice,
-                    projected: true
-                });
-            }
-            
-            return prices;
-        }
-
-        // Update the display function to show projected vs historical data
-        function displaySubscriptionResults(results) {
-            // ...existing code...
-            
-            // Add a legend note for projected data
-            if (results.monthlyData.some(d => d.projected)) {
-                const projectionNote = document.createElement('div');
-                projectionNote.className = 'helper-text';
-                projectionNote.innerHTML = `
-                    <i class="fas fa-chart-line"></i> 
-                    Future prices simulated with 30% CAGR over 4-year cycles 
-                    (3 bull years + 1 bear year with 75% decline)
-                `;
-                resultsDiv.insertBefore(projectionNote, document.querySelector('.chart-container'));
-            }
-            
-            // Update table display to show projected vs historical
-            results.monthlyData.forEach(data => {
-                const row = document.createElement('tr');
-                row.className = data.projected ? 'projected-data' : 'historical-data';
-                row.innerHTML = `
-                    <td>${formatDate(data.date)} ${data.projected ? '📊' : ''}</td>
-                    <td>${formatCurrency(data.btcPrice)}</td>
-                    <td>${data.btcBalance > 0 ? data.btcBalance.toFixed(8) + ' ₿' : '-'}</td>
-                    <td>${data.payment ? formatCurrency(data.payment) : '-'}</td>
-                    <td>${data.btcSpent ? '-' + data.btcSpent.toFixed(8) + ' ₿' : '-'}</td>
-                    <td>${formatCurrency(data.portfolioValue)}</td>
-                `;
-                tableBody.appendChild(row);
-            });
-            
-            // Add style for projected rows
-            const style = document.createElement('style');
-            style.textContent = `
-                .projected-data {
-                    background: rgba(247, 147, 26, 0.05);
-                }
-                .projected-data:hover {
-                    background: rgba(247, 147, 26, 0.1) !important;
-                }
-            `;
-            document.head.appendChild(style);
-            
-            // ...existing code...
-        }
     </script>
     <script>
     

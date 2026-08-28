@@ -149,12 +149,13 @@
     };
 
     /* ============================================
-       BITCOIN PRICE (CoinGecko, cached)
+       BITCOIN PRICE (Binance, cached)
        ============================================ */
     const PriceCache = {
         _cache: new Map(),
         _pending: new Map(),
-        COINGECKO: 'https://api.coingecko.com/api/v3/simple/price',
+        BINANCE: 'https://api.binance.com/api/v3/ticker/price',
+        FX: 'https://api.frankfurter.app/latest?from=USD',
         TTL_MS: 5 * 60 * 1000, // 5 minutes
 
         async getBtcPrice(currency = 'usd') {
@@ -164,23 +165,36 @@
 
             if (this._pending.has(currency)) return this._pending.get(currency);
 
-            const promise = fetch(`${this.COINGECKO}?ids=bitcoin&vs_currencies=${currency}`)
-                .then(r => {
-                    if (!r.ok) throw new Error(`CoinGecko HTTP ${r.status}`);
-                    return r.json();
-                })
-                .then(data => {
-                    const price = data.bitcoin?.[currency];
-                    if (!price) throw new Error('No price in response');
-                    this._cache.set(currency, { price, ts: Date.now() });
-                    this._pending.delete(currency);
-                    return price;
-                })
-                .catch(err => {
-                    this._pending.delete(currency);
-                    console.warn('BTC price fetch failed:', err);
-                    return null;
-                });
+            const promise = (async () => {
+                const pair = currency === 'usd' ? 'BTCUSDT' : `BTC${currency.toUpperCase()}`;
+                let price = null;
+                try {
+                    const r = await fetch(`${this.BINANCE}?symbol=${pair}`);
+                    if (r.ok) {
+                        const d = await r.json();
+                        price = parseFloat(d.price);
+                    }
+                } catch (e) { /* fall through to FX route */ }
+
+                // Fallback: BTC/USD x USD->currency via ECB rates
+                if (!price && currency !== 'usd') {
+                    try {
+                        const [usdRes, fxRes] = await Promise.all([
+                            fetch(`${this.BINANCE}?symbol=BTCUSDT`),
+                            fetch(`${this.FX}&to=${currency.toUpperCase()}`)
+                        ]);
+                        const usdData = await usdRes.json();
+                        const fxData = await fxRes.json();
+                        const rate = fxData.rates?.[currency.toUpperCase()];
+                        if (usdData.price && rate) price = parseFloat(usdData.price) * rate;
+                    } catch (e) { /* give up */ }
+                }
+
+                if (!price) throw new Error('No price in response');
+                this._cache.set(currency, { price, ts: Date.now() });
+                this._pending.delete(currency);
+                return price;
+            })();
 
             this._pending.set(currency, promise);
             return promise;

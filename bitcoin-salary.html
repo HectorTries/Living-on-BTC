@@ -2212,16 +2212,16 @@
             updateMetrics(years);
         }
 
-        // CoinGecko API configuration
-        const COINGECKO_API = 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd';
+        // Live price API (Binance - free, keyless, reliable)
+        const BINANCE_API = 'https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT';
         const UPDATE_INTERVAL = 5 * 60 * 1000; // 5 minutes
 
-        // Fetch live Bitcoin price from CoinGecko
+        // Fetch live Bitcoin price from Binance
         async function fetchLiveBitcoinPrice() {
             try {
-                const response = await fetch(COINGECKO_API);
+                const response = await fetch(BINANCE_API);
                 const data = await response.json();
-                liveBtcPrice = data.bitcoin.usd;
+                liveBtcPrice = parseFloat(data.price);
                 
                 // Also update the historical data with this latest price
                 const today = new Date();
@@ -2234,31 +2234,31 @@
                 console.error('Error fetching Bitcoin price:', error);
                 // Fallback to latest price from historical data
                 const keys = Object.keys(historicalBtcPrices);
-                liveBtcPrice = keys.length > 0 ? historicalBtcPrices[keys.sort().pop()] : DATA.bitcoinPrices['2025-01'];
+                liveBtcPrice = keys.length > 0 ? historicalBtcPrices[keys.sort().pop()] : DATA.bitcoinPrices['2026-07'];
                 updateLiveMetrics();
                 return liveBtcPrice;
             }
         }
 
-        // Fetch historical Bitcoin prices from CoinGecko (last 365 days)
+        // Fetch historical Bitcoin prices from blockchain.info (all-time daily data)
         async function fetchHistoricalBitcoinPrices() {
             try {
-                // Fetch 365 days of daily data
-                const response = await fetch('https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=365');
+                // Fetch all daily data (covers 1yr, 3yr and 5yr views)
+                const response = await fetch('https://api.blockchain.info/charts/market-price?timespan=all&format=json');
                 const data = await response.json();
                 
-                if (data.prices && Array.isArray(data.prices)) {
+                if (data.values && Array.isArray(data.values)) {
                     // Group by month and average
                     const monthlyPrices = {};
                     
-                    data.prices.forEach(([timestamp, price]) => {
-                        const date = new Date(timestamp);
+                    data.values.forEach(pt => {
+                        const date = new Date(pt.x * 1000);
                         const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
                         
                         if (!monthlyPrices[key]) {
                             monthlyPrices[key] = [];
                         }
-                        monthlyPrices[key].push(price);
+                        monthlyPrices[key].push(pt.y);
                     });
                     
                     // Calculate monthly average
