@@ -675,7 +675,13 @@
         }
 
         // ===== Init =====
-        bindUI();
+        // app.js is loaded with defer, so window.LivingOnBTC is only available
+        // after DOMContentLoaded — wait for it before binding the UI.
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', bindUI);
+        } else {
+            bindUI();
+        }
     })();
     </script>
 </body>
