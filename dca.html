@@ -286,6 +286,9 @@
     </main>
 
     <script>
+    // app.js is loaded with defer, so window.LivingOnBTC is only available
+    // after DOMContentLoaded — run the whole app after that point.
+    document.addEventListener('DOMContentLoaded', function () {
     (function () {
         'use strict';
 
@@ -675,14 +678,9 @@
         }
 
         // ===== Init =====
-        // app.js is loaded with defer, so window.LivingOnBTC is only available
-        // after DOMContentLoaded — wait for it before binding the UI.
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', bindUI);
-        } else {
-            bindUI();
-        }
+        bindUI();
     })();
+    });
     </script>
 </body>
 </html>
