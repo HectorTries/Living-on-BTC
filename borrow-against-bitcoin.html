@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#1a1f36">
+    <title>Borrow Against Bitcoin: Coinbase vs Ledn vs Unchained | LivingOnBTC</title>
+    <meta name="description" content="Borrow against BTC without selling: Coinbase (Morpho onchain USDC loans) vs Ledn vs Unchained compared, LTV and liquidation explained qualitatively, plus a risks checklist.">
+    <meta name="keywords" content="borrow against Bitcoin, BTC backed loan, Coinbase Morpho loan, Ledn Bitcoin loan, Unchained loan, Bitcoin collateral LTV liquidation">
+    <link rel="canonical" href="https://livingonbtc.com/borrow-against-bitcoin.html">
+    <link rel="alternate" hreflang="en" href="https://livingonbtc.com/borrow-against-bitcoin.html">
+    <link rel="alternate" hreflang="en-gb" href="https://livingonbtc.com/borrow-against-bitcoin.html">
+    <link rel="alternate" hreflang="en-us" href="https://livingonbtc.com/borrow-against-bitcoin.html">
+    <link rel="alternate" hreflang="x-default" href="https://livingonbtc.com/borrow-against-bitcoin.html">
+    <link rel="prev" href="https://livingonbtc.com/crypto-mortgages-2026.html">
+    <link rel="next" href="https://livingonbtc.com/fhfa-rule-explained.html">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://livingonbtc.com/borrow-against-bitcoin.html">
+    <meta property="og:title" content="Borrow Against Bitcoin: Coinbase vs Ledn vs Unchained">
+    <meta property="og:description" content="Compare BTC-backed borrowing options, understand LTV and liquidation risk, and run the risks checklist first.">
+    <meta property="og:image" content="https://livingonbtc.com/images/og-dca.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Borrow against Bitcoin comparison guide">
+    <meta property="og:site_name" content="LivingOnBTC">
+    <meta property="og:locale" content="en_GB">
+    <meta property="og:locale:alternate" content="en_US">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Borrow Against Bitcoin: Coinbase vs Ledn vs Unchained">
+    <meta name="twitter:description" content="BTC-backed borrowing compared, LTV and liquidation explained, risks checklist.">
+    <meta name="twitter:image" content="https://livingonbtc.com/images/og-dca.png">
+    <meta name="twitter:image:alt" content="Borrow against Bitcoin guide">
+    <meta name="twitter:site" content="@LivingOnBTC_">
+    <meta name="twitter:creator" content="@LivingOnBTC_">
+
+    <!-- Platform -->
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <meta name="author" content="LivingOnBTC">
+    <meta name="googlebot" content="index, follow">
+    <meta name="creator" content="LivingOnBTC">
+    <meta name="publisher" content="LivingOnBTC">
+    <meta name="revisit-after" content="30 days">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Borrow vs BTC">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/images/favicon.png" sizes="32x32">
+    <link rel="apple-touch-icon" href="/images/favicon-192.png">
+
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/styles.css">
+
+    <style>
+        .article-body h2 { font-size: 1.35rem; margin: 1.4em 0 0.5em; line-height: 1.3; }
+        .article-body h3 { font-size: 1.1rem; margin: 1.2em 0 0.4em; }
+        .article-body p, .article-body li { line-height: 1.7; }
+        .article-body ul { padding-left: 1.3em; margin: 0.5em 0 1em; }
+        .article-body li { margin-bottom: 0.4em; }
+        .article-body table { width: 100%; border-collapse: collapse; margin: 1em 0; font-size: 0.95rem; display: block; overflow-x: auto; }
+        .article-body th, .article-body td { border: 1px solid var(--border, #ddd); padding: 10px 12px; text-align: left; vertical-align: top; }
+        .article-body th { font-weight: 700; white-space: nowrap; }
+        .verify-note { border-left: 4px solid var(--bitcoin-orange, #f7931a); padding: 12px 16px; margin: 1em 0; border-radius: 0 8px 8px 0; background: rgba(247,147,26,0.08); line-height: 1.6; }
+    </style>
+
+    <!-- FAQ Schema -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Is borrowing against Bitcoin taxable?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Taking a loan collateralized by BTC is generally not a sale, so generally no capital-gains event when you borrow. Selling BTC, or having collateral liquidated, generally is a disposal. Confirm with a tax professional." }
+        },
+        {
+          "@type": "Question",
+          "name": "What is LTV in a Bitcoin loan?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Loan-to-value: the loan amount as a share of your pledged BTC value. Lower LTV means a bigger price-drop buffer before margin calls or liquidation. Check each lender for current terms." }
+        },
+        {
+          "@type": "Question",
+          "name": "Coinbase vs Ledn vs Unchained — what's the difference?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Coinbase offers onchain USDC loans via Morpho for eligible users; Ledn is a dedicated BTC-backed lender; Unchained focuses on collaborative-custody multisig lending. Custody model, availability, and terms differ — verify current details with each provider (as of Sept 2026 — verify)." }
+        }
+      ]
+    }
+    </script>
+
+    <script src="/app.js" defer></script>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <main id="main-content" class="container">
+        <header class="page-header">
+            <h1><i class="fas fa-landmark"></i> Borrow Against Bitcoin</h1>
+            <p class="page-subtitle">Get liquidity without selling your stack — if you respect the risks</p>
+            <div style="margin-top: 16px;">
+                <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+                    <i class="fas fa-moon"></i>
+                    <span class="theme-label">Dark</span>
+                </button>
+            </div>
+        </header>
+
+        <article class="card article-body">
+            <h2>Why borrow instead of sell?</h2>
+            <p>Selling BTC for cash generally triggers capital gains. Borrowing against it — pledging BTC as collateral for a dollar (or USDC) loan — generally does not, because a pledge is not a sale. That makes collateralized borrowing the go-to tool for short-term liquidity: a tax bill, a bridge to a house purchase, a business expense — without resetting your cost basis.</p>
+            <div class="verify-note"><strong><i class="fas fa-circle-exclamation"></i> Terms move fast:</strong> rates, LTV limits, and availability change often. We describe products qualitatively here — check each lender for current terms (as of Sept 2026 — verify).</div>
+
+            <h2>Comparison: Coinbase vs Ledn vs Unchained</h2>
+            <table>
+                <thead><tr><th>Product</th><th>What it is</th><th>Good to know</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Coinbase (Morpho onchain USDC loans)</strong></td><td>Eligible Coinbase users borrow USDC against BTC via Morpho onchain markets, without leaving the app flow.</td><td>Onchain rails mean transparent, smart-contract mechanics; availability is limited by region and eligibility. Borrowing limits and costs are set by the market and the app — check current terms.</td></tr>
+                    <tr><td><strong>Ledn</strong></td><td>Dedicated Bitcoin-backed lender offering dollar loans collateralized by BTC.</td><td>Straightforward custodial model aimed at holders who want liquidity without selling; loan sizing is conservative by design. Confirm custody, regions, and current terms.</td></tr>
+                    <tr><td><strong>Unchained</strong></td><td>Multisig, collaborative-custody lending: keys shared between you and Unchained.</td><td>Appeals to self-custody-minded borrowers — no single party holds all keys. Process can be more hands-on than a one-click app loan. Verify current offering.</td></tr>
+                </tbody>
+            </table>
+
+            <h2>LTV and liquidation, explained qualitatively</h2>
+            <ul>
+                <li><strong>LTV (loan-to-value)</strong> — your loan as a share of pledged BTC value. Borrow a little against a lot of BTC (low LTV) and you have a wide buffer; borrow close to the max (high LTV) and even a modest dip triggers a margin call.</li>
+                <li><strong>Margin call</strong> — the lender asks you to add collateral or repay part of the loan as BTC price falls.</li>
+                <li><strong>Liquidation</strong> — if you don't top up in time, the lender sells some or all of your collateral. That sale is generally a taxable disposal — the worst of both worlds: fewer sats <em>and</em> a tax bill.</li>
+                <li><strong>Rule of thumb:</strong> borrow well below the maximum, keep dry powder (cash or extra BTC) ready to top up, and size the loan so you can survive a harsh drawdown, not just an average one.</li>
+            </ul>
+
+            <h2>Risks checklist</h2>
+            <ul>
+                <li><i class="fas fa-check"></i> Could I repay this loan from income alone if BTC fell hard and stayed down?</li>
+                <li><i class="fas fa-check"></i> Do I understand exactly what price move triggers a margin call on my loan?</li>
+                <li><i class="fas fa-check"></i> Do I have top-up funds ready — not locked in the same collateral?</li>
+                <li><i class="fas fa-check"></i> Who holds my keys during the loan, and what happens if the lender has issues?</li>
+                <li><i class="fas fa-check"></i> Have I modeled the tax outcome of a forced liquidation, not just the happy path?</li>
+                <li><i class="fas fa-check"></i> Is the loan term flexible enough for my actual need (weeks vs years)?</li>
+                <li><i class="fas fa-check"></i> Have I compared borrowing costs against just selling a smaller amount outright?</li>
+            </ul>
+
+            <h2>FAQ</h2>
+            <h3>Is borrowing against Bitcoin taxable?</h3>
+            <p>Generally no at borrow time — a collateralized loan is not a sale. But liquidated collateral generally is a disposal. Confirm with a tax professional.</p>
+            <h3>Which is best: Coinbase, Ledn, or Unchained?</h3>
+            <p>Depends on what you value: in-app convenience (Coinbase/Morpho), a dedicated BTC lender (Ledn), or collaborative custody (Unchained). Compare custody, availability, and current terms — then pick (as of Sept 2026 — verify).</p>
+            <h3>Can I use a BTC loan for a house down payment?</h3>
+            <p>Sometimes — borrowed funds can bridge a purchase without selling BTC. But mortgage lenders have fund-sourcing rules, so confirm your mortgage lender accepts borrowed funds and get it in writing. See also our <a href="/crypto-mortgages-2026.html">crypto mortgages guide</a>.</p>
+
+            <div class="alert alert-info" style="margin-top: 20px;">
+                <strong>Not financial advice.</strong> Collateralized borrowing can lose you sats fast in a drawdown. Start small, stay low-LTV, and do your own research.
+            </div>
+        </article>
+
+        <footer class="site-footer">
+            <nav class="footer-nav">
+                <a href="/">Home</a>
+                <a href="/crypto-mortgages-2026.html">Crypto Mortgages</a>
+                <a href="/fhfa-rule-explained.html">FHFA Rule Explained</a>
+                <a href="/living-on-bitcoin-2026.html">Living on Bitcoin 2026</a>
+                <a href="/better-crypto-faq.html">Better Crypto FAQ</a>
+            </nav>
+            <p>Built for the Bitcoin standard. <a href="https://x.com/LivingOnBTC_" target="_blank" rel="noopener">@LivingOnBTC_</a></p>
+            <p class="footer-disclaimer">Not financial advice. Always do your own research.</p>
+        </footer>
+    </main>
+</body>
+</html>
