@@ -53,8 +53,8 @@
     <meta name="creator" content="LivingOnBTC">
     <meta name="publisher" content="LivingOnBTC">
     <meta name="revisit-after" content="7 days">
-    <meta name="twitter:site" content="@livingonbtc">
-    <meta name="twitter:creator" content="@livingonbtc">
+    <meta name="twitter:site" content="@LivingOnBTC_">
+    <meta name="twitter:creator" content="@LivingOnBTC_">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     
@@ -97,8 +97,8 @@
       "url": "https://livingonbtc.com",
       "description": "Bitcoin financial educator and calculator developer specializing in Bitcoin standard metrics",
       "sameAs": [
-        "https://twitter.com/livingonbtc",
-        "https://github.com/livingonbtc"
+        "https://x.com/LivingOnBTC_",
+        "https://github.com/HectorTries/Living-on-BTC"
       ],
       "knowsAbout": [
         "Bitcoin",
@@ -124,7 +124,7 @@
       "url": "https://livingonbtc.com",
       "jobTitle": "Bitcoin Financial Educator",
       "knowsAbout": ["Bitcoin", "Financial Independence", "DCA Strategy", "Cryptocurrency Investment", "Labour Economics", "Satoshis"],
-      "sameAs": ["https://twitter.com/livingonbtc", "https://github.com/livingonbtc"]
+      "sameAs": ["https://x.com/LivingOnBTC_", "https://github.com/HectorTries/Living-on-BTC"]
     }
     </script>
     
@@ -266,8 +266,8 @@
       "logo": "https://livingonbtc.com/images/logo.png",
       "description": "LivingOnBTC provides Bitcoin financial calculators including purchasing power, salary comparison, FIRE, and subscription funding tools.",
       "sameAs": [
-        "https://twitter.com/livingonbtc",
-        "https://github.com/livingonbtc"
+        "https://x.com/LivingOnBTC_",
+        "https://github.com/HectorTries/Living-on-BTC"
       ]
     }
     </script>
@@ -488,7 +488,7 @@
         "name": "LivingOnBTC"
       },
       "dateCreated": "2024-01-15",
-      "license": "https://livingonbtc.com/about"
+      "license": "https://livingonbtc.com/"
     }
     </script>
     
@@ -633,7 +633,7 @@
       "url": "https://livingonbtc.com",
       "description": "Bitcoin financial educator and calculator developer since 2024",
       "sameAs": [
-        "https://twitter.com/livingonbtc"
+        "https://x.com/LivingOnBTC_"
       ],
       "knowsAbout": [
         "Bitcoin",
@@ -1778,7 +1778,7 @@
                 <div class="btc-price-card">
                     <div class="btc-price-label">Bitcoin Price (Live)</div>
                     <div class="btc-price-value" id="live-btc-price">Loading...</div>
-                    <div class="btc-price-source">via CoinGecko</div>
+                    <div class="btc-price-source">via Binance</div>
                 </div>
                 <div class="sats-metrics">
                     <div class="sats-metric">
@@ -2087,7 +2087,11 @@
                 try: 30.0,    // USD to TRY (average)
                 mxn: 20.0,    // USD to MXN
                 cad: 1.35,    // USD to CAD
-                jpy: 150.0    // USD to JPY
+                jpy: 150.0,   // USD to JPY
+                eur: 0.92,    // USD to EUR
+                brl: 5.0,     // USD to BRL
+                inr: 83.0,    // USD to INR
+                aud: 1.52     // USD to AUD
             },
             
             // Working hours per week by country
@@ -2142,6 +2146,10 @@
                 case 'mxn': return amount / rates.mxn;
                 case 'cad': return amount / rates.cad;
                 case 'jpy': return amount / rates.jpy;
+                case 'eur': return amount / rates.eur;
+                case 'brl': return amount / rates.brl;
+                case 'inr': return amount / rates.inr;
+                case 'aud': return amount / rates.aud;
                 default: return amount;
             }
         }
@@ -2212,20 +2220,20 @@
             updateMetrics(years);
         }
 
-        // Live price API (CoinGecko primary, Binance fallback)
+        // Live price API (Binance primary, CoinGecko fallback)
         const COINGECKO_API = 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd';
         const BINANCE_API = 'https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT';
         const UPDATE_INTERVAL = 5 * 60 * 1000; // 5 minutes
 
-        // Fetch live Bitcoin price from CoinGecko (falls back to Binance)
+        // Fetch live Bitcoin price from Binance (falls back to CoinGecko)
         async function fetchLiveBitcoinPrice() {
             try {
-                const response = await fetch(COINGECKO_API);
-                if (response.ok) {
-                    const data = await response.json();
-                    liveBtcPrice = data.bitcoin.usd;
+                const binanceRes = await fetch(BINANCE_API);
+                if (binanceRes.ok) {
+                    const binanceData = await binanceRes.json();
+                    liveBtcPrice = parseFloat(binanceData.price);
                 } else {
-                    throw new Error('CoinGecko HTTP ' + response.status);
+                    throw new Error('Binance HTTP ' + binanceRes.status);
                 }
                 
                 // Also update the historical data with this latest price
@@ -2236,13 +2244,13 @@
                 updateLiveMetrics();
                 return liveBtcPrice;
             } catch (error) {
-                console.error('Error fetching Bitcoin price from CoinGecko:', error);
-                // Fallback: Binance ticker
+                console.error('Error fetching Bitcoin price from Binance:', error);
+                // Fallback: CoinGecko
                 try {
-                    const binanceRes = await fetch(BINANCE_API);
-                    if (binanceRes.ok) {
-                        const binanceData = await binanceRes.json();
-                        liveBtcPrice = parseFloat(binanceData.price);
+                    const response = await fetch(COINGECKO_API);
+                    if (response.ok) {
+                        const data = await response.json();
+                        liveBtcPrice = data.bitcoin.usd;
                         const today = new Date();
                         const key = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
                         historicalBtcPrices[key] = liveBtcPrice;
@@ -2250,7 +2258,7 @@
                         return liveBtcPrice;
                     }
                 } catch (e) {
-                    console.error('Error fetching Bitcoin price from Binance:', e);
+                    console.error('Error fetching Bitcoin price from CoinGecko:', e);
                 }
                 // Last resort: latest price from historical data
                 const keys = Object.keys(historicalBtcPrices);
@@ -2317,7 +2325,11 @@
                                 currentCountry === 'turkey' ? 'try' :
                                 currentCountry === 'mexico' ? 'mxn' :
                                 currentCountry === 'canada' ? 'cad' :
-                                currentCountry === 'japan' ? 'jpy' : 'usd';
+                                currentCountry === 'japan' ? 'jpy' :
+                                currentCountry === 'germany' || currentCountry === 'france' ? 'eur' :
+                                currentCountry === 'brazil' ? 'brl' :
+                                currentCountry === 'india' ? 'inr' :
+                                currentCountry === 'australia' ? 'aud' : 'usd';
             
             const minWageUSD = convertToUSD(currentMinWage, currencyCode);
             const medianWageUSD = convertToUSD(currentMedianWage, currencyCode);
@@ -2372,7 +2384,11 @@
                                     currentCountry === 'turkey' ? 'try' :
                                     currentCountry === 'mexico' ? 'mxn' :
                                     currentCountry === 'canada' ? 'cad' :
-                                    currentCountry === 'japan' ? 'jpy' : 'usd';
+                                    currentCountry === 'japan' ? 'jpy' :
+                                currentCountry === 'germany' || currentCountry === 'france' ? 'eur' :
+                                currentCountry === 'brazil' ? 'brl' :
+                                currentCountry === 'india' ? 'inr' :
+                                currentCountry === 'australia' ? 'aud' : 'usd';
                 
                 const wageUSD = convertToUSD(wage, currencyCode);
                 
@@ -2409,7 +2425,11 @@
                                 currentCountry === 'turkey' ? 'try' :
                                 currentCountry === 'mexico' ? 'mxn' :
                                 currentCountry === 'canada' ? 'cad' :
-                                currentCountry === 'japan' ? 'jpy' : 'usd';
+                                currentCountry === 'japan' ? 'jpy' :
+                                currentCountry === 'germany' || currentCountry === 'france' ? 'eur' :
+                                currentCountry === 'brazil' ? 'brl' :
+                                currentCountry === 'india' ? 'inr' :
+                                currentCountry === 'australia' ? 'aud' : 'usd';
             
             const minWageStartUSD = convertToUSD(minWageStart, currencyCode);
             const minWageEndUSD = convertToUSD(minWageEnd, currencyCode);

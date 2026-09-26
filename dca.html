@@ -34,8 +34,8 @@
     <meta name="twitter:description" content="See what dollar-cost averaging into Bitcoin would have returned. Calculate historical DCA outcomes.">
     <meta name="twitter:image" content="https://livingonbtc.com/images/og-dca.png">
     <meta name="twitter:image:alt" content="Bitcoin DCA Simulator">
-    <meta name="twitter:site" content="@livingonbtc">
-    <meta name="twitter:creator" content="@livingonbtc">
+    <meta name="twitter:site" content="@LivingOnBTC_">
+    <meta name="twitter:creator" content="@LivingOnBTC_">
 
     <!-- Platform -->
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
@@ -67,7 +67,7 @@
 
     <!-- Preload critical assets -->
     <link rel="preload" href="/app.js" as="script">
-    <link rel="preload" href="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" as="script">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" as="script">
 
     <!-- Schema.org WebApplication -->
     <script type="application/ld+json">
@@ -127,7 +127,7 @@
     </script>
 
     <script src="/app.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer></script>
 </head>
 <body>
     <a href="#main-content" class="skip-link">Skip to main content</a>
@@ -280,7 +280,7 @@
                 <a href="/bitcoinfire.html">FIRE Calculator</a>
                 <a href="/Subscriptions.html">Subscriptions</a>
             </nav>
-            <p>Built for the Bitcoin standard. <a href="https://twitter.com/livingonbtc" target="_blank" rel="noopener">@LivingOnBTC</a></p>
+            <p>Built for the Bitcoin standard. <a href="https://x.com/LivingOnBTC_" target="_blank" rel="noopener">@LivingOnBTC_</a></p>
             <p class="footer-disclaimer">Not financial advice. Always do your own research.</p>
         </footer>
     </main>
@@ -348,7 +348,6 @@
         // ===== Historical price fetch =====
         // CoinGecko primary (free, CORS-enabled) — falls back to Bitstamp for
         // ranges older than 365 days (CoinGecko free tier only serves recent data)
-        let btcUsdCache = null;        // Bitstamp daily BTC/USD (full history)
         let fxSeriesCache = {};        // currency -> {dateKey: rate}
 
         // --- CoinGecko (last 365 days) ---
@@ -367,8 +366,14 @@
         }
 
         // --- Bitstamp daily BTC/USD (full history since 2011, CORS-enabled) ---
+        // Shared Bitstamp history via app.js (window.LivingOnBTC.History) with local fallback
+        let btcUsdCache = null;
         async function fetchBtcUsdHistory() {
             if (btcUsdCache) return btcUsdCache;
+            if (window.LivingOnBTC?.History) {
+                btcUsdCache = await window.LivingOnBTC.History.fetchBtcUsdHistory();
+                return btcUsdCache;
+            }
             const map = {};
             let start = 1356998400; // 2013-01-01
             while (true) {
@@ -402,15 +407,14 @@
                 const chunkEnd = new Date(cur);
                 chunkEnd.setFullYear(chunkEnd.getFullYear() + 1);
                 const ce = chunkEnd > end ? end : chunkEnd;
-                const url = `https://api.frankfurter.dev/v1/${dateKey(cur)}..${dateKey(ce)}?from=USD&to=${currency}`;
+                const url = `https://api.frankfurter.dev/v2/rates?base=usd&quotes=${currency}&from=${dateKey(cur)}&to=${dateKey(ce)}`;
                 const res = await fetch(url);
                 if (res.ok) {
                     const data = await res.json();
                     // Timeseries rates are nested per currency: {date: {CUR: rate}}
-                    const series = data.rates || {};
-                    for (const [day, r] of Object.entries(series)) {
-                        if (r && typeof r === 'object') rates[day] = r[currency];
-                        else rates[day] = r; // flat fallback
+                    const records = Array.isArray(data) ? data : [];
+                    for (const rec of records) {
+                        if (rec && rec.date && rec.rate) rates[rec.date] = rec.rate;
                     }
                 }
                 cur = new Date(ce);
@@ -469,8 +473,9 @@
             // Validation
             const err = $('form-error');
             err.style.display = 'none';
-            if (!amount || amount <= 0) { showError('Enter an amount greater than zero.'); return; }
+            if (!amount || isNaN(amount) || amount <= 0) { showError('Enter an amount greater than zero.'); return; }
             if (!startDate) { showError('Pick a start date.'); return; }
+            if (new Date(startDate) > new Date()) { showError('Start date cannot be in the future.'); return; }
             if (new Date(startDate) >= new Date(endDate)) { showError('Start date must be before end date.'); return; }
 
             // Convert to USD (CoinGecko needs USD for non-USD conversion? Actually no, it accepts any vs_currency)

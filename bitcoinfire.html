@@ -41,8 +41,8 @@
     <meta name="twitter:description" content="Project when your Bitcoin can replace your income. Calculate your path to early retirement on the Bitcoin standard.">
     <meta name="twitter:image" content="https://livingonbtc.com/images/og-bitcoinfire.png">
     <meta name="twitter:image:alt" content="Bitcoin FIRE Calculator">
-    <meta name="twitter:site" content="@livingonbtc">
-    <meta name="twitter:creator" content="@livingonbtc">
+    <meta name="twitter:site" content="@LivingOnBTC_">
+    <meta name="twitter:creator" content="@LivingOnBTC_">
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-C25ZWRJKXL"></script>
     <script>
@@ -54,21 +54,21 @@
     <title>Bitcoin FIRE Calculator | Achieve Financial Independence with BTC</title>
     <meta name="description" content="Use the Bitcoin FIRE Calculator to project when your Bitcoin holdings can replace your income and achieve financial independence. Plan your journey to early retirement on the Bitcoin standard.">
     <link rel="canonical" href="https://livingonbtc.com/bitcoinfire.html">
-    <meta name="twitter:site" content="@livingonbtc">
-    <meta name="twitter:creator" content="@livingonbtc">
+    <meta name="twitter:site" content="@LivingOnBTC_">
+    <meta name="twitter:creator" content="@LivingOnBTC_">
     <link rel="alternate" hreflang="en" href="https://livingonbtc.com/bitcoinfire.html">
     <link rel="alternate" hreflang="x-default" href="https://livingonbtc.com/bitcoinfire.html">
     <link rel="prev" href="https://livingonbtc.com/calculator.html">
     <link rel="next" href="https://livingonbtc.com/Subscriptions.html">
     <meta name="robots" content="index, follow">
     <meta name="author" content="LivingOnBTC">
-    <meta name="twitter:site" content="@livingonbtc">
-    <meta name="twitter:creator" content="@livingonbtc">
+    <meta name="twitter:site" content="@LivingOnBTC_">
+    <meta name="twitter:creator" content="@LivingOnBTC_">
     <link rel="alternate" hreflang="en" href="https://livingonbtc.com/bitcoinfire.html">
     <link rel="alternate" hreflang="x-default" href="https://livingonbtc.com/bitcoinfire.html">
     <link rel="prev" href="https://livingonbtc.com/calculator.html">
     <link rel="next" href="https://livingonbtc.com/Subscriptions.html">
-    <meta name="twitter:creator" content="@livingonbtc">
+    <meta name="twitter:creator" content="@LivingOnBTC_">
     
     <!-- ===== ENHANCED SEO META TAGS ===== -->
     <meta name="DC.language" content="en">
@@ -115,8 +115,8 @@
     <meta name="twitter:description" content="Project when your Bitcoin can replace your income. Calculate your path to early retirement on the Bitcoin standard.">
     <meta name="twitter:image" content="https://livingonbtc.com/images/og-bitcoinfire.png">
     <meta name="twitter:image:alt" content="Bitcoin FIRE Calculator showing path to financial independence">
-    <meta name="twitter:site" content="@livingonbtc">
-    <meta name="twitter:creator" content="@livingonbtc">
+    <meta name="twitter:site" content="@LivingOnBTC_">
+    <meta name="twitter:creator" content="@LivingOnBTC_">
     
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>₿</text></svg>">
@@ -386,7 +386,7 @@
       "url": "https://livingonbtc.com",
       "description": "Bitcoin financial independence calculator developer since 2024",
       "sameAs": [
-        "https://twitter.com/livingonbtc"
+        "https://x.com/LivingOnBTC_"
       ],
       "knowsAbout": [
         "Bitcoin FIRE",
@@ -479,8 +479,8 @@
       "name": "LivingOnBTC",
       "url": "https://livingonbtc.com",
       "sameAs": [
-        "https://twitter.com/livingonbtc",
-        "https://github.com/livingonbtc"
+        "https://x.com/LivingOnBTC_",
+        "https://github.com/HectorTries/Living-on-BTC"
       ],
       "knowsAbout": [
         "Bitcoin",
@@ -600,8 +600,8 @@
     }
     </script>
     
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <style>
         :root {
             --bitcoin-orange: #f7931a;
@@ -1746,6 +1746,10 @@
             // Small delay to show loading state
             setTimeout(function() {
             const initialAnnualIncome = parseFloat(document.getElementById('annualIncome').value);
+            for (const [id, v] of [['annualIncome', initialAnnualIncome], ['btcPercentage', btcPercentage], ['savingsRate', savingsRate], ['expectedCagr', expectedCagr]]) {
+                if (isNaN(v) || v < 0) { alert('Please enter valid non-negative numbers in ' + id + '.'); btn.innerHTML = originalText; btn.disabled = false; btn.classList.remove('loading'); return; }
+            }
+            if (btcPercentage > 100 || savingsRate > 100) { alert('Percentages cannot exceed 100%.'); btn.innerHTML = originalText; btn.disabled = false; btn.classList.remove('loading'); return; }
             const btcPercentage = parseFloat(document.getElementById('btcPercentage').value);
             const savingsRate = parseFloat(document.getElementById('savingsRate').value);
             const expectedCagr = parseFloat(document.getElementById('expectedCagr').value);

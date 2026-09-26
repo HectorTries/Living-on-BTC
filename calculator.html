@@ -91,8 +91,8 @@
     <meta name="twitter:description" content="Calculate your Bitcoin purchasing power and see how much cheaper your life has become on the Bitcoin standard. Track your savings in sats over time.">
     <meta name="twitter:image" content="https://livingonbtc.com/images/og-calculator.png">
     <meta name="twitter:image:alt" content="Bitcoin Purchasing Power Calculator - See how much cheaper your life has become on the Bitcoin standard">
-    <meta name="twitter:site" content="@livingonbtc">
-    <meta name="twitter:creator" content="@livingonbtc">
+    <meta name="twitter:site" content="@LivingOnBTC_">
+    <meta name="twitter:creator" content="@LivingOnBTC_">
     
     <!-- Additional Platform Meta Tags -->
     <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
@@ -149,8 +149,8 @@
       "logo": "https://livingonbtc.com/images/logo.png",
       "description": "LivingOnBTC provides Bitcoin financial calculators including purchasing power, salary comparison, FIRE, and subscription funding tools.",
       "sameAs": [
-        "https://twitter.com/livingonbtc",
-        "https://github.com/livingonbtc"
+        "https://x.com/LivingOnBTC_",
+        "https://github.com/HectorTries/Living-on-BTC"
       ],
       "contactPoint": {
         "@type": "ContactPoint",
@@ -230,7 +230,7 @@
       "@context": "https://schema.org",
       "@type": "Person",
       "name": "LivingOnBTC Team",
-      "url": "https://livingonbtc.com/about",
+      "url": "https://livingonbtc.com/",
       "jobTitle": "Bitcoin Educators",
       "worksFor": {
         "@type": "Organization",
@@ -1928,6 +1928,14 @@
                 return;
             }
 
+            if (new Date(startDate) > new Date()) {
+                resultDiv.textContent = "Start date cannot be in the future. Please pick today or an earlier date.";
+                loadingDiv.style.display = "none";
+                btn.classList.remove('loading');
+                btnText.textContent = 'Calculate';
+                return;
+            }
+
             try {
                 const startPrice = await getBitcoinPrice(startDate, selectedCurrency);
                 const today = new Date().toISOString().slice(0, 10);
@@ -2025,7 +2033,6 @@
         // ============ Price data layer ============
         // CoinGecko primary (free, CORS-enabled) — falls back to Bitstamp for
         // dates older than 365 days (CoinGecko free tier only serves recent data)
-        let btcUsdCache = null;
         const fxCache = {};
 
         function toKey(date) {
@@ -2047,18 +2054,25 @@
         async function getFxRate(dateKey, currency) {
             if (currency === 'USD') return 1;
             if (fxCache[currency] && fxCache[currency].date === dateKey) return fxCache[currency].rate;
-            const url = `https://api.frankfurter.dev/v1/${dateKey}?from=USD&to=${currency}`;
+            const url = `https://api.frankfurter.dev/v2/rates?base=usd&quotes=${currency}&date=${dateKey}`;
             const res = await fetch(url);
             if (!res.ok) return null;
             const data = await res.json();
-            const rate = data.rates && data.rates[currency];
+            const rec = Array.isArray(data) ? data.find(r => r.quote === currency) : null;
+            const rate = rec ? rec.rate : null;
             fxCache[currency] = { date: dateKey, rate: rate };
             return rate;
         }
 
         // Full Bitstamp daily BTC/USD history (2013+, CORS-enabled)
+        // Shared Bitstamp history via app.js (window.LivingOnBTC.History) with local fallback
+        let btcUsdCache = null;
         async function fetchBtcUsdHistory() {
             if (btcUsdCache) return btcUsdCache;
+            if (window.LivingOnBTC?.History) {
+                btcUsdCache = await window.LivingOnBTC.History.fetchBtcUsdHistory();
+                return btcUsdCache;
+            }
             const map = {};
             let start = 1356998400; // 2013-01-01
             while (true) {

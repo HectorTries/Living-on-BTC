@@ -149,14 +149,14 @@
     };
 
     /* ============================================
-       BITCOIN PRICE (CoinGecko primary, Binance fallback)
+       BITCOIN PRICE (Binance primary, CoinGecko fallback)
        ============================================ */
     const PriceCache = {
         _cache: new Map(),
         _pending: new Map(),
         COINGECKO: 'https://api.coingecko.com/api/v3/simple/price',
         BINANCE: 'https://api.binance.com/api/v3/ticker/price',
-        FX: 'https://api.frankfurter.dev/v1/latest?from=USD',
+        FX: 'https://api.frankfurter.dev/v2/rates?base=usd',
         TTL_MS: 5 * 60 * 1000, // 5 minutes
 
         async getBtcPrice(currency = 'usd') {
@@ -168,38 +168,42 @@
 
             const promise = (async () => {
                 let price = null;
-                // Primary: CoinGecko
+                // Primary: Binance (direct pair, then BTC/USD x ECB FX)
                 try {
-                    const r = await fetch(`${this.COINGECKO}?ids=bitcoin&vs_currencies=${currency}`);
+                    const pair = currency === 'usd' ? 'BTCUSDT' : `BTC${currency.toUpperCase()}`;
+                    const r = await fetch(`${this.BINANCE}?symbol=${pair}`);
                     if (r.ok) {
                         const d = await r.json();
-                        const p = d.bitcoin?.[currency];
+                        const p = parseFloat(d.price);
                         if (p) price = p;
                     }
                 } catch (e) { /* fall through */ }
+                if (!price && currency !== 'usd') {
+                    try {
+                        const [usdRes, fxRes] = await Promise.all([
+                            fetch(`${this.BINANCE}?symbol=BTCUSDT`),
+                            fetch(`${this.FX}&quotes=${currency.toUpperCase()}`)
+                        ]);
+                        const usdData = await usdRes.json();
+                        const fxData = await fxRes.json();
+                        const rec = Array.isArray(fxData)
+                            ? fxData.find(r => r.quote === currency.toUpperCase())
+                            : null;
+                        const rate = rec?.rate;
+                        if (usdData.price && rate) price = parseFloat(usdData.price) * rate;
+                    } catch (e) { /* fall through */ }
+                }
 
-                // Fallback: Binance (direct pair, then BTC/USD x ECB FX)
+                // Fallback: CoinGecko
                 if (!price) {
                     try {
-                        const pair = currency === 'usd' ? 'BTCUSDT' : `BTC${currency.toUpperCase()}`;
-                        const r = await fetch(`${this.BINANCE}?symbol=${pair}`);
+                        const r = await fetch(`${this.COINGECKO}?ids=bitcoin&vs_currencies=${currency}`);
                         if (r.ok) {
                             const d = await r.json();
-                            price = parseFloat(d.price);
+                            const p = d.bitcoin?.[currency];
+                            if (p) price = p;
                         }
-                    } catch (e) { /* fall through */ }
-                    if (!price && currency !== 'usd') {
-                        try {
-                            const [usdRes, fxRes] = await Promise.all([
-                                fetch(`${this.BINANCE}?symbol=BTCUSDT`),
-                                fetch(`${this.FX}&to=${currency.toUpperCase()}`)
-                            ]);
-                            const usdData = await usdRes.json();
-                            const fxData = await fxRes.json();
-                            const rate = fxData.rates?.[currency.toUpperCase()];
-                            if (usdData.price && rate) price = parseFloat(usdData.price) * rate;
-                        } catch (e) { /* give up */ }
-                    }
+                    } catch (e) { /* give up */ }
                 }
 
                 if (!price) throw new Error('No price in response');
@@ -314,12 +318,52 @@
         registerServiceWorker();
     }
 
+    /* ============================================
+       BTC/USD DAILY HISTORY (Bitstamp, shared)
+       ============================================ */
+    const BtcHistory = {
+        _cache: null,
+        dateKey(d) {
+            return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}-${String(d.getUTCDate()).padStart(2, '0')}`;
+        },
+        async fetchBtcUsdHistory() {
+            if (this._cache) return this._cache;
+            const map = {};
+            let start = 1356998400; // 2013-01-01
+            while (true) {
+                const url = `https://www.bitstamp.net/api/v2/ohlc/btcusd/?step=86400&limit=1000&start=${start}`;
+                const res = await fetch(url);
+                if (!res.ok) throw new Error('Could not fetch BTC price history');
+                const data = await res.json();
+                const ohlc = data?.data?.ohlc || [];
+                if (!ohlc.length) break;
+                for (const c of ohlc) {
+                    map[this.dateKey(new Date(parseInt(c.timestamp) * 1000))] = parseFloat(c.close);
+                }
+                const last = parseInt(ohlc[ohlc.length - 1].timestamp);
+                if (ohlc.length < 1000) break;
+                start = last + 1;
+            }
+            this._cache = map;
+            return map;
+        },
+        nearestOnOrBefore(map, dateKeyStr, maxLookback = 21) {
+            const d = new Date(dateKeyStr + 'T00:00:00Z');
+            for (let i = 0; i <= maxLookback; i++) {
+                const k = this.dateKey(new Date(d.getTime() - i * 86400000));
+                if (map[k] !== undefined) return map[k];
+            }
+            return null;
+        }
+    };
+
     // Expose public API
     window.LivingOnBTC = {
         Theme: ThemeManager,
         Format,
         Price: PriceCache,
         Countries: CountryData,
+        History: BtcHistory,
         init
     };
 

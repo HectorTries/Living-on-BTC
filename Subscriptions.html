@@ -17,8 +17,8 @@
     <meta name="rating" content="general">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="twitter:site" content="@livingonbtc">
-    <meta name="twitter:creator" content="@livingonbtc">
+    <meta name="twitter:site" content="@LivingOnBTC_">
+    <meta name="twitter:creator" content="@LivingOnBTC_">
     <link rel="alternate" hreflang="en" href="https://livingonbtc.com/Subscriptions.html">
     <link rel="alternate" hreflang="x-default" href="https://livingonbtc.com/Subscriptions.html">
     <link rel="next" href="https://livingonbtc.com/bitcoin-salary.html">
@@ -79,8 +79,8 @@
     <meta name="twitter:description" content="Calculate how much BTC you need to fund subscriptions like Netflix and Spotify indefinitely. Backtest against historical prices.">
     <meta name="twitter:image" content="https://livingonbtc.com/images/og-subscriptions.png">
     <meta name="twitter:image:alt" content="Bitcoin Subscription Calculator - Calculate how much BTC needed to fund subscriptions indefinitely">
-    <meta name="twitter:site" content="@livingonbtc">
-    <meta name="twitter:creator" content="@livingonbtc">
+    <meta name="twitter:site" content="@LivingOnBTC_">
+    <meta name="twitter:creator" content="@LivingOnBTC_">
     
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>₿</text></svg>">
@@ -179,8 +179,8 @@
       "logo": "https://livingonbtc.com/images/logo.png",
       "description": "LivingOnBTC provides Bitcoin financial calculators including purchasing power, salary comparison, FIRE, and subscription funding tools.",
       "sameAs": [
-        "https://twitter.com/livingonbtc",
-        "https://github.com/livingonbtc"
+        "https://x.com/LivingOnBTC_",
+        "https://github.com/HectorTries/Living-on-BTC"
       ]
     }
     </script>
@@ -317,7 +317,7 @@
         "height": 630
       },
       "sameAs": [
-        "https://twitter.com/livingonbtc"
+        "https://x.com/LivingOnBTC_"
       ]
     }
     </script>
@@ -535,8 +535,8 @@
         "url": "https://livingonbtc.com"
       },
       "sameAs": [
-        "https://twitter.com/livingonbtc",
-        "https://github.com/livingonbtc"
+        "https://x.com/LivingOnBTC_",
+        "https://github.com/HectorTries/Living-on-BTC"
       ]
     }
     </script>
@@ -696,8 +696,8 @@
     
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <style>
         :root {
             --bitcoin-orange: #f7931a;
@@ -2371,7 +2371,6 @@
         // ============ Price data layer ============
         // CoinGecko primary (free, CORS-enabled) — falls back to Bitstamp for
         // ranges older than 365 days (CoinGecko free tier only serves recent data)
-        let btcUsdCache = null;        // Bitstamp daily BTC/USD (full history)
         let fxSeriesCache = {};        // currency -> { dateKey: rate }
         let fxRangeLoaded = {};        // currency -> true once series fetched
 
@@ -2391,8 +2390,14 @@
         }
 
         // Full Bitstamp daily BTC/USD history (2013+, CORS-enabled)
+        // Shared Bitstamp history via app.js (window.LivingOnBTC.History) with local fallback
+        let btcUsdCache = null;
         async function fetchBtcUsdHistory() {
             if (btcUsdCache) return btcUsdCache;
+            if (window.LivingOnBTC?.History) {
+                btcUsdCache = await window.LivingOnBTC.History.fetchBtcUsdHistory();
+                return btcUsdCache;
+            }
             const map = {};
             let start = 1356998400; // 2013-01-01
             while (true) {
@@ -2425,15 +2430,14 @@
                 const chunkEnd = new Date(cur);
                 chunkEnd.setFullYear(chunkEnd.getFullYear() + 1);
                 const ce = chunkEnd > end ? end : chunkEnd;
-                const url = `https://api.frankfurter.dev/v1/${toKey(cur)}..${toKey(ce)}?from=USD&to=${currency}`;
+                const url = `https://api.frankfurter.dev/v2/rates?base=usd&quotes=${currency}&from=${toKey(cur)}&to=${toKey(ce)}`;
                 const res = await fetch(url);
                 if (res.ok) {
                     const data = await res.json();
                     // Timeseries rates are nested per currency: {date: {CUR: rate}}
-                    const series = data.rates || {};
-                    for (const [day, r] of Object.entries(series)) {
-                        if (r && typeof r === 'object') rates[day] = r[currency];
-                        else rates[day] = r; // flat fallback
+                    const records = Array.isArray(data) ? data : [];
+                    for (const rec of records) {
+                        if (rec && rec.date && rec.rate) rates[rec.date] = rec.rate;
                     }
                 }
                 cur = new Date(ce);
@@ -2491,7 +2495,9 @@
             const monthlyAmount = parseFloat(document.getElementById('monthlyAmount').value);
             const startDate = document.getElementById('startDate').value;
             const initialPeriod = parseInt(document.getElementById('initialPeriod').value);
-            const sellFee = parseFloat(document.getElementById('sellFee').value);
+            let sellFee = parseFloat(document.getElementById('sellFee').value);
+            if (isNaN(sellFee) || sellFee < 0) sellFee = 0;
+            if (sellFee >= 100) { alert('Sell fee must be below 100%.'); return; }
             
             const loadingDiv = document.querySelector('.loading');
             const resultsDiv = document.getElementById('results');
@@ -2499,6 +2505,10 @@
             
             if (!startDate || !monthlyAmount || isNaN(monthlyAmount) || monthlyAmount <= 0) {
                 alert('Please enter valid subscription details');
+                return;
+            }
+            if (new Date(startDate) > new Date()) {
+                alert('Start date cannot be in the future.');
                 return;
             }
             
